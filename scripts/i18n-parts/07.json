@@ -1,0 +1,30 @@
+{
+  "optional": ["opsyonal", "opsyonal"],
+  "Fields marked * are required.": [
+    "Kailangang punan ang mga field na may markang *.",
+    "Kinahanglan pun-on ang mga field nga adunay marka nga *."
+  ],
+  "e.g. Santos": ["hal. Santos", "pananglitan: Santos"],
+  "Mobile number": ["Numero ng mobile", "Numero sa mobile"],
+  "Create a strong password": ["Gumawa ng matibay na password", "Himoa og lig-on nga password"],
+  "Use a stronger password: add the items still unchecked below.": [
+    "Gumamit ng mas matibay na password: idagdag ang mga hindi pa natatamaan sa ibaba.",
+    "Gamita ang mas lig-on nga password: idugang ang mga wala pa matuman sa ubos."
+  ],
+  "Enter a valid Philippine mobile number, e.g. 917 123 4567.": [
+    "Maglagay ng wastong mobile number sa Pilipinas, hal. 917 123 4567.",
+    "Ibutang ang husto nga mobile number sa Pilipinas, pananglitan: 917 123 4567."
+  ],
+  "Weak": ["Mahina", "Huyang"],
+  "Fair": ["Katamtaman", "Medyo"],
+  "Good": ["Maayos", "Maayo"],
+  "Strong": ["Matibay", "Lig-on"],
+  "An uppercase letter (A–Z)": ["Isang malaking titik (A–Z)", "Usa ka dako nga letra (A–Z)"],
+  "A lowercase letter (a–z)": ["Isang maliit na titik (a–z)", "Usa ka gamay nga letra (a–z)"],
+  "A number (0–9)": ["Isang numero (0–9)", "Usa ka numero (0–9)"],
+  "A symbol (! @ # ? …)": ["Isang simbolo (! @ # ? …)", "Usa ka simbolo (! @ # ? …)"],
+  "Password strength: {{level}}": ["Tibay ng password: {{level}}", "Kalig-on sa password: {{level}}"],
+  "Password strength": ["Tibay ng password", "Kalig-on sa password"],
+  "done": ["tapos na", "nahuman na"],
+  "not yet": ["hindi pa", "wala pa"]
+}

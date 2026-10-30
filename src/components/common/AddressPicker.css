@@ -1,0 +1,65 @@
+.bl-addr__box { position: relative; }
+
+.bl-addr__list {
+  position: absolute;
+  z-index: 1200; /* above the Leaflet panes and the modal body */
+  left: 0;
+  right: 0;
+  top: calc(100% + 4px);
+  margin: 0;
+  padding: var(--bl-s1);
+  list-style: none;
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border-strong);
+  border-radius: var(--bl-r-md);
+  box-shadow: var(--bl-shadow-md);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+.bl-addr__opt {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bl-s2);
+  padding: var(--bl-s2) var(--bl-s3);
+  border-radius: var(--bl-r-sm, 6px);
+  font-size: var(--bl-fs-sm);
+  cursor: pointer;
+}
+.bl-addr__opt ion-icon { color: var(--bl-green); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+.bl-addr__opt.is-active,
+.bl-addr__opt:hover { background: var(--bl-green-soft); }
+
+.bl-addr__note {
+  padding: var(--bl-s2) var(--bl-s3);
+  font-size: var(--bl-fs-sm);
+  color: var(--bl-text-secondary);
+}
+
+.bl-addr__map {
+  height: 220px;
+  border: 1px solid var(--bl-border-strong);
+  border-radius: var(--bl-r-md);
+  overflow: hidden;
+  background: var(--bl-bg);
+  z-index: 0;
+}
+
+.bl-addr__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  min-height: 20px;
+}
+
+.bl-addr__clear {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-danger);
+  cursor: pointer;
+}
+.bl-addr__clear:hover { text-decoration: underline; }

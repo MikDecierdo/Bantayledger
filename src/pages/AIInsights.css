@@ -1,0 +1,40 @@
+.bl-ai__about {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bl-s3);
+  margin-bottom: var(--bl-s4);
+  background: var(--bl-surface-muted);
+}
+
+.bl-ai__about-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--bl-r-md);
+  background: var(--bl-green-light);
+  color: var(--bl-green);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.bl-ai__about p { margin-top: 3px; font-size: var(--bl-fs-sm); max-width: 82ch; }
+
+.bl-ai__filters { margin-bottom: var(--bl-s4); }
+
+/*
+ * Insight cards carry a lot of prose, so they need width to stay readable —
+ * two across at most, rather than the four the default auto-fit would allow.
+ */
+.bl-ai__grid {
+  align-items: stretch;
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 900px) {
+  .bl-ai__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.bl-ai__grid > .bl-insight { height: 100%; }
+
+.bl-ai__foot { margin-top: var(--bl-s5); }

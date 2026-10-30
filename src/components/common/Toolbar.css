@@ -1,0 +1,68 @@
+.bl-toolbar {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  flex-wrap: wrap;
+  margin-bottom: var(--bl-s4);
+  min-width: 0;
+}
+
+.bl-toolbar__search {
+  flex: 1 1 240px;
+  min-width: 0;
+  max-width: 420px;
+}
+
+.bl-toolbar__filters {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s2);
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* On phones the search takes the full row and filters scroll beneath it. */
+@media (max-width: 599px) {
+  .bl-toolbar { gap: var(--bl-s3); }
+  .bl-toolbar__search { flex: 1 1 100%; max-width: none; }
+  .bl-toolbar__filters { width: 100%; }
+  .bl-toolbar__filters > .bl-chiprow { width: 100%; }
+  .bl-toolbar__filters > .bl-select,
+  .bl-toolbar__filters > .bl-field { flex: 1 1 140px; }
+}
+
+.bl-chip__count {
+  background: rgba(23, 34, 30, 0.08);
+  border-radius: var(--bl-r-pill);
+  padding: 1px 6px;
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.bl-chip[aria-pressed='true'] .bl-chip__count {
+  background: rgba(31, 111, 91, 0.16);
+}
+
+.bl-resultcount { margin-bottom: var(--bl-s3); }
+
+/* Desktop / tablet: the search + filter bar pins under the page header, so
+   only the rows below it scroll. */
+@media (min-width: 768px) {
+  .bl-toolbar {
+    position: sticky;
+    top: var(--bl-sticky-top, var(--bl-header-h, 0px));
+    z-index: 10;
+    padding: var(--bl-s3) 0;
+    margin-top: calc(-1 * var(--bl-s3));
+    background: var(--bl-bg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .bl-toolbar { box-sizing: border-box; min-height: var(--bl-toolbar-h, 0px); }
+}
+
+@media print {
+  .bl-toolbar { position: static; }
+}

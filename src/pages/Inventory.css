@@ -1,0 +1,129 @@
+.bl-inv__chips { margin-bottom: var(--bl-s4); }
+
+/* Add/Edit Product form: photo preview + its action buttons. */
+.bl-inv__photo-row {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s4);
+  margin-bottom: var(--bl-s4);
+}
+.bl-inv__photo-actions { display: flex; flex-direction: column; gap: var(--bl-s2); align-items: flex-start; }
+
+.bl-inv__row-photo { display: flex; align-items: center; gap: var(--bl-s3); }
+
+/* Add Product form: the category select plus its inline delete button. */
+.bl-inv__category-row {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--bl-s2);
+}
+.bl-inv__category-row .bl-inv__category-select { flex: 1; min-width: 0; }
+.bl-inv__category-row > .bl-btn { flex-shrink: 0; }
+
+/* Supplier select with "Add another size" beside it, bottom-aligned so the
+   button lines up with the select rather than its label. Wraps under it on
+   narrow screens. */
+.bl-inv__supplier-row {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--bl-s3);
+}
+.bl-inv__supplier-row .bl-inv__supplier-select { flex: 1 1 260px; min-width: 0; }
+.bl-inv__supplier-row > .bl-btn { flex-shrink: 0; }
+
+.bl-inv__namelink { color: var(--bl-text); }
+.bl-inv__namelink:hover { color: var(--bl-green-dark); text-decoration: underline; }
+
+/* "+N sizes" badge sitting next to a grouped product's name. */
+.bl-inv__row-photo .bl-badge,
+.bl-drow__title .bl-badge { margin-left: var(--bl-s2); vertical-align: middle; }
+
+/* Add/Edit Product form: each additional size gets its own bordered,
+   slightly tinted fieldset so it reads as nested under the main product
+   rather than just another identical section. */
+.bl-inv__subunit {
+  background: var(--bl-surface-muted);
+  border: 1px dashed var(--bl-border-strong);
+  border-radius: var(--bl-r-lg);
+  padding: var(--bl-s4);
+}
+.bl-inv__subunit-legend {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  width: 100%;
+}
+
+/* Never wrap to multiple lines — if the row ever can't fit, the table's own
+   horizontal scroll (`.bl-table-wrap.bl-scroll`) handles overflow instead. */
+.bl-inv__actions { display: inline-flex; gap: var(--bl-s2); flex-wrap: nowrap; justify-content: flex-end; }
+
+/* Row actions deliberately don't use the system's major 3D push buttons —
+   repeated down every row that'd be too heavy. Flat, color-tinted pills
+   instead: no shelf shadow, no lift, no press-compress. */
+.bl-btn.bl-inv__action--stock,
+.bl-btn.bl-inv__action--edit {
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  border-color: var(--bl-green);
+}
+.bl-btn.bl-inv__action--stock:hover:not(:disabled),
+.bl-btn.bl-inv__action--edit:hover:not(:disabled) { background: #DCEDE5; }
+
+.bl-btn.bl-inv__action--delete {
+  background: var(--bl-danger-bg);
+  color: var(--bl-danger);
+  border-color: var(--bl-danger);
+}
+.bl-btn.bl-inv__action--delete:hover:not(:disabled) { background: #F6D7D7; }
+
+.bl-btn.bl-inv__action--enable {
+  background: var(--bl-green-soft);
+  color: var(--bl-green-dark);
+  border-color: var(--bl-green);
+}
+
+/* A disabled product stays listed but reads as inactive. */
+.bl-inv__row--disabled td:not(.bl-td-actions) { opacity: 0.55; }
+
+/* "Healthy" is the normal state, so it needs no filled pill — just the green
+   icon and text. Low / critical / out keep their tinted badges so they stand out. */
+.bl-badge.bl-inv__status--plain {
+  background: transparent;
+  border-color: transparent;
+}
+
+/* The supplier column is the first to go when the table gets tight. */
+@media (max-width: 1180px) {
+  .bl-inv__col-supplier { display: none; }
+}
+
+/* ---- Mobile cards -------------------------------------------------------- */
+
+.bl-inv__cardlink { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+.bl-inv__cardlink:hover .bl-drow__title { color: var(--bl-green-dark); text-decoration: underline; }
+.bl-inv__cardlink:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); border-radius: var(--bl-r-sm); }
+
+.bl-inv__stockbar { display: grid; gap: 5px; margin-bottom: var(--bl-s3); }
+
+.bl-inv__stockbar-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+}
+
+.bl-inv__supplier-sm { font-size: var(--bl-fs-sm) !important; font-weight: var(--bl-fw-regular) !important; }
+
+.bl-inv__cardactions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: var(--bl-s2);
+  margin-top: var(--bl-s3);
+  padding-top: var(--bl-s3);
+  border-top: 1px dashed var(--bl-border);
+}
+.bl-inv__cardactions > .bl-btn:first-child { flex: 1; }

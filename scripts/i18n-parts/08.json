@@ -1,0 +1,23 @@
+{
+  "Add staff": ["Magdagdag ng staff", "Dugangi og staff"],
+  "Could not add this person. Please try again.": ["Hindi naidagdag ang taong ito. Subukan ulit.", "Wala nadugang kining tawhana. Sulayi pag-usab."],
+  "Could not remove this person.": ["Hindi natanggal ang taong ito.", "Wala matangtang kining tawhana."],
+  "Could not update the password.": ["Hindi na-update ang password.", "Wala ma-update ang password."],
+  "Create staff account": ["Gumawa ng staff account", "Himoa ang staff account"],
+  "Enter the full name.": ["Ilagay ang buong pangalan.", "Ibutang ang tibuok ngalan."],
+  "Give this password to your staff. They can sign in with their email right away.": ["Ibigay ang password na ito sa staff mo. Makakapag-sign in sila gamit ang email nila agad.", "Ihatag kini nga password sa imong staff. Makasulod sila gamit ang ilang email dayon."],
+  "Loading": ["Naglo-load", "Nag-load"],
+  "No other members yet.": ["Wala pang ibang miyembro.", "Wala pay lain nga miyembro."],
+  "Owner": ["May-ari", "Tag-iya"],
+  "Password updated. Share it with {{name}}.": ["Na-update ang password. Ibigay ito kay {{name}}.", "Na-update ang password. Ihatag kini kang {{name}}."],
+  "Remove this staff member?": ["Tanggalin ang staff na ito?", "Tangtangon kining staff?"],
+  "Reset password": ["I-reset ang password", "I-reset ang password"],
+  "Set a new password for {{name}}. They will be signed out everywhere.": ["Magtakda ng bagong password para kay {{name}}. Masa-sign out sila kahit saan.", "Magbutang og bag-ong password para kang {{name}}. Ma-sign out sila bisan asa."],
+  "Staff account created.": ["Nagawa na ang staff account.", "Nahimo na ang staff account."],
+  "Staff can record sales, purchases, expenses and stock. They cannot change products or the team.": ["Ang staff ay makakapagtala ng benta, pagbili, gastos, at stock. Hindi nila mababago ang mga produkto o ang team.", "Ang staff makatala og baligya, pamalit, gasto, ug stock. Dili nila usbon ang mga produkto o ang team."],
+  "Staff removed.": ["Natanggal na ang staff.", "Natangtang na ang staff."],
+  "Team": ["Team", "Team"],
+  "The owner and the staff who can sign in to this business.": ["Ang may-ari at ang staff na puwedeng mag-sign in sa negosyong ito.", "Ang tag-iya ug ang staff nga puwedeng mosulod niini nga negosyo."],
+  "They will no longer be able to sign in to this business. Their past records stay.": ["Hindi na sila makakapag-sign in sa negosyong ito. Mananatili ang mga nauna nilang tala.", "Dili na sila makasulod niini nga negosyo. Magpabilin ang ilang kanhing mga tala."],
+  "You are the only member. Add staff so helpers can record sales.": ["Ikaw lang ang miyembro. Magdagdag ng staff para makapagtala ng benta ang mga katulong.", "Ikaw ra ang miyembro. Dugangi og staff aron makatala og baligya ang mga katabang."]
+}

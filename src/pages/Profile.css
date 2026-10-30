@@ -1,0 +1,104 @@
+.bl-prof__hero {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s5);
+  margin-bottom: var(--bl-s5);
+  flex-wrap: wrap;
+}
+
+.bl-prof__avatar-wrap { position: relative; flex-shrink: 0; }
+
+.bl-prof__avatar-btn {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--bl-surface);
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 15px;
+}
+.bl-prof__avatar-btn:hover { background: var(--bl-green-accent); color: #fff; }
+.bl-prof__avatar-btn:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+.bl-prof__identity { min-width: 0; flex: 1 1 220px; }
+
+.bl-prof__name {
+  font-size: var(--bl-fs-xl);
+  font-weight: var(--bl-fw-bold);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.bl-prof__identity .bl-support { margin-top: 2px; }
+.bl-prof__badges { margin-top: var(--bl-s3); }
+
+/* ---- Detail lists -------------------------------------------------------- */
+
+.bl-prof__list { display: grid; gap: var(--bl-s4); margin: 0; }
+
+.bl-prof__list > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.bl-prof__list dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--bl-fs-xs);
+  color: var(--bl-text-secondary);
+  font-weight: var(--bl-fw-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.bl-prof__list dt ion-icon { font-size: 14px; color: var(--bl-green-accent); }
+
+.bl-prof__list dd {
+  margin: 0;
+  font-size: var(--bl-fs-base);
+  color: var(--bl-text);
+  line-height: var(--bl-lh-normal);
+  overflow-wrap: anywhere;
+}
+
+/* ---- Navigation list ----------------------------------------------------- */
+
+.bl-prof__nav li { border-bottom: 1px solid var(--bl-border); }
+.bl-prof__nav li:last-child { border-bottom: 0; }
+
+.bl-prof__nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  padding: var(--bl-s3) var(--bl-s4);
+  min-height: 52px;
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-medium);
+  color: var(--bl-text);
+  transition: background var(--bl-dur-fast) var(--bl-ease);
+  /* Logout is a <button> (it ends the session rather than navigating), so the
+     list needs the reset the anchors get for free. */
+  width: 100%;
+  border: 0;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+}
+.bl-prof__nav-item:hover { background: var(--bl-green-soft); }
+.bl-prof__nav-item:focus-visible { outline: none; box-shadow: inset var(--bl-focus-ring); }
+
+.bl-prof__nav-item > span { flex: 1; min-width: 0; }
+
+.bl-prof__nav-icon { font-size: 20px; color: var(--bl-green); flex-shrink: 0; }
+.bl-prof__nav-chev { font-size: 16px; color: var(--bl-text-secondary); flex-shrink: 0; }
+
+.bl-prof__nav-item--danger { color: var(--bl-danger); }
+.bl-prof__nav-item--danger .bl-prof__nav-icon { color: var(--bl-danger); }
+.bl-prof__nav-item--danger:hover { background: var(--bl-danger-bg); }

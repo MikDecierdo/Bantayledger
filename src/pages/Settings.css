@@ -1,0 +1,89 @@
+.bl-set__layout {
+  display: grid;
+  gap: var(--bl-s4);
+  grid-template-columns: 1fr;
+  align-items: start;
+}
+
+/* Two columns once there is room; groups stay whole. */
+@media (min-width: 1024px) {
+  .bl-set__layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.bl-set__group { overflow: hidden; }
+
+.bl-set__group-head {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bl-s3);
+  padding: var(--bl-s4) var(--bl-s5);
+  border-bottom: 1px solid var(--bl-border);
+  background: var(--bl-surface-muted);
+}
+.bl-set__group-head .bl-caption { margin-top: 2px; }
+
+.bl-set__group-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--bl-r-md);
+  background: var(--bl-green-light);
+  color: var(--bl-green);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+/* ---- Rows ---------------------------------------------------------------- */
+
+.bl-set__rows { display: grid; }
+
+.bl-set__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s4);
+  padding: var(--bl-s4) var(--bl-s5);
+  border-bottom: 1px solid var(--bl-border);
+  min-height: 62px;
+  min-width: 0;
+}
+.bl-set__row:last-child { border-bottom: 0; }
+
+.bl-set__row-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+
+.bl-set__row-title {
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-medium);
+  color: var(--bl-text);
+}
+
+.bl-set__row-control {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+  max-width: 220px;
+  width: auto;
+}
+.bl-set__row-control:empty { display: none; }
+.bl-set__row-control > .bl-field { width: 200px; max-width: 100%; }
+
+/* Inputs move below their label on phones so neither is squeezed. */
+@media (max-width: 599px) {
+  .bl-set__row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--bl-s3);
+  }
+  .bl-set__row-control { max-width: none; justify-content: flex-start; }
+  .bl-set__row-control > .bl-field { width: 100%; }
+  .bl-set__row-control > .bl-btn { width: 100%; }
+
+  /* Switches stay inline with their label rather than stretching. */
+  .bl-set__row:has(.bl-switch) {
+    flex-direction: row;
+    align-items: center;
+  }
+  .bl-set__row:has(.bl-switch) .bl-set__row-control { width: auto; justify-content: flex-end; }
+}

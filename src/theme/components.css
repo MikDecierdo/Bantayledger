@@ -1,0 +1,813 @@
+/* ==========================================================================
+   Design-system primitives: buttons, inputs, cards, badges, tables, chips
+   ========================================================================== */
+
+/* ---- Button -------------------------------------------------------------- */
+
+.bl-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bl-s2);
+  border: 1px solid transparent;
+  border-radius: var(--bl-r-lg);
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-semibold);
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+  background: none;
+  transition: background var(--bl-dur-fast) var(--bl-ease),
+    border-color var(--bl-dur-fast) var(--bl-ease),
+    color var(--bl-dur-fast) var(--bl-ease),
+    box-shadow var(--bl-dur) var(--bl-ease-spring),
+    transform var(--bl-dur) var(--bl-ease-spring);
+  min-height: 40px;
+  padding: 0 var(--bl-s4);
+  text-align: center;
+}
+
+.bl-btn:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.bl-btn:disabled,
+.bl-btn[aria-disabled='true'] {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.bl-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--bl-focus-ring);
+}
+
+.bl-btn__icon {
+  font-size: 1.125em;
+  flex-shrink: 0;
+}
+
+/* sizes */
+.bl-btn--sm { min-height: 34px; padding: 0 var(--bl-s3); font-size: var(--bl-fs-sm); }
+.bl-btn--lg { min-height: 48px; padding: 0 var(--bl-s5); font-size: var(--bl-fs-md); }
+.bl-btn--block { width: 100%; }
+.bl-btn--icon-only { padding: 0; width: 40px; }
+.bl-btn--sm.bl-btn--icon-only { width: 34px; }
+
+/* variants
+   Depth is graduated by importance: primary/danger are the "major" actions
+   and get the full playful push (a hard colored ledge that compresses flush
+   on press); secondary/subtle get a thinner version of the same language;
+   ghost stays flat (it's the deliberately-minimal variant, mostly icon-only
+   row actions) but still gets a smoother hover than a plain color swap. */
+
+.bl-btn--primary {
+  background: var(--bl-green);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--bl-green-dark), 0 6px 14px rgba(23, 34, 30, 0.18);
+}
+.bl-btn--primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--bl-green-dark), 0 10px 20px rgba(23, 34, 30, 0.22);
+}
+.bl-btn--primary:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--bl-green-dark), 0 2px 6px rgba(23, 34, 30, 0.16);
+}
+.bl-btn--primary:disabled,
+.bl-btn--primary[aria-disabled='true'] {
+  box-shadow: 0 2px 0 var(--bl-green-dark), 0 2px 6px rgba(23, 34, 30, 0.1);
+}
+
+.bl-btn--danger {
+  background: var(--bl-danger);
+  color: #fff;
+  box-shadow: 0 4px 0 var(--bl-danger-dark), 0 6px 14px rgba(23, 34, 30, 0.18);
+}
+.bl-btn--danger:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 0 var(--bl-danger-dark), 0 10px 20px rgba(23, 34, 30, 0.22);
+}
+.bl-btn--danger:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--bl-danger-dark), 0 2px 6px rgba(23, 34, 30, 0.16);
+}
+.bl-btn--danger:disabled,
+.bl-btn--danger[aria-disabled='true'] {
+  box-shadow: 0 2px 0 var(--bl-danger-dark), 0 2px 6px rgba(23, 34, 30, 0.1);
+}
+
+.bl-btn--secondary {
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  border-color: var(--bl-border-strong);
+  box-shadow: 0 2px 0 var(--bl-border-strong), 0 2px 6px rgba(23, 34, 30, 0.06);
+}
+.bl-btn--secondary:hover:not(:disabled) {
+  background: var(--bl-green-soft);
+  border-color: var(--bl-green-accent);
+  color: var(--bl-green-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--bl-green-accent), 0 4px 10px rgba(23, 34, 30, 0.1);
+}
+.bl-btn--secondary:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 var(--bl-border-strong), 0 1px 3px rgba(23, 34, 30, 0.08);
+}
+
+.bl-btn--ghost {
+  background: transparent;
+  color: var(--bl-text-secondary);
+}
+.bl-btn--ghost:hover:not(:disabled) {
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+}
+
+.bl-btn--subtle {
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  box-shadow: 0 2px 0 var(--bl-green-accent), 0 2px 6px rgba(23, 34, 30, 0.05);
+}
+.bl-btn--subtle:hover:not(:disabled) {
+  background: #DCEDE5;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 0 var(--bl-green-accent), 0 4px 10px rgba(23, 34, 30, 0.08);
+}
+.bl-btn--subtle:active:not(:disabled) {
+  transform: translateY(2px);
+  box-shadow: 0 0 0 transparent, 0 1px 3px rgba(23, 34, 30, 0.06);
+}
+
+/* Icon-only buttons (table/toolbar row actions) stay flat regardless of
+   variant — a colored ledge under a 34px square icon button would look
+   cluttered, not playful, at that density. Equal specificity to the variant
+   rules above and declared after them, so this wins the cascade. */
+.bl-btn--icon-only,
+.bl-btn--icon-only:hover:not(:disabled),
+.bl-btn--icon-only:active:not(:disabled) {
+  box-shadow: none;
+}
+.bl-btn--icon-only:active:not(:disabled) { transform: scale(0.985); }
+
+/* ---- Card ---------------------------------------------------------------- */
+
+.bl-card {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  padding: var(--bl-s5);
+}
+
+.bl-card--raised { box-shadow: var(--bl-shadow-sm); }
+.bl-card--flush { padding: 0; overflow: hidden; }
+.bl-card--tight { padding: var(--bl-s4); }
+.bl-card--interactive {
+  cursor: pointer;
+  transition: border-color var(--bl-dur) var(--bl-ease),
+    box-shadow var(--bl-dur) var(--bl-ease),
+    transform var(--bl-dur) var(--bl-ease);
+  text-align: left;
+  width: 100%;
+  display: block;
+}
+.bl-card--interactive:hover {
+  border-color: var(--bl-green-accent);
+  box-shadow: var(--bl-shadow-md);
+  transform: translateY(-2px);
+}
+.bl-card--interactive:focus-visible {
+  outline: none;
+  box-shadow: var(--bl-focus-ring);
+  border-color: var(--bl-green);
+}
+
+.bl-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  margin-bottom: var(--bl-s4);
+}
+
+.bl-card__header-text { min-width: 0; }
+.bl-card__header-text p { margin-top: 2px; }
+
+/* A product tile in the POS cart grid: a card button sized and centered for
+   a thumbnail + short label, rather than card's usual free-flowing content. */
+.bl-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--bl-s2);
+  padding: var(--bl-s3);
+  text-align: center;
+}
+.bl-tile:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* 3D "push" tile: a solid ledge underneath that collapses when pressed. */
+.bl-card--interactive.bl-tile {
+  border-color: var(--bl-border-strong);
+  box-shadow: 0 4px 0 var(--bl-border-strong), 0 6px 10px rgba(23, 34, 30, 0.08);
+  transition: transform 140ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 140ms cubic-bezier(0.34, 1.56, 0.64, 1),
+    border-color var(--bl-dur) var(--bl-ease);
+  margin-bottom: 4px;
+}
+.bl-card--interactive.bl-tile:hover:not(:disabled) {
+  border-color: var(--bl-green-accent);
+  box-shadow: 0 5px 0 var(--bl-green-accent), 0 8px 14px rgba(23, 34, 30, 0.1);
+  transform: translateY(-2px);
+}
+.bl-card--interactive.bl-tile:active:not(:disabled) {
+  transform: translateY(4px);
+  box-shadow: 0 0 0 var(--bl-green-accent), 0 1px 3px rgba(23, 34, 30, 0.1);
+  transition-duration: 60ms;
+}
+.bl-card--interactive.bl-tile:disabled,
+.bl-card--interactive.bl-tile:disabled:hover {
+  transform: none;
+  border-color: var(--bl-border);
+  box-shadow: 0 2px 0 var(--bl-border);
+}
+.bl-tile--picked { background: var(--bl-green-soft); }
+.bl-tile__badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--bl-r-pill);
+  background: var(--bl-green);
+  color: var(--bl-text-inverse);
+  font-size: 12px;
+  font-weight: 700;
+  box-shadow: 0 2px 0 var(--bl-green-dark);
+  animation: bl-tile-pop 260ms cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+@keyframes bl-tile-pop {
+  0% { transform: scale(0.5); }
+  60% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bl-card--interactive.bl-tile, .bl-tile__badge { transition: none; animation: none; }
+  .bl-card--interactive.bl-tile:hover:not(:disabled),
+  .bl-card--interactive.bl-tile:active:not(:disabled) { transform: none; }
+}
+.bl-tile__name {
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-medium);
+  color: var(--bl-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+.bl-tile__price { font-size: var(--bl-fs-xs); color: var(--bl-text-secondary); }
+.bl-tile__stock { font-size: 11px; color: var(--bl-text-secondary); }
+.bl-tile__stock--out { color: var(--bl-danger); }
+
+/* ---- Product thumbnail ---------------------------------------------------- */
+
+.bl-phototile {
+  display: inline-grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: var(--bl-r-md);
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  flex-shrink: 0;
+  object-fit: cover;
+}
+.bl-phototile--sm { width: 32px; height: 32px; }
+.bl-phototile--lg { width: 72px; height: 72px; }
+.bl-phototile__fallback {
+  font-weight: var(--bl-fw-bold);
+  font-size: var(--bl-fs-base);
+  letter-spacing: 0.02em;
+}
+
+/* ---- Section ------------------------------------------------------------- */
+
+.bl-section { margin-bottom: var(--bl-s6); }
+.bl-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  margin-bottom: var(--bl-s3);
+  flex-wrap: wrap;
+}
+.bl-section__head p { margin-top: 2px; }
+
+/* ---- Badge / status ------------------------------------------------------ */
+
+.bl-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px 3px 7px;
+  border-radius: var(--bl-r-pill);
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-semibold);
+  line-height: 1.4;
+  white-space: nowrap;
+  border: 1px solid transparent;
+}
+
+.bl-badge ion-icon { font-size: 13px; flex-shrink: 0; }
+
+.bl-badge--success { background: var(--bl-success-bg); color: var(--bl-success); border-color: #CDE6DA; }
+.bl-badge--warning { background: var(--bl-warning-bg); color: var(--bl-warning); border-color: #F0DEBE; }
+.bl-badge--danger  { background: var(--bl-danger-bg);  color: var(--bl-danger);  border-color: #F1D2D2; }
+.bl-badge--info    { background: var(--bl-info-bg);    color: var(--bl-info);    border-color: #CFE0E7; }
+.bl-badge--neutral { background: #F1F4F2; color: var(--bl-text-secondary); border-color: var(--bl-border); }
+.bl-badge--brand   { background: var(--bl-green-light); color: var(--bl-green-dark); border-color: #D5E8DF; }
+
+/* ---- Delta (trend) chip -------------------------------------------------- */
+
+.bl-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+.bl-delta--up { color: var(--bl-success); }
+.bl-delta--down { color: var(--bl-danger); }
+.bl-delta--flat { color: var(--bl-text-secondary); }
+.bl-delta ion-icon { font-size: 14px; }
+
+/* ---- Form fields --------------------------------------------------------- */
+
+.bl-field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+
+.bl-field__label {
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-text);
+}
+.bl-field__req { color: var(--bl-danger); margin-left: 2px; }
+
+.bl-field__hint { font-size: var(--bl-fs-xs); color: var(--bl-text-secondary); }
+.bl-field__error {
+  font-size: var(--bl-fs-xs);
+  color: var(--bl-danger);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.bl-input,
+.bl-select,
+.bl-textarea {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--bl-s3);
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border-strong);
+  border-radius: var(--bl-r-md);
+  font-size: var(--bl-fs-base);
+  color: var(--bl-text);
+  transition: border-color var(--bl-dur-fast) var(--bl-ease),
+    box-shadow var(--bl-dur-fast) var(--bl-ease);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.bl-textarea { padding: var(--bl-s3); min-height: 88px; resize: vertical; line-height: var(--bl-lh-normal); }
+
+/* One control height everywhere: text, number, date, currency and dropdowns
+   all measure the same, whatever the browser's native rendering does. */
+.bl-input,
+.bl-select {
+  height: 44px;
+  box-sizing: border-box;
+  line-height: 1.2;
+}
+.bl-select { text-overflow: ellipsis; white-space: nowrap; }
+.bl-input[type='date'] { padding-top: 0; padding-bottom: 0; }
+.bl-input[type='date']::-webkit-datetime-edit,
+.bl-input[type='date']::-webkit-datetime-edit-fields-wrapper { padding: 0; }
+.bl-input[type='number'] { -moz-appearance: textfield; appearance: textfield; }
+.bl-input[type='number']::-webkit-outer-spin-button,
+.bl-input[type='number']::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.bl-input::placeholder,
+.bl-textarea::placeholder { color: #9BA8A1; }
+
+.bl-input:hover, .bl-select:hover, .bl-textarea:hover { border-color: var(--bl-green-accent); }
+
+.bl-input:focus, .bl-select:focus, .bl-textarea:focus {
+  outline: none;
+  border-color: var(--bl-green);
+  box-shadow: var(--bl-focus-ring);
+}
+
+.bl-input:disabled, .bl-select:disabled { background: var(--bl-bg); color: var(--bl-text-secondary); cursor: not-allowed; }
+
+.bl-field--invalid .bl-input,
+.bl-field--invalid .bl-select,
+.bl-field--invalid .bl-textarea { border-color: var(--bl-danger); }
+.bl-field--invalid .bl-input:focus { box-shadow: 0 0 0 3px rgba(197, 75, 75, 0.22); }
+
+.bl-select {
+  padding-right: 34px;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='none' stroke='%23718078' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' d='M1 1.5 6 6.5l5-5'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right var(--bl-s3) center;
+  cursor: pointer;
+}
+
+/* input with leading affix (currency / search) */
+.bl-input-group { position: relative; display: flex; align-items: center; }
+.bl-input-group__affix {
+  position: absolute;
+  left: var(--bl-s3);
+  color: var(--bl-text-secondary);
+  font-size: var(--bl-fs-base);
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+.bl-input-group__affix ion-icon { font-size: 17px; }
+.bl-input-group .bl-input { padding-left: 36px; }
+.bl-input-group--suffix .bl-input { padding-right: 40px; }
+.bl-input-group__suffix {
+  position: absolute;
+  right: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.bl-fieldset { border: 0; margin: 0; padding: 0; }
+.bl-fieldset + .bl-fieldset { margin-top: var(--bl-s5); }
+.bl-fieldset__legend {
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-text);
+  padding: 0;
+  margin-bottom: var(--bl-s3);
+}
+
+.bl-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--bl-s4);
+}
+@media (min-width: 600px) {
+  .bl-form-grid--2,
+  .bl-form-grid--3 { grid-template-columns: 1fr 1fr; }
+  .bl-form-grid__full { grid-column: 1 / -1; }
+}
+/* Used by the Add/Edit Product form only, which is wide enough at desktop
+   (the normalized 880px modal tier) to pack a third column in — other
+   modals stay on `--2` so they're unaffected. */
+@media (min-width: 1024px) {
+  .bl-form-grid--3 { grid-template-columns: repeat(3, 1fr); }
+}
+
+/* checkbox / switch */
+.bl-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--bl-s2);
+  cursor: pointer;
+  font-size: var(--bl-fs-base);
+  min-height: 32px;
+}
+.bl-check input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--bl-green);
+  cursor: pointer;
+  margin: 0;
+}
+
+.bl-switch { position: relative; display: inline-flex; flex-shrink: 0; }
+.bl-switch input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  cursor: pointer;
+}
+.bl-switch__track {
+  width: 44px;
+  height: 26px;
+  border-radius: var(--bl-r-pill);
+  background: #CFD8D3;
+  transition: background var(--bl-dur) var(--bl-ease);
+  display: flex;
+  align-items: center;
+  padding: 3px;
+  pointer-events: none;
+}
+.bl-switch__thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--bl-shadow-sm);
+  transition: transform var(--bl-dur) var(--bl-ease);
+}
+.bl-switch input:checked + .bl-switch__track { background: var(--bl-green); }
+.bl-switch input:checked + .bl-switch__track .bl-switch__thumb { transform: translateX(18px); }
+.bl-switch input:focus-visible + .bl-switch__track { box-shadow: var(--bl-focus-ring); }
+
+/* ---- Segmented control --------------------------------------------------- */
+
+.bl-segment {
+  display: inline-flex;
+  background: #EDF1EF;
+  border-radius: var(--bl-r-md);
+  padding: 3px;
+  gap: 2px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.bl-segment::-webkit-scrollbar { display: none; }
+.bl-segment__btn {
+  border: 0;
+  background: transparent;
+  border-radius: 6px;
+  padding: 7px 14px;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-medium);
+  color: var(--bl-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--bl-dur-fast) var(--bl-ease), color var(--bl-dur-fast) var(--bl-ease);
+  min-height: 34px;
+}
+.bl-segment__btn:hover { color: var(--bl-text); }
+.bl-segment__btn[aria-selected='true'] {
+  background: var(--bl-surface);
+  color: var(--bl-green-dark);
+  font-weight: var(--bl-fw-semibold);
+  box-shadow: var(--bl-shadow-xs);
+}
+.bl-segment__btn:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+/* ---- Filter chips -------------------------------------------------------- */
+
+.bl-chiprow {
+  display: flex;
+  gap: var(--bl-s2);
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.bl-chiprow::-webkit-scrollbar { display: none; }
+
+.bl-chip {
+  border: 1px solid var(--bl-border-strong);
+  background: var(--bl-surface);
+  border-radius: var(--bl-r-pill);
+  padding: 7px 13px;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-medium);
+  color: var(--bl-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  min-height: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-chip:hover { border-color: var(--bl-green-accent); color: var(--bl-green-dark); }
+.bl-chip[aria-pressed='true'] {
+  background: var(--bl-green-light);
+  border-color: var(--bl-green-accent);
+  color: var(--bl-green-dark);
+  font-weight: var(--bl-fw-semibold);
+}
+.bl-chip:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+/* ---- Table --------------------------------------------------------------- */
+
+.bl-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.bl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--bl-fs-base);
+  min-width: 640px;
+}
+
+.bl-table caption { text-align: left; }
+
+.bl-table thead th {
+  text-align: left;
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--bl-text-secondary);
+  padding: var(--bl-s3) var(--bl-s4);
+  border-bottom: 1px solid var(--bl-border);
+  background: var(--bl-surface-muted);
+  white-space: nowrap;
+}
+
+.bl-table tbody td {
+  padding: var(--bl-s3) var(--bl-s4);
+  border-bottom: 1px solid var(--bl-border);
+  vertical-align: middle;
+  color: var(--bl-text);
+}
+
+.bl-table tbody tr:last-child td { border-bottom: 0; }
+.bl-table tbody tr { transition: background var(--bl-dur-fast) var(--bl-ease); }
+.bl-table tbody tr:hover { background: var(--bl-green-soft); }
+
+.bl-table .bl-td-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bl-table .bl-td-actions { text-align: right; white-space: nowrap; width: 1%; }
+
+.bl-table__primary { font-weight: var(--bl-fw-semibold); }
+.bl-table__sub { font-size: var(--bl-fs-xs); color: var(--bl-text-secondary); }
+
+.bl-table--clickable tbody tr { cursor: pointer; }
+
+/* ---- Data list (mobile card rows) --------------------------------------- */
+
+.bl-datalist { display: grid; gap: var(--bl-s3); }
+
+.bl-drow {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  padding: var(--bl-s4);
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+.bl-drow__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  margin-bottom: var(--bl-s3);
+}
+/* Block, so these stack even when rendered as bare spans inside a plain div. */
+.bl-drow__title {
+  display: block;
+  font-weight: var(--bl-fw-semibold);
+  font-size: var(--bl-fs-md);
+  line-height: var(--bl-lh-snug);
+}
+.bl-drow__meta {
+  display: block;
+  font-size: var(--bl-fs-xs);
+  color: var(--bl-text-secondary);
+  margin-top: 2px;
+}
+.bl-drow__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bl-s3);
+  padding-top: var(--bl-s3);
+  border-top: 1px dashed var(--bl-border);
+}
+.bl-drow__grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.bl-drow__cell dt { font-size: var(--bl-fs-caption); color: var(--bl-text-secondary); text-transform: uppercase; letter-spacing: 0.05em; font-weight: var(--bl-fw-semibold); }
+.bl-drow__cell dd { margin: 2px 0 0; font-size: var(--bl-fs-base); font-weight: var(--bl-fw-medium); font-variant-numeric: tabular-nums; }
+
+/* ---- Meter / progress ---------------------------------------------------- */
+
+.bl-meter {
+  height: 6px;
+  border-radius: var(--bl-r-pill);
+  background: #EDF1EF;
+  overflow: hidden;
+}
+.bl-meter__fill {
+  height: 100%;
+  border-radius: var(--bl-r-pill);
+  background: var(--bl-green);
+  transition: width var(--bl-dur) var(--bl-ease);
+}
+.bl-meter__fill--warning { background: var(--bl-warning); }
+.bl-meter__fill--danger { background: var(--bl-danger); }
+.bl-meter__fill--muted { background: var(--bl-green-accent); }
+
+/* ---- Divider / misc ------------------------------------------------------ */
+
+.bl-divider { height: 1px; background: var(--bl-border); border: 0; margin: var(--bl-s4) 0; }
+
+.bl-stack { display: grid; gap: var(--bl-s3); }
+.bl-stack--sm { gap: var(--bl-s2); }
+.bl-stack--lg { gap: var(--bl-s5); }
+
+.bl-row {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s2);
+  flex-wrap: wrap;
+}
+.bl-row--between { justify-content: space-between; }
+.bl-row--nowrap { flex-wrap: nowrap; }
+
+.bl-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---- Key/value list ------------------------------------------------------ */
+
+.bl-kv { display: grid; gap: var(--bl-s3); }
+.bl-kv__item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s4);
+}
+.bl-kv__k { font-size: var(--bl-fs-base); color: var(--bl-text-secondary); }
+.bl-kv__v { font-size: var(--bl-fs-base); font-weight: var(--bl-fw-semibold); font-variant-numeric: tabular-nums; text-align: right; }
+
+/* ==========================================================================
+   Touch target sizing
+
+   Controls are sized for the mouse by default. On phones and on any coarse
+   pointer they grow to the 44px minimum, so nothing on a touch screen is
+   harder to hit than it needs to be.
+   ========================================================================== */
+
+@media (max-width: 767px), (pointer: coarse) {
+  .bl-btn--sm { min-height: 44px; padding-inline: var(--bl-s4); }
+  .bl-btn--sm.bl-btn--icon-only { width: 44px; }
+
+  .bl-chip { min-height: 44px; padding-inline: var(--bl-s4); }
+
+  .bl-segment { padding: 4px; }
+  .bl-segment__btn { min-height: 42px; padding-inline: var(--bl-s4); }
+
+  /* Wrapping label makes the whole row a target, not just the 18px box. */
+  .bl-check { min-height: 44px; }
+  .bl-check input { width: 22px; height: 22px; }
+
+  .bl-viewall { min-height: 44px; }
+
+  .bl-chart__data > summary { min-height: 40px; padding: var(--bl-s2) var(--bl-s3); }
+
+  .bl-fc__link,
+  .bl-insight__action,
+  .bl-alertcard__link { min-height: 44px; }
+}
+
+/* ---- Form-level error ----------------------------------------------------
+   For errors that belong to a whole form rather than one field — a failed
+   save, a permission refusal, a lost connection.
+   ------------------------------------------------------------------------- */
+
+.bl-form-error {
+  padding: var(--bl-s3) var(--bl-s4);
+  background: var(--bl-danger-bg);
+  border: 1px solid #F1D2D2;
+  border-radius: var(--bl-r-md);
+  color: var(--bl-danger);
+  font-size: var(--bl-fs-sm);
+  line-height: var(--bl-lh-normal);
+}
+
+/* ---- Desktop: pinned table header -----------------------------------------
+   `overflow-x: auto` on the wrapper (and `overflow: hidden` on flush cards)
+   would make them the sticky container, so the column headings would never
+   pin to the page scroll. From desktop width the table fits, so the wrapper
+   stops clipping and the headings pin under the page header + filter bar. */
+@media (min-width: 1024px) {
+  :root { --bl-toolbar-h: 64px; }
+
+  .bl-table-wrap { overflow: visible; }
+  .bl-card--flush { overflow: clip; }
+
+  .bl-table thead th {
+    position: sticky;
+    top: calc(var(--bl-sticky-top, var(--bl-header-h, 0px)) + var(--bl-toolbar-h));
+    z-index: 5;
+    box-shadow: 0 1px 0 var(--bl-border);
+  }
+}
+
+@media print {
+  .bl-table thead th { position: static; }
+}

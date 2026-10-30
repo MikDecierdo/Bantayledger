@@ -1,0 +1,80 @@
+import type { Expense, SeriesPoint, WasteRecord } from '../../types';
+import type { ExpenseCategory, WasteReason } from '../../types';
+import { api } from './client';
+
+export interface ExpenseInput {
+  category: ExpenseCategory;
+  description: string;
+  amount: number;
+  expenseDate?: string;
+}
+
+export interface WasteInput {
+  productId: string;
+  quantity: number;
+  reason: WasteReason;
+  estimatedCost?: number;
+  wasteDate?: string;
+  notes?: string;
+}
+
+export interface ExpenseOverview {
+  summary: {
+    today: number;
+    todayChangePct: number;
+    monthToDate: number;
+    monthChangePct: number;
+    largestCategory: ExpenseCategory;
+    largestCategoryAmount: number;
+  };
+  byCategory: SeriesPoint[];
+  last6Months: SeriesPoint[];
+}
+
+export interface WasteOverview {
+  summary: {
+    monthToDate: number;
+    monthChangePct: number;
+    itemsLost: number;
+    topReason: WasteReason;
+    wasteRatePct: number;
+  };
+  byReason: SeriesPoint[];
+  last6Months: SeriesPoint[];
+}
+
+export const expenseService = {
+  async list(businessId: string, limit = 200): Promise<Expense[]> {
+    return api.get<Expense[]>(`/businesses/${businessId}/expenses`, { limit });
+  },
+
+  async create(businessId: string, _userId: string | null, input: ExpenseInput): Promise<void> {
+    await api.post(`/businesses/${businessId}/expenses`, input);
+  },
+
+  async remove(businessId: string, id: string): Promise<void> {
+    await api.delete(`/businesses/${businessId}/expenses/${id}`);
+  },
+
+  async overview(businessId: string): Promise<ExpenseOverview> {
+    return api.get<ExpenseOverview>(`/businesses/${businessId}/expenses/overview`);
+  },
+};
+
+export const wasteService = {
+  async list(businessId: string, limit = 200): Promise<WasteRecord[]> {
+    return api.get<WasteRecord[]>(`/businesses/${businessId}/waste`, { limit });
+  },
+
+  async create(businessId: string, _userId: string | null, input: WasteInput): Promise<void> {
+    await api.post(`/businesses/${businessId}/waste`, input);
+  },
+
+  async remove(businessId: string, id: string): Promise<void> {
+    await api.delete(`/businesses/${businessId}/waste/${id}`);
+  },
+
+  async overview(businessId: string): Promise<WasteOverview> {
+    return api.get<WasteOverview>(`/businesses/${businessId}/waste/overview`);
+  },
+};

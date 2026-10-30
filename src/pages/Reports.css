@@ -1,0 +1,74 @@
+.bl-rep__filters { margin-bottom: var(--bl-s5); }
+
+.bl-rep__filters-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr));
+  gap: var(--bl-s3);
+}
+
+.bl-rep__sum { display: grid; gap: 4px; align-content: start; padding: var(--bl-s4) var(--bl-s5); }
+.bl-rep__sum .bl-metric { margin: 2px 0; }
+
+.bl-rep__sum--good .bl-metric { color: var(--bl-success); }
+.bl-rep__sum--bad .bl-metric { color: var(--bl-danger); }
+
+.bl-rep__tabs {
+  margin-bottom: var(--bl-s5);
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+.bl-rep__tabs::-webkit-scrollbar { display: none; }
+
+.bl-rep__note {
+  margin-top: var(--bl-s4);
+  padding-top: var(--bl-s3);
+  border-top: 1px solid var(--bl-border);
+  font-size: var(--bl-fs-xs);
+  color: var(--bl-text-secondary);
+  line-height: var(--bl-lh-normal);
+}
+
+/* ---- Table footer totals ------------------------------------------------- */
+
+.bl-table tfoot th,
+.bl-table tfoot td {
+  padding: var(--bl-s3) var(--bl-s4);
+  border-top: 2px solid var(--bl-border-strong);
+  font-weight: var(--bl-fw-semibold);
+  text-align: left;
+  background: var(--bl-surface-muted);
+}
+.bl-table tfoot td.bl-td-num { text-align: right; font-variant-numeric: tabular-nums; }
+
+.bl-rep__filters-error { margin-top: var(--bl-s3); }
+
+/* Business + period line — only on paper, where the filter bar is hidden. */
+.bl-rep__printmeta { display: none; }
+
+/* ---- Print --------------------------------------------------------------- */
+
+@media print {
+  .bl-rep .bl-noexport { display: none !important; }
+  .bl-rep__printmeta {
+    display: block;
+    margin: calc(-1 * var(--bl-s3)) 0 var(--bl-s4);
+    color: var(--bl-text-secondary);
+  }
+  /* Keep a chart or table from being split across two sheets. */
+  .bl-rep .bl-card { break-inside: avoid; box-shadow: none; }
+  .bl-rep .bl-grid--split { grid-template-columns: 1fr 1fr; }
+}
+
+/* Desktop / tablet: the report filters pin under the page header. */
+@media (min-width: 768px) {
+  .bl-rep__filters {
+    position: sticky;
+    top: calc(var(--bl-header-h, 0px) + var(--bl-s2));
+    z-index: 10;
+  }
+}
+
+@media print {
+  .bl-rep__filters { position: static; }
+}

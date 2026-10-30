@@ -1,0 +1,65 @@
+.bl-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bl-logo__mark {
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
+}
+
+.bl-logo__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.15;
+}
+
+.bl-logo__name {
+  font-weight: var(--bl-fw-bold);
+  letter-spacing: -0.02em;
+  color: var(--bl-text);
+  white-space: nowrap;
+}
+
+.bl-logo__ai {
+  color: var(--bl-green);
+  font-weight: var(--bl-fw-bold);
+}
+
+.bl-logo__tagline {
+  font-size: var(--bl-fs-caption);
+  color: var(--bl-text-secondary);
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.bl-logo--sm .bl-logo__name { font-size: var(--bl-fs-md); }
+.bl-logo--sm .bl-logo__tagline { display: none; }
+
+.bl-logo--md .bl-logo__name { font-size: var(--bl-fs-lg); }
+
+.bl-logo--lg { gap: 12px; }
+.bl-logo--lg .bl-logo__name { font-size: var(--bl-fs-xl); }
+.bl-logo--lg .bl-logo__tagline { font-size: var(--bl-fs-xs); }
+
+.bl-logo--inverse .bl-logo__name { color: #fff; }
+.bl-logo--inverse .bl-logo__ai { color: var(--bl-green-accent); }
+.bl-logo--inverse .bl-logo__tagline { color: rgba(255, 255, 255, 0.72); }
+
+/* Mark above the wordmark instead of beside it — for a centered brand block
+   rather than a left-aligned inline lockup. Text wraps and centers instead
+   of the horizontal layout's nowrap, since a narrow container (e.g. a
+   sidebar rail) can't guarantee room for "BantayLedger AI" on one line. */
+.bl-logo--stacked {
+  flex-direction: column;
+  gap: 8px;
+  text-align: center;
+}
+.bl-logo--stacked .bl-logo__text { align-items: center; }
+.bl-logo--stacked .bl-logo__name,
+.bl-logo--stacked .bl-logo__tagline { white-space: normal; }

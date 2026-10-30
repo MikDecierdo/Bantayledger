@@ -1,0 +1,122 @@
+ion-modal.bl-modal {
+  --background: var(--bl-surface);
+  --border-radius: 0;
+  --box-shadow: var(--bl-shadow-lg);
+  --width: 100%;
+  --height: 100%;
+  /* Ionic reads the dim from these, not from --ion-backdrop-*. */
+  --backdrop-opacity: 0.32;
+}
+
+ion-modal.bl-modal::part(backdrop) {
+  background: #17221E;
+}
+
+@keyframes bl-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.bl-modal__shell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 100%;
+  background: var(--bl-surface);
+  animation: bl-modal-in var(--bl-dur-slow) var(--bl-ease);
+}
+
+.bl-modal__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  padding: var(--bl-s5);
+  padding-top: calc(var(--bl-s5) + var(--bl-safe-top));
+  border-bottom: 1px solid var(--bl-border);
+  flex-shrink: 0;
+}
+
+.bl-modal__header-text p { margin-top: 3px; }
+
+.bl-modal__close {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: var(--bl-r-md);
+  background: transparent;
+  color: var(--bl-text-secondary);
+  cursor: pointer;
+  font-size: 20px;
+  transition: background var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-modal__close:hover { background: var(--bl-green-light); color: var(--bl-green-dark); }
+
+.bl-modal__body {
+  padding: var(--bl-s5);
+  overflow-y: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.bl-modal__footer {
+  display: flex;
+  gap: var(--bl-s3);
+  justify-content: flex-end;
+  padding: var(--bl-s4) var(--bl-s5);
+  padding-bottom: calc(var(--bl-s4) + var(--bl-safe-bottom));
+  border-top: 1px solid var(--bl-border);
+  background: var(--bl-surface-muted);
+  flex-shrink: 0;
+}
+
+/* On phones the footer buttons stack full width for easier tapping. */
+@media (max-width: 479px) {
+  .bl-modal__footer {
+    flex-direction: column-reverse;
+  }
+  .bl-modal__footer .bl-btn { width: 100%; min-height: 46px; }
+}
+
+/* Centred dialog from small tablets upward. */
+@media (min-width: 600px) {
+  ion-modal.bl-modal {
+    --border-radius: var(--bl-r-xl);
+    --max-width: calc(100vw - 48px);
+    --max-height: calc(100vh - 64px);
+  }
+  ion-modal.bl-modal--sm { --width: 440px; --height: auto; }
+  ion-modal.bl-modal--md { --width: 560px; --height: auto; }
+  ion-modal.bl-modal--lg { --width: 760px; --height: auto; }
+  ion-modal.bl-modal--xl { --width: 760px; --height: auto; }
+
+  .bl-modal__shell { max-height: calc(100vh - 64px); }
+  .bl-modal__header,
+  .bl-modal__body { padding-top: var(--bl-s5); }
+  .bl-modal__footer { padding-bottom: var(--bl-s4); }
+}
+
+/* True desktop: `md` is the standard form modal (two columns of fields, kept
+   portrait-leaning rather than stretched), `lg` the wide multi-column form
+   (Add Product), `xl` the Add Sale workspace. `sm` stays the quick-prompt
+   tier. */
+@media (min-width: 1024px) {
+  ion-modal.bl-modal { --max-height: calc(100vh - 48px); }
+  ion-modal.bl-modal--md { --width: 600px; }
+  ion-modal.bl-modal--lg { --width: 880px; }
+  ion-modal.bl-modal--sm { --width: 480px; }
+  ion-modal.bl-modal--xl { --width: min(1200px, calc(100vw - 48px)); --height: calc(100vh - 48px); }
+  /* Fixed frame: the body itself never scrolls; the content scrolls in its own regions. */
+  ion-modal.bl-modal--xl .bl-modal__body { overflow: hidden; display: flex; flex-direction: column; }
+
+  .bl-modal__shell { max-height: calc(100vh - 48px); }
+}

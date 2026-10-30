@@ -1,0 +1,47 @@
+{
+  "name": "bantayledger",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "cap:sync": "npm run build && npx cap sync",
+    "check:i18n": "node scripts/extract-i18n.mjs --check",
+    "merge:i18n": "node scripts/merge-i18n.mjs"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/core": "^8.5.1",
+    "@capacitor/ios": "^8.5.1",
+    "@fontsource/inter": "^5.3.0",
+    "@ionic/react": "^8.8.19",
+    "@ionic/react-router": "^8.8.19",
+    "@types/leaflet": "^1.9.22",
+    "i18next": "^26.4.2",
+    "ionicons": "^7.4.0",
+    "jspdf": "^4.2.1",
+    "leaflet": "^1.9.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-i18next": "^17.0.16",
+    "react-router": "^5.3.4",
+    "react-router-dom": "^5.3.4",
+    "sweetalert2": "^11.26.25"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^8.5.1",
+    "@types/node": "^24.13.3",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@types/react-router": "^5.1.20",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^6.1.0",
+    "oxlint": "^1.79.0",
+    "sass": "^1.103.1",
+    "typescript": "~6.0.2",
+    "vite": "^8.2.2"
+  }
+}

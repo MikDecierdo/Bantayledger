@@ -1,0 +1,44 @@
+.bl-alerts__summary { margin-bottom: var(--bl-s5); }
+
+.bl-alerts__sum {
+  display: grid;
+  gap: 2px;
+  align-content: start;
+  border-left-width: 3px;
+  border-left-style: solid;
+}
+
+.bl-alerts__sum--critical { border-left-color: var(--bl-danger); }
+.bl-alerts__sum--warning { border-left-color: var(--bl-warning); }
+.bl-alerts__sum--info { border-left-color: var(--bl-info); }
+
+.bl-alerts__sum-value {
+  font-size: var(--bl-fs-2xl);
+  font-weight: var(--bl-fw-bold);
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+  margin: 2px 0;
+}
+
+.bl-alerts__filters { margin-bottom: var(--bl-s4); }
+
+.bl-alerts__list { display: grid; gap: var(--bl-s3); }
+
+.bl-alerts__item { position: relative; }
+
+.bl-alerts__item-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--bl-s2);
+  margin-top: 6px;
+}
+
+/* Dismiss sits inside the card corner on wide screens to save vertical space. */
+@media (min-width: 768px) {
+  .bl-alerts__item-actions {
+    position: absolute;
+    right: var(--bl-s3);
+    bottom: var(--bl-s3);
+    margin-top: 0;
+  }
+}

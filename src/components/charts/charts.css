@@ -1,0 +1,161 @@
+.bl-chart {
+  margin: 0;
+  width: 100%;
+  min-width: 0;
+}
+
+.bl-chart__plot {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.bl-chart__plot svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+  touch-action: pan-y;
+}
+
+/* ---- Legend -------------------------------------------------------------- */
+
+.bl-chart__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--bl-s2) var(--bl-s4);
+  margin-bottom: var(--bl-s3);
+}
+
+.bl-chart__legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: var(--bl-fs-xs);
+  color: var(--bl-text-secondary);
+  font-weight: var(--bl-fw-medium);
+}
+
+.bl-chart__swatch {
+  width: 14px;
+  height: 3px;
+  border-radius: 2px;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.bl-chart__swatch--dashed {
+  background: none;
+  border-top: 3px dashed currentColor;
+  height: 0;
+  border-radius: 0;
+}
+
+.bl-chart__swatch--band {
+  height: 11px;
+  border-radius: 3px;
+  opacity: 0.35;
+}
+
+/* ---- Tooltip ------------------------------------------------------------- */
+
+.bl-chart__tip {
+  position: absolute;
+  z-index: 5;
+  transform: translate(10px, -50%);
+  background: #1B2B26;
+  color: #fff;
+  border-radius: var(--bl-r-md);
+  padding: 8px 10px;
+  font-size: var(--bl-fs-xs);
+  box-shadow: var(--bl-shadow-md);
+  pointer-events: none;
+  min-width: 116px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  white-space: nowrap;
+}
+
+.bl-chart__tip--flip { transform: translate(calc(-100% - 10px), -50%); }
+
+.bl-chart__tip-title {
+  font-weight: var(--bl-fw-semibold);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--bl-fs-caption);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bl-chart__tip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bl-chart__tip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(27, 43, 38, 1);
+}
+
+.bl-chart__tip-label { color: rgba(255, 255, 255, 0.75); }
+
+.bl-chart__tip-value {
+  margin-left: auto;
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Data table fallback ------------------------------------------------- */
+
+.bl-chart__data { margin-top: var(--bl-s3); }
+
+.bl-chart__data > summary {
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-green-dark);
+  cursor: pointer;
+  list-style: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  border-radius: var(--bl-r-sm);
+  background: var(--bl-green-light);
+  min-height: 30px;
+}
+.bl-chart__data > summary::-webkit-details-marker { display: none; }
+.bl-chart__data > summary::before { content: '▸'; font-size: 10px; }
+.bl-chart__data[open] > summary::before { content: '▾'; }
+.bl-chart__data > summary:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+.bl-chart__data .bl-table-wrap { margin-top: var(--bl-s3); }
+.bl-chart__table { min-width: 320px; font-size: var(--bl-fs-sm); }
+.bl-chart__table thead th,
+.bl-chart__table tbody td,
+.bl-chart__table tbody th { padding: 7px var(--bl-s3); }
+
+/* ---- Sparkline ----------------------------------------------------------- */
+
+.bl-spark { display: block; overflow: visible; }
+
+/* ---- Bar / distribution rows -------------------------------------------- */
+
+.bl-barlist { display: grid; gap: var(--bl-s3); }
+
+.bl-barlist__row { display: grid; gap: 6px; }
+
+.bl-barlist__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  font-size: var(--bl-fs-sm);
+}
+
+.bl-barlist__label { color: var(--bl-text); font-weight: var(--bl-fw-medium); min-width: 0; }
+.bl-barlist__value { color: var(--bl-text); font-weight: var(--bl-fw-semibold); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bl-barlist__pct { color: var(--bl-text-secondary); font-weight: var(--bl-fw-regular); margin-left: 6px; }

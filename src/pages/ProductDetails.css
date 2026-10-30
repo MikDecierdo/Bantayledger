@@ -1,0 +1,99 @@
+/* ---- Breadcrumb ---------------------------------------------------------- */
+
+.bl-crumbs { margin-bottom: var(--bl-s3); }
+
+.bl-crumbs ol {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  font-size: var(--bl-fs-xs);
+  color: var(--bl-text-secondary);
+}
+
+.bl-crumbs a { color: var(--bl-green-dark); font-weight: var(--bl-fw-medium); }
+.bl-crumbs a:hover { text-decoration: underline; }
+.bl-crumbs ion-icon { font-size: 12px; display: block; }
+.bl-crumbs li[aria-current] { color: var(--bl-text); font-weight: var(--bl-fw-medium); }
+
+/* Phones already have a back button in the header. */
+@media (max-width: 767px) {
+  .bl-crumbs { display: none; }
+}
+
+/* ---- Stat tiles ---------------------------------------------------------- */
+
+.bl-pd__stat { padding: var(--bl-s4) var(--bl-s5); }
+
+/* ---- Forecast header ----------------------------------------------------- */
+
+.bl-pd__forecast-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s4);
+  flex-wrap: wrap;
+  margin-bottom: var(--bl-s5);
+}
+.bl-pd__forecast-head .bl-metric { margin: 3px 0 2px; }
+
+.bl-pd__pricegrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 130px), 1fr));
+  gap: var(--bl-s4);
+  padding-bottom: var(--bl-s5);
+  margin-bottom: var(--bl-s4);
+  border-bottom: 1px solid var(--bl-border);
+}
+
+.bl-pd__trend {
+  display: flex;
+  align-items: center;
+  min-height: 28px;
+  font-size: var(--bl-fs-md);
+}
+.bl-pd__trend .bl-delta { font-size: var(--bl-fs-md); }
+
+/* ---- Supplier block ------------------------------------------------------ */
+
+.bl-pd__supplier { display: grid; gap: var(--bl-s4); }
+
+.bl-pd__supplier-main .bl-caption { margin-top: 3px; }
+
+.bl-pd__supplier-facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 120px), 1fr));
+  gap: var(--bl-s4);
+  padding: var(--bl-s4) 0;
+  border-top: 1px solid var(--bl-border);
+  border-bottom: 1px solid var(--bl-border);
+  margin: 0;
+}
+
+.bl-pd__supplier-facts dt {
+  font-size: var(--bl-fs-caption);
+  color: var(--bl-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--bl-fw-semibold);
+}
+
+.bl-pd__supplier-facts dd {
+  margin: 3px 0 0;
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Empty insight ------------------------------------------------------- */
+
+.bl-pd__noinsight {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+}
+.bl-pd__noinsight ion-icon {
+  font-size: 22px;
+  color: var(--bl-green-accent);
+  flex-shrink: 0;
+}

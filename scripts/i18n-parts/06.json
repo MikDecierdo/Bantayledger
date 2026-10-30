@@ -1,0 +1,110 @@
+{
+  "Welcome to BantayLedger AI": [
+    "Maligayang pagdating sa BantayLedger AI",
+    "Maayong pag-abot sa BantayLedger AI"
+  ],
+  "What we collect and why": [
+    "Ano ang kinokolekta namin at bakit",
+    "Unsay among gikolekta ug ngano"
+  ],
+  "Your name, email, phone number and password. Your password is stored scrambled, never as plain text.": [
+    "Ang pangalan, email, numero ng telepono, at password mo. Nakatago nang naka-scramble ang password mo, hindi kailanman bilang simpleng teksto.",
+    "Ang imong ngalan, email, numero sa telepono, ug password. Ang imong password gitipigan nga naka-scramble, dili gayud isip simpleng teksto."
+  ],
+  "Your business name, type and address.": [
+    "Ang pangalan, uri, at address ng negosyo mo.",
+    "Ang ngalan, matang, ug address sa imong negosyo."
+  ],
+  "The products, stock, prices, sales, purchases, expenses and spoiled or damaged items you record, and any photos you upload.": [
+    "Ang mga produkto, stock, presyo, benta, pagbili, gastos, at sira o panis na item na itinatala mo, pati ang mga litratong ia-upload mo.",
+    "Ang mga produkto, stock, presyo, baligya, pamalit, gasto, ug nadaot o nadunot nga item nga imong gitala, lakip ang mga litrato nga imong i-upload."
+  ],
+  "Optional map locations of your suppliers.": [
+    "Opsyonal na mga lokasyon ng supplier mo sa mapa.",
+    "Opsyonal nga mga lokasyon sa imong supplier sa mapa."
+  ],
+  "We use this only to run your inventory, sales and reports, and to give you forecasts and tips.": [
+    "Ginagamit lang namin ito para patakbuhin ang imbentaryo, benta, at mga ulat mo, at para bigyan ka ng mga forecast at payo.",
+    "Gigamit ra namo kini aron dumalahon ang imong inventaryo, baligya, ug mga report, ug aron hatagan ka og mga forecast ug tambag."
+  ],
+  "Where it is stored and who can see it": [
+    "Saan ito nakaimbak at sino ang makakakita",
+    "Asa kini gitipigan ug kinsa ang makakita"
+  ],
+  "Your records are kept in this system's database.": [
+    "Nakaimbak ang mga tala mo sa database ng sistemang ito.",
+    "Gitipigan ang imong mga rekord sa database niini nga sistema."
+  ],
+  "Only people you add to your business (owner, admin or staff) can see your business data, and what they can change depends on their role.": [
+    "Ang mga taong idinagdag mo lang sa negosyo mo (may-ari, admin, o kawani) ang makakakita ng datos ng negosyo mo, at depende sa tungkulin nila ang mababago nila.",
+    "Ang mga tawo lang nga imong gidugang sa imong negosyo (tag-iya, admin, o empleyado) ang makakita sa datos sa imong negosyo, ug nagdepende sa ilang tahas ang ilang mausab."
+  ],
+  "Your data is not sold and is not used for advertising.": [
+    "Hindi ibinebenta ang datos mo at hindi ito ginagamit sa patalastas.",
+    "Dili gibaligya ang imong datos ug dili kini gigamit sa mga patalastas."
+  ],
+  "AI features and outside services": [
+    "Mga feature ng AI at panlabas na serbisyo",
+    "Mga feature sa AI ug gawas nga serbisyo"
+  ],
+  "Forecasts, alerts and tips are calculated on the server from your own records.": [
+    "Kinakalkula sa server ang mga forecast, paalala, at payo mula sa sarili mong mga tala.",
+    "Gikalkulo sa server ang mga forecast, pahimangno, ug tambag gikan sa imong kaugalingong mga rekord."
+  ],
+  "If an administrator turns on \"Explain with AI\", only a product name, its category and its weekly unit counts are sent to the AI service. Your name, customers and prices are never sent.": [
+    "Kapag binuksan ng administrator ang \"Ipaliwanag gamit ang AI\", pangalan lang ng produkto, kategorya nito, at lingguhang bilang ng unit ang ipinapadala sa serbisyo ng AI. Hindi kailanman ipinapadala ang pangalan mo, mga customer, at presyo.",
+    "Kung ablihan sa administrator ang \"Ipasabot gamit ang AI\", ngalan lang sa produkto, kategoriya niini, ug semana-semana nga ihap sa unit ang ipadala sa serbisyo sa AI. Dili gayud ipadala ang imong ngalan, mga customer, ug presyo."
+  ],
+  "Address search and maps use OpenStreetMap services, which receive the text you type or the map position you pick.": [
+    "Gumagamit ng mga serbisyo ng OpenStreetMap ang paghahanap ng address at mapa, na tumatanggap ng tina-type mo o ng posisyon sa mapang pipiliin mo.",
+    "Naggamit og mga serbisyo sa OpenStreetMap ang pagpangita sa address ug mapa, nga modawat sa imong gi-type o sa posisyon sa mapa nga imong pilion."
+  ],
+  "Your rights and how to reach us": [
+    "Ang mga karapatan mo at paano kami makontak",
+    "Ang imong mga katungod ug unsaon pagkontak kanamo"
+  ],
+  "You can ask to see, correct, export or delete your data, and you can withdraw your consent at any time.": [
+    "Maaari mong hilingin na makita, itama, i-export, o burahin ang datos mo, at maaari mong bawiin ang pahintulot mo anumang oras.",
+    "Mahimo nimong hangyoon nga makita, tarong-on, i-export, o papason ang imong datos, ug mahimo nimong bawion ang imong pagtugot bisan unsang orasa."
+  ],
+  "To make a request, contact: {{contact}}": [
+    "Para gumawa ng kahilingan, makipag-ugnayan sa: {{contact}}",
+    "Aron maghimo og hangyo, kontaka: {{contact}}"
+  ],
+  "To make a request, ask the owner of your business.": [
+    "Para gumawa ng kahilingan, magtanong sa may-ari ng negosyo mo.",
+    "Aron maghimo og hangyo, pangutan-a ang tag-iya sa imong negosyo."
+  ],
+  "I have read and understand this notice and I agree to it.": [
+    "Nabasa at naintindihan ko ang abisong ito at sumasang-ayon ako rito.",
+    "Nabasa ug nasabtan nako kini nga pahibalo ug mouyon ko niini."
+  ],
+  "Continue": [
+    "Magpatuloy",
+    "Padayon"
+  ],
+  "Could not save your choice. Please try again.": [
+    "Hindi na-save ang pinili mo. Subukan ulit.",
+    "Wala ma-save ang imong gipili. Sulayi pag-usab."
+  ],
+  "This is a plain-language summary of how your data is handled.": [
+    "Ito ay madaling maintindihang buod kung paano pinangangasiwaan ang datos mo.",
+    "Kini usa ka sayon masabtan nga katingbanan kung unsaon pagdumala ang imong datos."
+  ],
+  "Before you start, please read how your data is handled.": [
+    "Bago ka magsimula, basahin muna kung paano pinangangasiwaan ang datos mo.",
+    "Sa dili pa ka magsugod, basaha una kung unsaon pagdumala ang imong datos."
+  ],
+  "Choose your language": [
+    "Piliin ang wika mo",
+    "Pilia ang imong pinulongan"
+  ],
+  "Get started": [
+    "Magsimula na",
+    "Sugdi na"
+  ],
+  "Back to the notice": [
+    "Bumalik sa abiso",
+    "Balik sa pahibalo"
+  ]
+}

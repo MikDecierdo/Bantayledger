@@ -1,0 +1,364 @@
+/* Shared styles for the transactional list pages:
+   Sales, Purchases, Suppliers, Expenses and Waste. */
+
+.bl-tx__amount {
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-bold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.bl-tx__soft { font-weight: var(--bl-fw-regular) !important; font-size: var(--bl-fs-sm) !important; }
+
+/* Line items inside a mobile transaction card. */
+.bl-tx__items {
+  display: grid;
+  gap: 5px;
+  padding: var(--bl-s3);
+  margin-bottom: var(--bl-s3);
+  background: var(--bl-bg);
+  border-radius: var(--bl-r-md);
+}
+
+.bl-tx__items li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  font-size: var(--bl-fs-sm);
+  color: var(--bl-text-secondary);
+  min-width: 0;
+}
+
+.bl-tx__items li span:last-child { flex-shrink: 0; color: var(--bl-text); }
+
+/* Secondary columns drop first as the table narrows. */
+@media (max-width: 1180px) {
+  .bl-tx__col-cashier,
+  .bl-tx__col-secondary { display: none; }
+}
+
+/* ---- Category cell (expenses / waste) ------------------------------------ */
+
+.bl-tx__cat {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
+
+.bl-tx__cat-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bl-green-accent);
+  flex-shrink: 0;
+}
+
+/* ---- Supplier list ------------------------------------------------------- */
+
+.bl-sup__contact { display: grid; gap: 2px; min-width: 0; }
+
+.bl-sup__products {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.bl-sup__initials {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--bl-r-md);
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  display: grid;
+  place-items: center;
+  font-weight: var(--bl-fw-bold);
+  font-size: var(--bl-fs-sm);
+  flex-shrink: 0;
+}
+
+.bl-sup__namecell {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  min-width: 0;
+}
+
+/* ---- Totals strip -------------------------------------------------------- */
+
+.bl-tx__totals {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s4);
+  flex-wrap: wrap;
+  padding: var(--bl-s4);
+  background: var(--bl-green-soft);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  margin-bottom: var(--bl-s3);
+}
+
+.bl-tx__totals .bl-caption {
+  margin-left: auto;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.bl-tx__totals-value {
+  line-height: 1.1;
+  font-size: var(--bl-fs-xl);
+  font-weight: var(--bl-fw-bold);
+  font-variant-numeric: tabular-nums;
+  color: var(--bl-green-dark);
+  margin-top: 2px;
+}
+
+/* ---- Supplier detail modal ----------------------------------------------- */
+
+.bl-sup__detaillist { display: grid; gap: var(--bl-s3); }
+
+.bl-sup__detaillist li {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bl-s3);
+  min-width: 0;
+}
+
+.bl-sup__detaillist ion-icon {
+  font-size: 18px;
+  color: var(--bl-green);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.bl-sup__detaillist li > span {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  font-size: var(--bl-fs-base);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.bl-sup__products--modal { margin-top: var(--bl-s3); }
+
+.bl-tx__date { margin-top: var(--bl-s3); }
+
+/* ---- POS-style Add Sale modal --------------------------------------------- */
+
+.bl-pos__picker { display: grid; gap: var(--bl-s3); margin-bottom: var(--bl-s4); }
+
+/* `auto-fill`/`minmax` columns, not a column-count breakpoint, because this
+   grid lives inside a centered modal (max ~880px wide) rather than the full
+   viewport. `max-height`/`overflow-y` stay as a safety net for an unusually
+   large catalog — the desktop override below just sizes it generously
+   enough that a normal small-shop catalog fits without a scrollbar. */
+.bl-grid--tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: var(--bl-s3);
+  max-height: 38vh;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+@media (min-width: 1024px) {
+  .bl-grid--tiles { max-height: 56vh; }
+}
+
+/* Two columns on desktop: products + cart on the left, a "Sale details"
+   sidebar (date, payment, GCash reference) on the right. Stacks below 1024px. */
+.bl-pos__layout { display: grid; gap: var(--bl-s5); }
+.bl-pos__main { min-width: 0; display: grid; gap: var(--bl-s4); align-content: start; }
+.bl-pos__side {
+  display: grid;
+  gap: var(--bl-s4);
+  align-content: start;
+  padding: var(--bl-s4);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  background: var(--bl-surface-muted);
+}
+.bl-pos__side-title { margin: 0; font-size: 1rem; }
+.bl-pos__side-count { font-weight: 400; color: var(--bl-text-secondary); }
+.bl-pos__side-fields { display: grid; gap: var(--bl-s4); }
+.bl-pos__summary { display: grid; gap: var(--bl-s2); margin: 0; padding-top: var(--bl-s3); border-top: 1px solid var(--bl-border); }
+.bl-pos__summary > div { display: flex; justify-content: space-between; }
+.bl-pos__summary dt { color: var(--bl-text-secondary); }
+.bl-pos__summary dd { margin: 0; font-weight: 700; }
+
+/* The cart lives in the sidebar and scrolls on its own. */
+.bl-pos__side .bl-cart {
+  max-height: 40vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: var(--bl-s3);
+  border-bottom: 1px solid var(--bl-border);
+}
+
+/* Narrow sidebar: each cart row is two lines (item + remove, then price,
+   quantity and subtotal) so nothing is wider than the column. */
+.bl-pos__main,
+.bl-pos__side { min-width: 0; }
+.bl-pos__side .bl-cart__row {
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: var(--bl-s3);
+  row-gap: var(--bl-s2);
+}
+.bl-pos__side .bl-cart__row > :nth-child(1) { grid-column: 1; grid-row: 1; }
+.bl-pos__side .bl-cart__row > :nth-child(2) { grid-column: 2; grid-row: 1; }
+.bl-pos__side .bl-cart__row > :nth-child(6) { grid-column: 3; grid-row: 1; }
+.bl-pos__side .bl-cart__row > :nth-child(3) { grid-column: 1; grid-row: 2; width: auto; }
+.bl-pos__side .bl-cart__row > :nth-child(4) { grid-column: 2; grid-row: 2; justify-self: center; }
+.bl-pos__side .bl-cart__row > :nth-child(5) { grid-column: 3; grid-row: 2; width: auto; }
+
+@media (min-width: 1024px) {
+  .bl-pos__layout {
+    grid-template-columns: minmax(0, 1fr) 400px;
+    flex: 1 1 auto;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr);
+  }
+  .bl-pos__main { display: flex; flex-direction: column; min-height: 0; }
+  .bl-pos__main > .bl-pos__picker { flex: 1 1 auto; min-height: 0; margin-bottom: 0; display: flex; flex-direction: column; }
+  .bl-pos__main .bl-grid--tiles { flex: 1 1 auto; max-height: none; min-height: 0; align-content: start; padding: 10px 10px 14px; }
+  .bl-pos__side { display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+  .bl-pos__side .bl-cart { flex: 1 1 auto; min-height: 96px; max-height: none; align-content: start; }
+  .bl-pos__side-title, .bl-pos__side-fields { flex-shrink: 0; }
+}
+
+.bl-cart { display: grid; gap: var(--bl-s2); }
+
+.bl-cart__empty { padding: var(--bl-s4) 0; text-align: center; }
+
+.bl-cart__row {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  padding: var(--bl-s2) 0;
+  border-bottom: 1px solid var(--bl-border);
+}
+.bl-cart__row:last-child { border-bottom: none; }
+
+.bl-cart__info { display: flex; flex-direction: column; min-width: 0; flex: 1 1 120px; }
+.bl-cart__name {
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-medium);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.bl-cart__unit { font-size: 11px; color: var(--bl-text-secondary); }
+
+.bl-cart__price { width: 92px; flex-shrink: 0; }
+
+.bl-cart__stepper { display: flex; align-items: center; gap: var(--bl-s1); flex-shrink: 0; }
+.bl-cart__qty { min-width: 24px; text-align: center; font-variant-numeric: tabular-nums; }
+
+.bl-cart__subtotal {
+  width: 72px;
+  flex-shrink: 0;
+  text-align: right;
+  font-weight: var(--bl-fw-medium);
+  font-variant-numeric: tabular-nums;
+}
+
+.bl-cart__total {
+  display: flex;
+  flex-direction: column;
+  margin-right: auto;
+}
+.bl-cart__total strong { font-size: var(--bl-fs-lg); color: var(--bl-green-dark); }
+
+@media (max-width: 480px) {
+  .bl-cart__row { flex-wrap: wrap; }
+  .bl-cart__price { order: 1; width: 84px; }
+  .bl-cart__subtotal { width: auto; margin-left: auto; }
+}
+
+/* ---- Sales-only pieces of the pinned summary (the generic rules live in
+   components/layout/PinnedSummary.css) --------------------------------- */
+
+@media (min-width: 1024px) {
+  /* The trend card: the chart fades and collapses as the page scrolls, leaving
+     a small tile. The chart itself is never resized, so nothing re-renders. */
+  .bl-sales-trend-card { padding: calc(16px - 10px * var(--p)) calc(20px - 8px * var(--p)); }
+  .bl-sales-trend-card .bl-card__header {
+    margin-bottom: calc(var(--bl-s3) * (1 - var(--p)));
+  }
+  .bl-sales-trend-card .bl-segment {
+    overflow: hidden;
+    opacity: calc(1 - 2 * var(--p));
+    max-width: calc(260px * (1 - var(--p)));
+  }
+  .bl-sales-trend-card__chart {
+    overflow: hidden;
+    max-height: calc(130px * (1 - var(--p)));
+    opacity: calc(1 - 1.8 * var(--p));
+  }
+
+  .bl-pin .bl-stat--gcash::after,
+  .bl-pin .bl-stat--cash::after { opacity: calc(0.1 * (1 - var(--p))); }
+  .bl-pin .bl-stat__logo { margin: 0; }
+  .bl-pin .bl-stat__logo img,
+  .bl-pin .bl-stat__logo svg {
+    height: calc(44px - 22px * var(--p));
+    width: auto;
+  }
+}
+
+/* ---- Purchases ------------------------------------------------------------ */
+
+.bl-tx__budget { align-items: center; gap: var(--bl-s3); }
+.bl-tx__budget-actions { flex-shrink: 0; gap: var(--bl-s3); }
+.bl-tx__budget + .bl-form-error { margin-top: var(--bl-s3); }
+
+/* Status and the row action keep fixed columns so rows with and without the
+   "mark received" button line up. */
+.bl-table .bl-tx__col-status { width: 1%; white-space: nowrap; text-align: left; }
+.bl-table .bl-tx__col-action { width: 56px; min-width: 56px; text-align: right; }
+
+/* ---- Add Sale: cash-change calculator ------------------------------------ */
+
+.bl-pos__cash { display: grid; gap: var(--bl-s2); flex-shrink: 0; }
+
+.bl-pos__cash-chips { display: flex; flex-wrap: wrap; gap: var(--bl-s2); }
+
+.bl-pos__chip {
+  border: 1px solid var(--bl-border-strong);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  border-radius: var(--bl-r-pill);
+  padding: 4px 12px;
+  min-height: 30px;
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  transition: border-color var(--bl-dur-fast) var(--bl-ease), background var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-pos__chip:hover:not(:disabled) { border-color: var(--bl-green-accent); background: var(--bl-green-soft); }
+.bl-pos__chip:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.bl-pos__change {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  padding: var(--bl-s2) var(--bl-s3);
+  border-radius: var(--bl-r-md);
+  font-size: var(--bl-fs-sm);
+  background: var(--bl-bg);
+  color: var(--bl-text-secondary);
+}
+.bl-pos__change strong {
+  font-size: var(--bl-fs-lg);
+  font-variant-numeric: tabular-nums;
+}
+.bl-pos__change--change { background: var(--bl-green-light); color: var(--bl-green-dark); }
+.bl-pos__change--short { background: var(--bl-danger-bg); color: var(--bl-danger); }

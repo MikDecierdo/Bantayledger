@@ -1,0 +1,67 @@
+/* Pinned summary cards that shrink with scroll (desktop). `--p` is 0 at the
+   top of the page and 1 when fully shrunk; see PinnedSummary.tsx. Every size
+   below is interpolated from it. */
+
+@media (min-width: 1024px) {
+  .bl-pin {
+    --p: 0;
+    position: sticky;
+    top: var(--bl-header-h, 0px);
+    z-index: 15;
+    background: var(--bl-bg);
+    padding-bottom: calc(var(--bl-s3) - var(--bl-s2) * var(--p));
+    will-change: contents;
+  }
+
+  /* The page's height must not change as the block shrinks, so the browser
+     must not re-anchor the scroll. */
+  #bl-main { overflow-anchor: none; }
+
+  /* Section headings and descriptions fade out and collapse. */
+  .bl-pin .bl-section__head {
+    overflow: hidden;
+    opacity: calc(1 - 1.6 * var(--p));
+    max-height: calc(60px * (1 - var(--p)));
+    margin-bottom: calc(var(--bl-s3) * (1 - var(--p)));
+  }
+  .bl-pin .bl-section { margin-bottom: calc(var(--bl-s5) - 14px * var(--p)); }
+  .bl-pin .bl-grid { margin-bottom: 0; }
+
+  /* Stat cards. */
+  .bl-pin .bl-grid--kpi { gap: calc(var(--bl-s4) - 8px * var(--p)); }
+  .bl-pin .bl-stat {
+    padding: calc(16px - 10px * var(--p)) calc(20px - 8px * var(--p));
+    gap: calc(8px - 6px * var(--p));
+  }
+  .bl-pin .bl-stat__value,
+  .bl-pin .bl-stat--plain .bl-stat__value,
+  .bl-pin .bl-stat__value--hero {
+    font-size: calc(var(--bl-fs-xl) - (var(--bl-fs-xl) - var(--bl-fs-md)) * var(--p));
+  }
+  .bl-pin .bl-stat__foot,
+  .bl-pin .bl-stat .bl-spark {
+    overflow: hidden;
+    opacity: calc(1 - 2 * var(--p));
+    max-height: calc(28px * (1 - var(--p)));
+  }
+  .bl-pin .bl-stat__icon { opacity: calc(1 - 2 * var(--p)); }
+
+  /* Plain cards (Forecast, Alerts, other metric tiles). */
+  .bl-pin .bl-card:not(.bl-stat) {
+    padding: calc(20px - 14px * var(--p)) calc(20px - 8px * var(--p));
+  }
+  .bl-pin .bl-card:not(.bl-stat) .bl-metric,
+  .bl-pin .bl-alerts__sum-value {
+    font-size: calc(var(--bl-fs-xl) - (var(--bl-fs-xl) - var(--bl-fs-md)) * var(--p));
+    margin: 0;
+  }
+  .bl-pin .bl-card:not(.bl-stat) > .bl-caption {
+    overflow: hidden;
+    opacity: calc(1 - 2 * var(--p));
+    max-height: calc(40px * (1 - var(--p)));
+  }
+}
+
+@media print {
+  .bl-pin { position: static; }
+}
