@@ -1,0 +1,61 @@
+import type { Sale, SeriesPoint } from '../../types';
+import type { PaymentMethod } from '../../types/database';
+import { api } from './client';
+
+export interface SalesOverview {
+  summary: {
+    today: number;
+    todayChangePct: number;
+    yesterday: number;
+    week: number;
+    weekChangePct: number;
+    month: number;
+    monthChangePct: number;
+    transactionsToday: number;
+    averageBasket: number;
+    todayCash: number;
+    todayGCash: number;
+  };
+  last7Days: SeriesPoint[];
+  last6Months: SeriesPoint[];
+  byCategory: SeriesPoint[];
+}
+
+export interface SaleItemInput {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+}
+
+export interface SaleInput {
+  items: SaleItemInput[];
+  paymentMethod: PaymentMethod;
+  /** Required for GCash: the last 4 digits of the GCash reference number. */
+  paymentReference?: string;
+  saleDate?: string;
+  notes?: string;
+  reference?: string;
+}
+
+export const salesService = {
+  async list(businessId: string, limit = 100): Promise<Sale[]> {
+    return api.get<Sale[]>(`/businesses/${businessId}/sales`, { limit });
+  },
+
+  async create(businessId: string, _userId: string | null, input: SaleInput): Promise<Sale> {
+    // userId is inferred server-side from the bearer token, not passed
+    // explicitly — kept as a parameter for call-site compatibility with the
+    // Supabase/local versions.
+    return api.post<Sale>(`/businesses/${businessId}/sales`, input);
+  },
+
+  async remove(businessId: string, saleId: string): Promise<void> {
+    await api.delete(`/businesses/${businessId}/sales/${saleId}`);
+  },
+
+  async overview(businessId: string): Promise<SalesOverview> {
+    return api.get<SalesOverview>(`/businesses/${businessId}/sales/overview`);
+  },
+};
+
+export default salesService;

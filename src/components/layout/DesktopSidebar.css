@@ -1,0 +1,218 @@
+.bl-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  width: var(--bl-sidebar-w);
+  background: var(--bl-surface);
+  border-right: 1px solid var(--bl-border);
+  display: flex;
+  flex-direction: column;
+  z-index: 20;
+  transition: width var(--bl-dur) var(--bl-ease);
+}
+
+.bl-sidebar--collapsed { width: var(--bl-sidebar-w-compact); }
+
+/* ---- Brand --------------------------------------------------------------- */
+
+.bl-sidebar__brand {
+  padding: var(--bl-s5) var(--bl-s4) var(--bl-s4);
+  border-bottom: 1px solid var(--bl-border);
+  flex-shrink: 0;
+  min-height: 65px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bl-s2);
+}
+
+.bl-sidebar--collapsed .bl-sidebar__brand { justify-content: center; padding-inline: var(--bl-s2); }
+
+.bl-sidebar__brand-link {
+  display: block;
+  border-radius: var(--bl-r-md);
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Hamburger: toggles collapsed/expanded. Lives outside the sidebar, straddling
+   its right edge, so it never competes with the logo for space inside it —
+   a small round button pinned to the sidebar/content border, sliding with it
+   as the sidebar's width changes. */
+.bl-sidebar-toggle {
+  position: fixed;
+  top: 28px;
+  left: var(--bl-sidebar-w);
+  transform: translateX(-50%);
+  z-index: 21;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex-shrink: 0;
+  border: 1px solid var(--bl-border);
+  background: var(--bl-surface);
+  color: var(--bl-text-secondary);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 16px;
+  box-shadow: var(--bl-shadow-sm);
+  transition: left var(--bl-dur) var(--bl-ease), background var(--bl-dur-fast) var(--bl-ease),
+    color var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-sidebar-toggle--collapsed { left: var(--bl-sidebar-w-compact); }
+.bl-sidebar-toggle:hover { background: var(--bl-green-soft); color: var(--bl-green-dark); border-color: var(--bl-green-accent); }
+.bl-sidebar-toggle:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+/* ---- Nav ----------------------------------------------------------------- */
+
+.bl-sidebar__nav {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--bl-s4) var(--bl-s3);
+  min-height: 0;
+}
+
+.bl-sidebar__group + .bl-sidebar__group { margin-top: var(--bl-s5); }
+
+.bl-sidebar__group-title {
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bl-text-secondary);
+  padding: 0 var(--bl-s3);
+  margin-bottom: var(--bl-s2);
+}
+
+.bl-sidebar__group ul { display: grid; gap: 2px; }
+
+.bl-sidenav {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  padding: 0 var(--bl-s3);
+  min-height: 42px;
+  border-radius: var(--bl-r-md);
+  color: var(--bl-text-secondary);
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-medium);
+  transition: background var(--bl-dur-fast) var(--bl-ease), color var(--bl-dur-fast) var(--bl-ease);
+  position: relative;
+}
+
+.bl-sidenav:hover { background: var(--bl-green-soft); color: var(--bl-text); }
+.bl-sidenav:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+.bl-sidenav--active {
+  background: var(--bl-green-light);
+  color: var(--bl-green);
+  font-weight: var(--bl-fw-semibold);
+}
+.bl-sidenav--active:hover { background: var(--bl-green-light); color: var(--bl-green); }
+
+/* Left marker so the active item is not signalled by color alone. */
+.bl-sidenav--active::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 22px;
+  border-radius: 0 3px 3px 0;
+  background: var(--bl-green);
+}
+
+.bl-sidenav__icon { font-size: 20px; flex-shrink: 0; }
+.bl-sidenav__label { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.bl-sidenav__badge {
+  background: var(--bl-danger);
+  color: #fff;
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-bold);
+  min-width: 19px;
+  height: 19px;
+  border-radius: var(--bl-r-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  flex-shrink: 0;
+}
+
+.bl-sidebar--collapsed .bl-sidenav {
+  justify-content: center;
+  padding-inline: 0;
+}
+.bl-sidebar--collapsed .bl-sidenav__badge {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  min-width: 16px;
+  height: 16px;
+  font-size: 9px;
+}
+.bl-sidebar--collapsed .bl-sidenav--active::before { left: -12px; }
+
+/* ---- Footer -------------------------------------------------------------- */
+
+.bl-sidebar__footer {
+  border-top: 1px solid var(--bl-border);
+  padding: var(--bl-s3);
+  flex-shrink: 0;
+  display: grid;
+  gap: 2px;
+}
+
+/* Rendered as a <button>, not a <NavLink> like other .bl-sidenav items, so
+   it needs its own reset for the default button chrome. Hovers green, not
+   the red/danger color a destructive action would normally get, per design. */
+.bl-sidenav--logout {
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  color: var(--bl-text-secondary);
+}
+.bl-sidenav--logout:hover { background: var(--bl-green-soft); color: var(--bl-green-dark); }
+
+.bl-sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  padding: var(--bl-s3);
+  margin-top: var(--bl-s2);
+  background: var(--bl-bg);
+  border-radius: var(--bl-r-md);
+  min-width: 0;
+}
+
+.bl-sidebar__user-text { display: flex; flex-direction: column; min-width: 0; line-height: 1.3; }
+.bl-sidebar__user-name { font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-semibold); }
+.bl-sidebar__user-biz { font-size: var(--bl-fs-xs); color: var(--bl-text-secondary); }
+
+
+/* ---- Avatar -------------------------------------------------------------- */
+
+.bl-avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  font-weight: var(--bl-fw-bold);
+  font-size: var(--bl-fs-base);
+  flex-shrink: 0;
+  letter-spacing: 0.02em;
+}
+
+.bl-avatar--sm { width: 32px; height: 32px; font-size: var(--bl-fs-xs); }
+.bl-avatar--lg { width: 72px; height: 72px; font-size: var(--bl-fs-xl); }
+.bl-avatar--solid { background: var(--bl-green); color: #fff; }

@@ -1,0 +1,123 @@
+/* ==========================================================================
+   BantayLedger AI — Design Tokens
+   Single source of truth for color, type, space, radius, shadow, motion.
+   ========================================================================== */
+
+:root {
+  /* ---- Brand palette ---------------------------------------------------- */
+  --bl-green: #1F6F5B;
+  --bl-green-dark: #174F42;
+  --bl-green-light: #E9F4EF;
+  --bl-green-soft: #EFF8F4;
+  --bl-green-accent: #6FB296;
+
+  /* ---- Surfaces --------------------------------------------------------- */
+  --bl-bg: #F6F8F7;
+  --bl-surface: #FFFFFF;
+  --bl-surface-muted: #FAFCFB;
+
+  /* ---- Text ------------------------------------------------------------- */
+  --bl-text: #17221E;
+  --bl-text-secondary: #718078;
+  --bl-text-inverse: #FFFFFF;
+
+  /* ---- Lines ------------------------------------------------------------ */
+  --bl-border: #E4EBE7;
+  --bl-border-strong: #D3DED8;
+
+  /* ---- Semantic --------------------------------------------------------- */
+  --bl-success: #27825E;
+  --bl-success-bg: #E7F4ED;
+  --bl-warning: #B97818;
+  --bl-warning-bg: #FBF1E0;
+  --bl-danger: #C54B4B;
+  --bl-danger-dark: #9C3B3B;
+  --bl-danger-bg: #FBEAEA;
+  --bl-info: #437B8F;
+  --bl-info-bg: #E6F0F4;
+
+  /* ---- Typography ------------------------------------------------------- */
+  --bl-font: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --bl-font-numeric: 'Inter', 'SF Mono', ui-monospace, sans-serif;
+
+  --bl-fs-caption: 0.6875rem;   /* 11px */
+  --bl-fs-xs: 0.75rem;          /* 12px */
+  --bl-fs-sm: 0.8125rem;        /* 13px */
+  --bl-fs-base: 0.875rem;       /* 14px */
+  --bl-fs-md: 0.9375rem;        /* 15px */
+  --bl-fs-lg: 1.0625rem;        /* 17px */
+  --bl-fs-xl: 1.25rem;          /* 20px */
+  --bl-fs-2xl: 1.5rem;          /* 24px */
+  --bl-fs-3xl: 1.75rem;         /* 28px */
+  --bl-fs-metric: 1.625rem;     /* 26px */
+
+  --bl-lh-tight: 1.2;
+  --bl-lh-snug: 1.35;
+  --bl-lh-normal: 1.55;
+
+  --bl-fw-regular: 400;
+  --bl-fw-medium: 500;
+  --bl-fw-semibold: 600;
+  --bl-fw-bold: 700;
+
+  /* ---- Spacing scale ---------------------------------------------------- */
+  --bl-s1: 4px;
+  --bl-s2: 8px;
+  --bl-s3: 12px;
+  --bl-s4: 16px;
+  --bl-s5: 20px;
+  --bl-s6: 24px;
+  --bl-s8: 32px;
+  --bl-s10: 40px;
+  --bl-s12: 48px;
+
+  /* ---- Radius ----------------------------------------------------------- */
+  --bl-r-sm: 6px;
+  --bl-r-md: 8px;
+  --bl-r-lg: 12px;
+  --bl-r-xl: 16px;
+  --bl-r-pill: 999px;
+
+  /* ---- Shadow ----------------------------------------------------------- */
+  --bl-shadow-xs: 0 1px 2px rgba(23, 34, 30, 0.04);
+  --bl-shadow-sm: 0 1px 3px rgba(23, 34, 30, 0.06), 0 1px 2px rgba(23, 34, 30, 0.04);
+  --bl-shadow-md: 0 4px 12px rgba(23, 34, 30, 0.07);
+  --bl-shadow-lg: 0 12px 32px rgba(23, 34, 30, 0.12);
+
+  /* ---- Layout ----------------------------------------------------------- */
+  --bl-sidebar-w: 256px;
+  --bl-sidebar-w-compact: 76px;
+  --bl-content-max: 1440px;
+  --bl-header-h: 56px;
+  --bl-bottomnav-h: 60px;
+  --bl-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --bl-safe-top: env(safe-area-inset-top, 0px);
+
+  /* ---- Motion ----------------------------------------------------------- */
+  --bl-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  /* Playful overshoot — reserved for the button push, not entrance motion. */
+  --bl-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --bl-dur-fast: 120ms;
+  --bl-dur: 180ms;
+  --bl-dur-slow: 240ms;
+
+  /* ---- Focus ring ------------------------------------------------------- */
+  --bl-focus-ring: 0 0 0 3px rgba(31, 111, 91, 0.28);
+}
+
+/* Bridge tokens into Ionic's variable system so Ionic primitives
+   (modals, toasts, spinners) inherit the same brand. */
+:root {
+  --ion-font-family: var(--bl-font);
+  --ion-background-color: var(--bl-bg);
+  --ion-text-color: var(--bl-text);
+  --ion-color-primary: #1F6F5B;
+  --ion-color-primary-rgb: 31, 111, 91;
+  --ion-color-primary-contrast: #ffffff;
+  --ion-color-primary-contrast-rgb: 255, 255, 255;
+  --ion-color-primary-shade: #174F42;
+  --ion-color-primary-tint: #35806e;
+  --ion-backdrop-color: #17221E;
+  --ion-backdrop-opacity: 0.32;
+}

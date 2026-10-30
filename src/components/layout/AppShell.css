@@ -1,0 +1,235 @@
+.bl-shell {
+  /*
+   * Bounded to the viewport, not just "at least" — Ionic's own structure.css
+   * pins <body> to position:fixed/height:100%/overflow:hidden (it assumes
+   * every page uses <IonContent> as the scroll host). This app uses its own
+   * scroll container instead (.bl-shell__main below), which only works if
+   * this whole chain is bounded to the viewport rather than left to grow
+   * past it — growing past a fixed, clipped <body> just makes the extra
+   * content unreachable, not scrollable.
+   */
+  height: 100vh;
+  height: 100dvh;
+  background: var(--bl-bg);
+  width: 100%;
+  overflow: hidden;
+}
+
+.bl-shell__body {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  height: 100dvh;
+  min-width: 0;
+}
+
+.bl-shell__main {
+  flex: 1 1 auto;
+  /* Without this a flex child won't shrink below its content's natural
+     height, so overflow-y below would never have anything to trigger on. */
+  min-height: 0;
+  min-width: 0;
+  overflow-y: auto;
+  padding: var(--bl-s4) var(--bl-s4) var(--bl-s5);
+  /*
+   * Clears the fixed bottom bar so the last card is never trapped behind it.
+   * The extra 16px keeps a comfortable gap above the bar.
+   */
+  padding-bottom: calc(var(--bl-bottomnav-h) + var(--bl-safe-bottom) + var(--bl-s5));
+}
+
+.bl-shell__main:focus { outline: none; }
+
+/* Sidebar layouts have no bottom bar to clear. */
+.bl-shell--sidebar .bl-shell__body {
+  margin-left: var(--bl-sidebar-w);
+  transition: margin-left var(--bl-dur) var(--bl-ease);
+}
+
+.bl-shell--sidebar.bl-shell--collapsed .bl-shell__body {
+  margin-left: var(--bl-sidebar-w-compact);
+}
+
+.bl-shell--sidebar .bl-shell__main {
+  /* The sticky page header cancels these paddings to sit flush at the top. */
+  --bl-main-pt: var(--bl-s5);
+  --bl-main-px: var(--bl-s5);
+  padding: var(--bl-main-pt) var(--bl-main-px);
+  padding-bottom: var(--bl-s8);
+}
+
+/* Content column: readable width, centred on large monitors. */
+.bl-container {
+  width: 100%;
+  max-width: var(--bl-content-max);
+  margin: 0 auto;
+  min-width: 0;
+}
+
+@media (min-width: 1280px) {
+  .bl-shell--sidebar .bl-shell__main {
+    --bl-main-pt: var(--bl-s6);
+    --bl-main-px: var(--bl-s8);
+    padding: var(--bl-main-pt) var(--bl-main-px) var(--bl-s10);
+  }
+}
+
+@media (min-width: 1920px) {
+  .bl-shell--sidebar .bl-shell__main {
+    --bl-main-px: var(--bl-s10);
+    padding-inline: var(--bl-main-px);
+  }
+}
+
+/* ---- Shared responsive grids -------------------------------------------- */
+
+/*
+ * Auto-fit grids with `min(100%, X)` so a single column never overflows a
+ * 320px viewport.
+ */
+.bl-grid {
+  display: grid;
+  gap: var(--bl-s4);
+  min-width: 0;
+}
+
+.bl-grid > * { min-width: 0; }
+
+/*
+ * KPI row: 1 col on the narrowest phones, 2 from 400px, 4 from 1024px.
+ * Explicit counts (rather than auto-fit) so the hero tile can reliably span
+ * two tracks at every size where more than one track exists.
+ */
+.bl-grid--kpi { grid-template-columns: 1fr; }
+
+@media (min-width: 360px) {
+  .bl-grid--kpi { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bl-grid--kpi > .bl-stat--hero { grid-column: span 2; }
+  .bl-grid--kpi5 > :nth-child(6) { grid-column: span 2; }
+}
+
+@media (min-width: 1024px) {
+  .bl-grid--kpi { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+  /* Four equal cards in one row: the wide hero is a small-screen treatment. */
+  .bl-grid--kpi > .bl-stat--hero { grid-column: span 1; }
+
+  /*
+   * Five cards (Sales page): four columns would leave the last one alone on a
+   * second row. Instead the first row is Today (wide) + two cards, and the
+   * second row is the 4th and 5th cards at double width, so both rows fill.
+   */
+  .bl-grid--kpi5 > :first-child,
+  .bl-grid--kpi5 > :nth-child(6) { grid-column: span 2; }
+}
+
+/*
+ * Dashboard quick-action shortcuts: 2 columns on phones, 3 from 480px (fits
+ * the 3 non-duplicated actions on one row), margin above to separate it
+ * from the page header.
+ */
+.bl-grid--quickactions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: var(--bl-s2);
+  margin-bottom: var(--bl-s2);
+}
+
+@media (min-width: 480px) {
+  .bl-grid--quickactions { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/*
+ * Content cards: 1 column on phones, exactly 2 from 768px up. Capped rather
+ * than auto-fit, because these cards hold prose and lose readability when a
+ * wide monitor squeezes four of them onto one row.
+ */
+.bl-grid--2 { grid-template-columns: 1fr; }
+
+@media (min-width: 768px) {
+  .bl-grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Compact cards: up to 3 across, never more. */
+.bl-grid--3 { grid-template-columns: 1fr; }
+
+@media (min-width: 640px) {
+  .bl-grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1100px) {
+  .bl-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* Asymmetric main + rail, stacking below 1024px */
+.bl-grid--split { grid-template-columns: 1fr; }
+
+@media (min-width: 1024px) {
+  .bl-grid--split { grid-template-columns: minmax(0, 1.85fr) minmax(0, 1fr); align-items: start; }
+}
+
+.bl-grid--gap-lg { gap: var(--bl-s5); }
+
+/* ---- Responsive visibility helpers -------------------------------------- */
+
+@media (max-width: 767px) {
+  .bl-hide-mobile { display: none !important; }
+}
+
+@media (min-width: 768px) {
+  .bl-only-mobile { display: none !important; }
+}
+
+@media (max-width: 1023px) {
+  .bl-hide-tablet-down { display: none !important; }
+}
+
+/* Table on wide screens, cards below — used by every list page. */
+.bl-responsive-table { display: none; }
+.bl-responsive-cards { display: grid; gap: var(--bl-s3); }
+
+@media (min-width: 900px) {
+  .bl-responsive-table { display: block; }
+  .bl-responsive-cards { display: none; }
+}
+
+/* ---- Print ---------------------------------------------------------------- */
+
+/*
+ * Printing shows only the page content. Ionic pins the whole app to the
+ * viewport (position:fixed / overflow:hidden on body, ion-app and .ion-page)
+ * and this shell scrolls inside a fixed-height container — all of which
+ * would cut a printout off after one screen — so every link in that chain
+ * is released to normal document flow.
+ */
+@media print {
+  .bl-sidebar,
+  .bl-sidebar-toggle,
+  .bl-mheader,
+  .bl-bottomnav,
+  .bl-skip-link,
+  .bl-noprint,
+  .bl-pageheader__actions { display: none !important; }
+
+  html,
+  body,
+  ion-app,
+  ion-router-outlet,
+  .ion-page,
+  .bl-shell,
+  .bl-shell__body,
+  .bl-shell__main {
+    position: static !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    contain: none !important;
+  }
+
+  .bl-shell--sidebar .bl-shell__body,
+  .bl-shell--sidebar.bl-shell--collapsed .bl-shell__body { margin-left: 0 !important; }
+
+  .bl-shell,
+  .bl-shell__main { background: #fff !important; padding: 0 !important; }
+
+  .bl-container { max-width: none !important; }
+}

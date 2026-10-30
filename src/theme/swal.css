@@ -1,0 +1,168 @@
+/*
+ * SweetAlert2, dressed in the BantayLedger design system.
+ *
+ * Everything here maps SweetAlert's own class names onto the tokens in
+ * `tokens.css`, so its popups sit alongside the app's `Modal`/`ConfirmDialog`
+ * without looking like a different product. Values deliberately mirror
+ * `../components/common/Modal.css` — same radius, shadow, backdrop dim, and
+ * the same full-width stacked buttons on phones.
+ *
+ * Buttons are not styled here: `../lib/swal.ts` sets `buttonsStyling: false`
+ * and hands SweetAlert the real `.bl-btn` classes instead.
+ */
+
+.swal2-container {
+  /* Above Ionic's modals (~20000), below the toast layer (30000) so an error
+     toast after a failed action is still readable over the popup. */
+  z-index: 25000;
+  padding: var(--bl-s4);
+  /* Belt and braces with `heightAuto: false` in ../lib/swal.ts: size against
+     the viewport directly so centring never depends on Ionic's ancestor
+     heights resolving. */
+  box-sizing: border-box;
+  min-height: 100dvh;
+}
+
+.swal2-container.swal2-backdrop-show {
+  /* Matches ion-modal's backdrop: #17221E at 0.32. */
+  background: rgba(23, 34, 30, 0.32);
+}
+
+.swal2-popup.bl-swal {
+  width: min(440px, calc(100vw - 32px));
+  padding: var(--bl-s6);
+  border-radius: var(--bl-r-xl);
+  background: var(--bl-surface);
+  box-shadow: var(--bl-shadow-lg);
+  font-family: var(--bl-font);
+  color: var(--bl-text);
+}
+
+.swal2-popup.bl-swal .bl-swal__title {
+  padding: 0;
+  margin-top: var(--bl-s4);
+  font-size: var(--bl-fs-xl);
+  font-weight: var(--bl-fw-semibold);
+  line-height: var(--bl-lh-snug);
+  color: var(--bl-text);
+}
+
+.swal2-popup.bl-swal .bl-swal__text {
+  margin: var(--bl-s2) 0 0;
+  padding: 0;
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-regular);
+  line-height: var(--bl-lh-normal);
+  color: var(--bl-text-secondary);
+}
+
+.swal2-popup.bl-swal .bl-swal__actions {
+  gap: var(--bl-s3);
+  margin: var(--bl-s6) 0 0;
+  width: 100%;
+  justify-content: flex-end;
+}
+
+/*
+ * The stock icon is oversized for a dialog this compact, so it's shrunk
+ * here — but via `font-size`, not `width`/`height`. Every measurement inside
+ * a SweetAlert2 icon (border, the success checkmark's two line divs, its
+ * ring, the error icon's X-mark lines) is defined in `em`, relative to this
+ * element's own font-size — width/height default to 5em apiece. Overriding
+ * width/height directly (as this used to) shrinks the outer circle but
+ * leaves all of that internal em-based geometry sized for the original
+ * circle, so the lines end up positioned for a bigger circle than the one
+ * they're drawn in — which is what made the success checkmark's two strokes
+ * cross near the center instead of meeting at an offset point, rendering as
+ * an X instead of a ✓. Scaling by font-size keeps every em-based child
+ * proportional automatically, the same mechanism SweetAlert2's own CSS
+ * already relies on. 11.2px here reproduces the same ~56px icon the old
+ * fixed size targeted (5em x 11.2px), without the distortion.
+ */
+.swal2-popup.bl-swal .swal2-icon {
+  font-size: 11.2px;
+  margin: 0 auto;
+}
+
+.swal2-popup.bl-swal .swal2-icon .swal2-icon-content {
+  font-size: 2.25rem;
+}
+
+.swal2-popup.bl-swal .swal2-icon.swal2-warning {
+  border-color: var(--bl-warning);
+  color: var(--bl-warning);
+  background-color: var(--bl-warning-bg);
+}
+
+.swal2-popup.bl-swal .swal2-icon.swal2-error {
+  border-color: var(--bl-danger);
+  color: var(--bl-danger);
+  background-color: var(--bl-danger-bg);
+}
+
+.swal2-popup.bl-swal .swal2-icon.swal2-success {
+  border-color: var(--bl-success);
+  color: var(--bl-success);
+  background-color: var(--bl-success-bg);
+}
+
+.swal2-popup.bl-swal .swal2-icon.swal2-info,
+.swal2-popup.bl-swal .swal2-icon.swal2-question {
+  border-color: var(--bl-info);
+  color: var(--bl-info);
+  background-color: var(--bl-info-bg);
+}
+
+/* Success draws its tick from these rings; tint them to match. */
+.swal2-popup.bl-swal .swal2-icon.swal2-success [class^='swal2-success-line'] {
+  background-color: var(--bl-success);
+}
+.swal2-popup.bl-swal .swal2-icon.swal2-success .swal2-success-ring {
+  border-color: var(--bl-success);
+}
+
+.swal2-popup.bl-swal .bl-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--bl-focus-ring);
+}
+
+/* Matches .bl-input in ../theme/components.css, so a text prompt (e.g. naming
+   a new category) looks like the app's own fields, not a foreign widget. */
+.swal2-popup.bl-swal .bl-swal__input.swal2-input {
+  width: 100%;
+  height: 44px;
+  margin: var(--bl-s4) 0 0;
+  padding: 0 var(--bl-s3);
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border-strong);
+  border-radius: var(--bl-r-md);
+  font-size: var(--bl-fs-base);
+  font-family: var(--bl-font);
+  color: var(--bl-text);
+  box-shadow: none;
+}
+
+.swal2-popup.bl-swal .bl-swal__input.swal2-input:focus {
+  border-color: var(--bl-green);
+  box-shadow: var(--bl-focus-ring);
+}
+
+.swal2-popup.bl-swal .swal2-validation-message {
+  margin-top: var(--bl-s2);
+  background: var(--bl-danger-bg);
+  color: var(--bl-danger);
+  font-size: var(--bl-fs-sm);
+  border-radius: var(--bl-r-sm);
+}
+
+/* Phones: stack full-width with the primary action on top, exactly as the
+   app's own modal footer does below 480px. */
+@media (max-width: 479px) {
+  .swal2-popup.bl-swal .bl-swal__actions {
+    flex-direction: column-reverse;
+  }
+  .swal2-popup.bl-swal .bl-swal__actions .bl-btn {
+    width: 100%;
+    min-height: 46px;
+  }
+}

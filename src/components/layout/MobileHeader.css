@@ -1,0 +1,99 @@
+.bl-mheader {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  min-height: var(--bl-header-h);
+  padding: var(--bl-s2) var(--bl-s4);
+  padding-top: calc(var(--bl-s2) + var(--bl-safe-top));
+  background: var(--bl-surface);
+  border-bottom: 1px solid var(--bl-border);
+}
+
+.bl-mheader__left {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s2);
+  min-width: 0;
+  flex: 1;
+}
+
+.bl-mheader__title-wrap {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+
+.bl-mheader__title {
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-bold);
+  letter-spacing: -0.01em;
+  color: var(--bl-text);
+  margin: 0;
+}
+
+.bl-mheader__sub {
+  font-size: var(--bl-fs-caption);
+  color: var(--bl-text-secondary);
+}
+
+.bl-mheader__right {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s1);
+  flex-shrink: 0;
+}
+
+.bl-mheader__icon-btn {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  border-radius: var(--bl-r-md);
+  color: var(--bl-text);
+  font-size: 22px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.bl-mheader__icon-btn:hover { background: var(--bl-green-soft); }
+.bl-mheader__icon-btn:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+.bl-mheader__dot {
+  position: absolute;
+  top: 10px;
+  right: 11px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--bl-danger);
+  border: 2px solid var(--bl-surface);
+}
+
+.bl-mheader__avatar-btn {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  background: transparent;
+  border-radius: var(--bl-r-md);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+}
+.bl-mheader__avatar-btn:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+/*
+ * Phones only. From 768px the icon rail carries navigation and the page's own
+ * H1 becomes visible, so a top bar would just repeat the title.
+ */
+@media (min-width: 768px) {
+  .bl-mheader { display: none; }
+}

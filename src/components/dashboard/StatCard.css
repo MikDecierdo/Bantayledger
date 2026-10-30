@@ -1,0 +1,160 @@
+.bl-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bl-s2);
+  padding: var(--bl-s4) var(--bl-s5);
+  min-width: 0;
+}
+
+.bl-stat__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s2);
+  min-width: 0;
+  min-height: 30px;
+}
+
+/*
+ * Labels wrap rather than truncate. In a two-up phone grid an ellipsis would
+ * hide the word that distinguishes one tile from another ("Expenses today"
+ * becoming "Expenses ..."), so a second line is the better trade.
+ */
+.bl-stat__label { min-width: 0; }
+
+.bl-stat__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--bl-r-md);
+  display: grid;
+  place-items: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.bl-stat__icon--brand { background: var(--bl-green-light); color: var(--bl-green); }
+.bl-stat__icon--warning { background: var(--bl-warning-bg); color: var(--bl-warning); }
+.bl-stat__icon--danger { background: var(--bl-danger-bg); color: var(--bl-danger); }
+.bl-stat__icon--info { background: var(--bl-info-bg); color: var(--bl-info); }
+.bl-stat__icon--neutral { background: #F1F4F2; color: var(--bl-text-secondary); }
+
+.bl-stat__value-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  min-width: 0;
+}
+
+.bl-stat__value {
+  font-size: var(--bl-fs-metric);
+  font-weight: var(--bl-fw-bold);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--bl-text);
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.bl-stat__foot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.bl-stat__chev { margin-left: auto; color: var(--bl-text-secondary); font-size: 15px; flex-shrink: 0; }
+
+/* ---- Emphasis levels ----------------------------------------------------- */
+
+/*
+ * The hero tile is the day's headline number: green ground, larger type, and
+ * it spans two columns where the grid allows.
+ */
+.bl-stat--hero {
+  background: var(--bl-green);
+  border-color: var(--bl-green);
+  color: #fff;
+  padding: var(--bl-s5);
+  gap: var(--bl-s3);
+}
+
+.bl-stat--hero .bl-stat__label { color: rgba(255, 255, 255, 0.78); }
+.bl-stat--hero .bl-stat__value { color: #fff; }
+.bl-stat--hero .bl-stat__value--hero { font-size: var(--bl-fs-3xl); }
+.bl-stat--hero .bl-stat__icon { background: rgba(255, 255, 255, 0.16); color: #fff; }
+.bl-stat--hero .bl-caption { color: rgba(255, 255, 255, 0.78); }
+.bl-stat--hero .bl-delta--up { color: #A8E4C6; }
+.bl-stat--hero .bl-delta--down { color: #F5BDBD; }
+.bl-stat--hero .bl-delta--flat { color: rgba(255, 255, 255, 0.8); }
+.bl-stat--hero .bl-stat__chev { color: rgba(255, 255, 255, 0.8); }
+
+/* Supporting counts sit quieter than the money figures. */
+.bl-stat--plain .bl-stat__value { font-size: var(--bl-fs-xl); }
+
+/* ---- Link behaviour ------------------------------------------------------ */
+
+.bl-stat--link {
+  transition: border-color var(--bl-dur) var(--bl-ease), box-shadow var(--bl-dur) var(--bl-ease);
+}
+.bl-stat--link:hover { border-color: var(--bl-green-accent); box-shadow: var(--bl-shadow-md); }
+.bl-stat--hero.bl-stat--link:hover { border-color: var(--bl-green-dark); background: var(--bl-green-dark); }
+.bl-stat--link:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+/* Column spanning for the hero tile lives with the grid, in AppShell.css. */
+
+/* ---- Phone sizing --------------------------------------------------------- */
+
+/*
+ * Two tiles sit side by side from 360px up, so supporting values step down to
+ * 20px to fit without wrapping. The hero tile spans the full row and keeps its
+ * larger figure, which also sharpens the hierarchy on small screens.
+ */
+@media (max-width: 599px) {
+  .bl-stat { padding: var(--bl-s4); }
+  .bl-stat__value { font-size: var(--bl-fs-xl); }
+  .bl-stat--plain .bl-stat__value { font-size: var(--bl-fs-lg); }
+
+  .bl-stat--hero { padding: var(--bl-s5) var(--bl-s4); }
+  .bl-stat--hero .bl-stat__value--hero { font-size: var(--bl-fs-2xl); }
+}
+
+/* Payment-method cards: brand badge top-right and a soft tint. */
+.bl-stat__logo { display: grid; place-items: center; flex-shrink: 0; margin: -4px -2px 0 0; }
+.bl-stat--gcash { background: #EAF1FF; border-color: #B9D0FF; border-top: 3px solid #0A5CFF; }
+.bl-stat--cash { background: var(--bl-green-light); border-color: var(--bl-green-accent); border-top: 3px solid var(--bl-green); }
+
+@media (max-width: 599px) {
+  .bl-stat__logo svg { height: 36px; width: auto; }
+}
+
+/* Faded silhouette of the payment method behind the card's content. */
+.bl-stat--gcash,
+.bl-stat--cash { position: relative; overflow: hidden; }
+.bl-stat--gcash > *,
+.bl-stat--cash > * { position: relative; z-index: 1; }
+.bl-stat--gcash::after,
+.bl-stat--cash::after {
+  content: '';
+  position: absolute;
+  right: -18px;
+  bottom: -22px;
+  width: 140px;
+  height: 120px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  opacity: 0.1;
+  pointer-events: none;
+}
+.bl-stat--gcash::after { background-image: url('/gcash-logo.png'); }
+.bl-stat--cash::after {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 48'%3E%3Crect x='2' y='8' width='54' height='30' rx='5' fill='%232E8F73'/%3E%3Ccircle cx='29' cy='23' r='9' fill='%23fff'/%3E%3Ccircle cx='51' cy='35' r='10' fill='%23F2B632'/%3E%3C/svg%3E");
+}
+
+@media (max-width: 599px) {
+  .bl-stat--gcash::after,
+  .bl-stat--cash::after { width: 96px; height: 82px; right: -14px; bottom: -16px; }
+}

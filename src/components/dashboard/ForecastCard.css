@@ -1,0 +1,202 @@
+.bl-fc {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bl-s4);
+  min-width: 0;
+}
+
+.bl-fc__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  flex-wrap: wrap;
+}
+
+.bl-fc__head-text { min-width: 0; }
+.bl-fc__head-text p { margin-top: 2px; }
+
+/* ---- Demand -------------------------------------------------------------- */
+
+.bl-fc__metric { display: grid; gap: 3px; }
+
+.bl-fc__unit {
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-medium);
+  color: var(--bl-text-secondary);
+  letter-spacing: 0;
+}
+
+.bl-fc__facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--bl-s3);
+  padding: var(--bl-s3) 0;
+  border-top: 1px solid var(--bl-border);
+  border-bottom: 1px solid var(--bl-border);
+  margin: 0;
+}
+
+.bl-fc__facts dt {
+  font-size: var(--bl-fs-caption);
+  color: var(--bl-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: var(--bl-fw-semibold);
+  line-height: 1.35;
+}
+
+.bl-fc__facts dd {
+  margin: 3px 0 0;
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+/* ---- Confidence ---------------------------------------------------------- */
+
+.bl-fc__confidence { display: grid; gap: 6px; }
+
+.bl-fc__confidence-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s2);
+}
+
+.bl-fc__confidence-value {
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+.bl-fc__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-green-dark);
+  min-height: 32px;
+  margin-top: auto;
+}
+.bl-fc__link:hover { text-decoration: underline; }
+.bl-fc__link ion-icon { font-size: 15px; }
+
+/* ---- Price --------------------------------------------------------------- */
+
+.bl-fc__pricerow {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  min-width: 0;
+}
+
+.bl-fc__price {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.bl-fc__price-value {
+  font-size: var(--bl-fs-xl);
+  font-weight: var(--bl-fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  overflow-wrap: anywhere;
+}
+
+.bl-fc__price--estimate .bl-fc__price-value { color: var(--bl-green-dark); }
+
+.bl-fc__arrow { color: var(--bl-text-secondary); font-size: 18px; flex-shrink: 0; }
+
+.bl-fc__pricefoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  flex-wrap: wrap;
+  padding-top: var(--bl-s3);
+  border-top: 1px solid var(--bl-border);
+}
+.bl-fc__pricefoot strong { color: var(--bl-text); font-weight: var(--bl-fw-semibold); }
+
+/* On very narrow phones the price pair stacks rather than squeezing. */
+@media (max-width: 359px) {
+  .bl-fc__pricerow { flex-direction: column; align-items: stretch; gap: var(--bl-s2); }
+  .bl-fc__arrow { transform: rotate(90deg); align-self: center; }
+}
+
+/* ---- Purchasing cost ----------------------------------------------------- */
+
+.bl-fc__calc {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  background: var(--bl-bg);
+  border-radius: var(--bl-r-md);
+  padding: var(--bl-s3) var(--bl-s4);
+  min-width: 0;
+}
+
+.bl-fc__calc-part { display: grid; gap: 2px; min-width: 0; flex: 1 1 0; }
+
+.bl-fc__calc-value {
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.bl-fc__calc-op {
+  font-size: var(--bl-fs-lg);
+  color: var(--bl-text-secondary);
+  flex-shrink: 0;
+  font-weight: var(--bl-fw-medium);
+}
+
+.bl-fc__total {
+  display: grid;
+  gap: 3px;
+  padding: var(--bl-s4);
+  background: var(--bl-green-light);
+  border-radius: var(--bl-r-md);
+}
+.bl-fc__total .bl-metric { color: var(--bl-green-dark); }
+
+.bl-fc__compare {
+  display: grid;
+  gap: var(--bl-s2);
+  padding-top: var(--bl-s3);
+  border-top: 1px solid var(--bl-border);
+}
+
+.bl-fc__diff { font-variant-numeric: tabular-nums; }
+.bl-fc__diff--up { color: var(--bl-danger); }
+.bl-fc__diff--down { color: var(--bl-success); }
+
+.bl-fc__note {
+  font-size: var(--bl-fs-sm);
+  color: var(--bl-text-secondary);
+  line-height: var(--bl-lh-normal);
+}
+
+/* ---- Inline stat --------------------------------------------------------- */
+
+.bl-fc__stat {
+  display: grid;
+  gap: 3px;
+  align-content: start;
+  min-width: 0;
+}
+
+.bl-fc__stat-value {
+  font-size: var(--bl-fs-xl);
+  font-weight: var(--bl-fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--bl-text);
+  overflow-wrap: anywhere;
+}

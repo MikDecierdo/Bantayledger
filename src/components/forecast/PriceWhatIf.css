@@ -1,0 +1,44 @@
+.bl-whatif__controls {
+  display: flex;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--bl-s4);
+  margin-bottom: var(--bl-s4);
+}
+.bl-whatif__controls .bl-field { width: 220px; }
+
+.bl-whatif__chips { display: flex; flex-wrap: wrap; gap: var(--bl-s2); padding-bottom: 7px; }
+
+.bl-whatif__totals {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s4);
+  flex-wrap: wrap;
+  padding: var(--bl-s3) var(--bl-s4);
+  margin-bottom: var(--bl-s4);
+  background: var(--bl-bg);
+  border-radius: var(--bl-r-md);
+}
+.bl-whatif__total {
+  font-size: var(--bl-fs-xl);
+  font-weight: var(--bl-fw-bold);
+  font-variant-numeric: tabular-nums;
+  margin-top: 2px;
+}
+.bl-whatif__total.is-up { color: var(--bl-danger); }
+.bl-whatif__total.is-down { color: var(--bl-green-dark); }
+
+.bl-whatif__chip {
+  border: 1px solid var(--bl-border-strong);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  border-radius: var(--bl-r-pill);
+  padding: 4px 12px;
+  min-height: 30px;
+  font-size: var(--bl-fs-xs);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+.bl-whatif__chip:hover { border-color: var(--bl-green-accent); background: var(--bl-green-soft); }

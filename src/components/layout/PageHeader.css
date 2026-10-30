@@ -1,0 +1,112 @@
+.bl-pageheader {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s4);
+  flex-wrap: wrap;
+  margin-bottom: var(--bl-s5);
+}
+
+.bl-pageheader__text { min-width: 0; flex: 1 1 320px; }
+
+.bl-pageheader__eyebrow { margin-bottom: var(--bl-s2); }
+
+.bl-pageheader__desc { margin-top: var(--bl-s1); max-width: 68ch; }
+
+.bl-pageheader__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s2);
+  flex-wrap: wrap;
+}
+
+/*
+ * On phones the sticky header already shows the page name, so the H1 is kept
+ * for the document outline but visually hidden, and actions go full width.
+ */
+@media (max-width: 767px) {
+  .bl-pageheader {
+    margin-bottom: var(--bl-s4);
+    gap: var(--bl-s3);
+  }
+
+  .bl-pageheader__title {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .bl-pageheader__text { flex-basis: 100%; }
+
+  .bl-pageheader__actions { width: 100%; }
+  .bl-pageheader__actions > .bl-btn { flex: 1 1 auto; min-height: 44px; }
+}
+
+/* Keep the H1 visible on pages rendered without the mobile chrome. */
+.bl-pageheader--always-title .bl-pageheader__title {
+  position: static;
+  width: auto;
+  height: auto;
+  margin: 0;
+  overflow: visible;
+  clip: auto;
+  white-space: normal;
+}
+
+/* ---- Desktop / tablet: pinned header --------------------------------------
+   The title and the page's major buttons stay in view while the page scrolls.
+   Margins cancel the scroll area's padding so the bar sits flush at the top
+   and spans the full width. Pages with an eyebrow (breadcrumbs) keep the
+   normal, taller header. */
+@media (min-width: 768px) {
+  :root { --bl-header-h: 84px; }
+
+  .bl-pageheader:not(:has(.bl-pageheader__eyebrow)) {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    box-sizing: border-box;
+    height: var(--bl-header-h);
+    align-items: center;
+    flex-wrap: nowrap;
+    margin: calc(-1 * var(--bl-main-pt, 0px)) calc(-1 * var(--bl-main-px, 0px)) var(--bl-s5);
+    padding: 0 var(--bl-main-px, 0px);
+    background: var(--bl-bg);
+    border-bottom: 1px solid var(--bl-border);
+  }
+  .bl-pageheader:not(:has(.bl-pageheader__eyebrow)) .bl-pageheader__text { flex: 1 1 auto; }
+  .bl-pageheader:not(:has(.bl-pageheader__eyebrow)) .bl-pageheader__desc {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
+  .bl-pageheader:not(:has(.bl-pageheader__eyebrow)) .bl-pageheader__actions {
+    flex-wrap: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+@media print {
+  .bl-pageheader { position: static !important; height: auto !important; margin: 0 0 var(--bl-s4) !important; padding: 0 !important; }
+}
+
+/* Opaque cover above the pinned header: whatever gap the scroll area's
+   padding leaves above it, rows never show through. */
+@media (min-width: 768px) {
+  .bl-pageheader:not(:has(.bl-pageheader__eyebrow))::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 100vh;
+    background: var(--bl-bg);
+    pointer-events: none;
+  }
+}

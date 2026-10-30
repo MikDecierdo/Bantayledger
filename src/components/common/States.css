@@ -1,0 +1,117 @@
+/* ---- Empty / error states ------------------------------------------------ */
+
+.bl-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--bl-s3);
+  padding: var(--bl-s10) var(--bl-s5);
+  background: var(--bl-surface);
+  border: 1px dashed var(--bl-border-strong);
+  border-radius: var(--bl-r-lg);
+}
+
+.bl-state--compact { padding: var(--bl-s6) var(--bl-s4); }
+
+.bl-state__icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--bl-r-lg);
+  background: var(--bl-green-light);
+  color: var(--bl-green);
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+}
+
+.bl-state--error .bl-state__icon {
+  background: var(--bl-danger-bg);
+  color: var(--bl-danger);
+}
+
+.bl-state__title {
+  font-size: var(--bl-fs-lg);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-text);
+}
+
+.bl-state__desc {
+  font-size: var(--bl-fs-base);
+  color: var(--bl-text-secondary);
+  max-width: 44ch;
+  margin: 0;
+}
+
+.bl-state .bl-btn { margin-top: var(--bl-s1); }
+
+/* ---- Skeletons ----------------------------------------------------------- */
+
+@keyframes bl-shimmer {
+  0% { background-position: -220px 0; }
+  100% { background-position: 220px 0; }
+}
+
+.bl-skeleton {
+  display: block;
+  background: #ECF1EE;
+  background-image: linear-gradient(90deg, #ECF1EE 0%, #F6F9F7 45%, #ECF1EE 90%);
+  background-size: 440px 100%;
+  background-repeat: no-repeat;
+  animation: bl-shimmer 1.25s linear infinite;
+  flex-shrink: 0;
+}
+
+.bl-skeleton-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bl-s2);
+  width: 100%;
+}
+
+.bl-skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bl-s3);
+}
+
+.bl-skeleton-grid {
+  display: grid;
+  gap: var(--bl-s4);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+}
+
+.bl-skeleton-rows { padding: 0; }
+
+.bl-skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  padding: var(--bl-s4);
+  border-bottom: 1px solid var(--bl-border);
+}
+.bl-skeleton-row:last-child { border-bottom: 0; }
+
+.bl-skeleton-row__body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bl-s2);
+  flex: 1;
+  min-width: 0;
+}
+
+/* ---- Button spinner ------------------------------------------------------ */
+
+@keyframes bl-spin {
+  to { transform: rotate(360deg); }
+}
+
+.bl-btn__spinner {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: bl-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}

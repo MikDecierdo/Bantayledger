@@ -1,0 +1,158 @@
+.bl-insight {
+  display: flex;
+  flex-direction: column;
+  gap: var(--bl-s3);
+  padding: var(--bl-s5);
+  min-width: 0;
+  /* Faint tint marks the card as generated without dressing it up. */
+  background: linear-gradient(var(--bl-green-soft), var(--bl-green-soft)) padding-box;
+}
+
+.bl-insight--compact { padding: var(--bl-s4); gap: var(--bl-s2); }
+
+.bl-insight__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s2);
+  flex-wrap: wrap;
+}
+
+.bl-insight__tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bl-green-dark);
+  background: var(--bl-surface);
+  border: 1px solid #D5E8DF;
+  border-radius: var(--bl-r-pill);
+  padding: 3px 9px 3px 7px;
+}
+.bl-insight__tag ion-icon { font-size: 13px; }
+
+.bl-insight__tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.bl-insight__title {
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-semibold);
+  line-height: var(--bl-lh-snug);
+  color: var(--bl-text);
+}
+
+.bl-insight__summary {
+  font-size: var(--bl-fs-base);
+  color: var(--bl-text-secondary);
+  line-height: var(--bl-lh-normal);
+}
+
+/* ---- Reasoning ----------------------------------------------------------- */
+
+.bl-insight__reasoning {
+  display: grid;
+  gap: var(--bl-s1);
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+  padding: var(--bl-s4);
+  margin: 0;
+}
+
+.bl-insight__reasoning dt {
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--bl-text-secondary);
+}
+
+.bl-insight__reasoning dd {
+  margin: 0 0 var(--bl-s3);
+  font-size: var(--bl-fs-base);
+  color: var(--bl-text);
+  line-height: var(--bl-lh-normal);
+}
+.bl-insight__reasoning dd:last-child { margin-bottom: 0; }
+
+/* ---- Supporting data ----------------------------------------------------- */
+
+.bl-insight__data {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 128px), 1fr));
+  gap: var(--bl-s2);
+}
+
+.bl-insight__datum {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+  padding: var(--bl-s3);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.bl-insight__datum-label {
+  font-size: var(--bl-fs-caption);
+  color: var(--bl-text-secondary);
+  line-height: 1.35;
+}
+
+.bl-insight__datum-value {
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--bl-text);
+  overflow-wrap: anywhere;
+}
+
+/* ---- Footer -------------------------------------------------------------- */
+
+.bl-insight__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  flex-wrap: wrap;
+  padding-top: var(--bl-s1);
+}
+
+.bl-insight__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-green-dark);
+  min-height: 32px;
+}
+.bl-insight__action:hover { text-decoration: underline; }
+.bl-insight__action ion-icon { font-size: 15px; }
+
+/* Optional AI write-up on trending insights. */
+.bl-insight__ai { display: grid; gap: var(--bl-s2); justify-items: start; }
+
+.bl-insight__ai-answer {
+  display: grid;
+  gap: var(--bl-s2);
+  width: 100%;
+  padding: var(--bl-s3) var(--bl-s4);
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+}
+.bl-insight__ai-answer p { white-space: pre-line; font-size: var(--bl-fs-sm); }
+.bl-insight__ai-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-bold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bl-green-dark);
+}

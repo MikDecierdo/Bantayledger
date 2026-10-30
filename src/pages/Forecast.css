@@ -1,0 +1,126 @@
+/* ---- Preview notice ------------------------------------------------------ */
+
+.bl-fcast__notice {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bl-s2);
+  background: var(--bl-info-bg);
+  border: 1px solid #CFE0E7;
+  border-radius: var(--bl-r-md);
+  padding: var(--bl-s3) var(--bl-s4);
+  margin-bottom: var(--bl-s4);
+  font-size: var(--bl-fs-sm);
+  color: var(--bl-info);
+}
+.bl-fcast__notice ion-icon { font-size: 17px; flex-shrink: 0; margin-top: 1px; }
+
+/* ---- Summary tiles ------------------------------------------------------- */
+
+.bl-fcast__sum { display: grid; gap: 4px; align-content: start; padding: var(--bl-s4) var(--bl-s5); }
+.bl-fcast__sum .bl-metric { margin: 2px 0; }
+
+/* ---- Product picker ------------------------------------------------------ */
+
+.bl-fcast__picker {
+  display: flex;
+  gap: var(--bl-s2);
+  overflow-x: auto;
+  padding-bottom: var(--bl-s3);
+  margin-bottom: var(--bl-s4);
+  border-bottom: 1px solid var(--bl-border);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.bl-fcast__picker::-webkit-scrollbar { display: none; }
+
+/* ---- Selected product detail --------------------------------------------- */
+
+.bl-fcast__detail-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s5);
+  flex-wrap: wrap;
+  margin-bottom: var(--bl-s5);
+}
+.bl-fcast__detail-head .bl-caption { margin-top: 2px; }
+
+.bl-fcast__detail-stats {
+  display: flex;
+  gap: var(--bl-s6);
+  flex-wrap: wrap;
+}
+
+.bl-fcast__stat-value {
+  font-size: var(--bl-fs-lg);
+  font-weight: var(--bl-fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  margin-top: 3px;
+  white-space: nowrap;
+}
+
+@media (max-width: 599px) {
+  .bl-fcast__detail-stats { gap: var(--bl-s4); width: 100%; }
+  .bl-fcast__detail-stats > div { flex: 1 1 90px; }
+}
+
+.bl-fcast__cards { margin-top: var(--bl-s4); }
+
+/* ---- Cost total ---------------------------------------------------------- */
+
+.bl-fcast__total-card { background: var(--bl-green-soft); }
+
+.bl-fcast__total {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--bl-s4);
+  flex-wrap: wrap;
+}
+.bl-fcast__total .bl-metric { margin: 3px 0 4px; color: var(--bl-green-dark); }
+
+/* ---- Accuracy ------------------------------------------------------------ */
+
+.bl-accuracy { display: grid; gap: var(--bl-s5); }
+
+.bl-accuracy__row { display: grid; gap: 6px; }
+
+.bl-accuracy__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  flex-wrap: wrap;
+}
+
+.bl-accuracy__metric {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-semibold);
+}
+.bl-accuracy__metric ion-icon { font-size: 16px; }
+.bl-accuracy__ok { color: var(--bl-success); }
+.bl-accuracy__warn { color: var(--bl-warning); }
+
+.bl-accuracy__value {
+  font-size: var(--bl-fs-base);
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.bl-accuracy__target { color: var(--bl-text-secondary); font-weight: var(--bl-fw-regular); }
+
+.bl-fcast__method {
+  margin-top: var(--bl-s5);
+  padding-top: var(--bl-s4);
+  border-top: 1px solid var(--bl-border);
+  font-size: var(--bl-fs-xs);
+  color: var(--bl-text-secondary);
+  line-height: var(--bl-lh-normal);
+}
+
+.bl-fcast__updated { margin: calc(-1 * var(--bl-s3)) 0 var(--bl-s4); }
