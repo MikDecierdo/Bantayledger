@@ -29,6 +29,16 @@ export function PasswordStrength({ password }: { password: string }) {
     symbol: t('A symbol (! @ # ? …)'),
   });
 
+  // Phones show one short line of what's still missing instead of the checklist.
+  const short: Record<string, string> = {
+    length: t('8+ characters'),
+    upper: t('A–Z'),
+    lower: t('a–z'),
+    number: t('0–9'),
+    symbol: t('symbol'),
+  };
+  const missing = rules.filter((r) => !r.met).map((r) => short[r.id] ?? r.label);
+
   return (
     <div className={`bl-pw bl-pw--l${level}`}>
       <div className="bl-pw__meter">
@@ -39,7 +49,15 @@ export function PasswordStrength({ password }: { password: string }) {
           <span />
         </div>
         <span className="bl-pw__label" aria-live="polite">
-          {level ? t('Password strength: {{level}}', { level: levelName(level) }) : t('Password strength')}
+          {level ? (
+            <>
+              {/* Phones show only the level word. */}
+              <span className="bl-pw__label-prefix">{t('Password strength')}: </span>
+              {levelName(level)}
+            </>
+          ) : (
+            t('Password strength')
+          )}
         </span>
       </div>
       <ul className="bl-pw__rules">
@@ -51,6 +69,9 @@ export function PasswordStrength({ password }: { password: string }) {
           </li>
         ))}
       </ul>
+      <p className="bl-pw__hint">
+        {missing.length === 0 ? t('Looks good') : `${t('Add:')} ${missing.join(' · ')}`}
+      </p>
     </div>
   );
 }

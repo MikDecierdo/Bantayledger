@@ -12,6 +12,7 @@ import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
 import { Logo } from '../components/brand/Logo';
 import Button from '../components/common/Button';
+import GoogleButton from '../components/auth/GoogleButton';
 import { TextField } from '../components/common/Field';
 import { useToast } from '../components/common/ToastProvider';
 import './Login.css';
@@ -130,6 +131,8 @@ export function Login() {
             <h1 className="bl-page-title">{t('Welcome back')}</h1>
             <p className="bl-support">{t('Sign in to continue managing your business.')}</p>
           </div>
+
+          <GoogleButton />
 
           <form className="bl-login__form" onSubmit={handleSubmit} noValidate>
             {errors.form && (

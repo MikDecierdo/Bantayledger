@@ -172,5 +172,9 @@
   "Choose how the customer paid.": "Piliin kung paano nagbayad ang customer.",
   "Use each payment method only once. Put the whole amount for that method in one line.": "Isang beses lang gamitin ang bawat paraan ng pagbabayad. Ilagay ang buong halaga ng paraang iyon sa isang linya.",
   "The cash and GCash amounts must add up to the sale total of :total.": "Dapat pantay sa kabuuang benta na :total ang pinagsamang halaga ng cash at GCash.",
-  "This record is still being saved. Please wait a moment.": "Sine-save pa ang record na ito. Maghintay sandali."
+  "This record is still being saved. Please wait a moment.": "Sine-save pa ang record na ito. Maghintay sandali.",
+  "Almost done. What is the name of your store?": "Malapit na. Ano ang pangalan ng tindahan mo?",
+  "Google sign-in is not set up yet. Use your email and password.": "Hindi pa naka-set up ang Google sign-in. Gamitin ang email at password mo.",
+  "Could not reach Google. Please try again.": "Hindi maabot ang Google. Subukan muli.",
+  "Google sign-in did not work. Please try again.": "Hindi gumana ang Google sign-in. Subukan muli."
 }
