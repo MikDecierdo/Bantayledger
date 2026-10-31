@@ -31,6 +31,7 @@ import './theme/swal.css';
 
 import './i18n';
 import App from './App';
+import { preventZoom } from './lib/noZoom';
 import { isInstalledApp } from './lib/platform';
 
 /*
@@ -39,6 +40,9 @@ import { isInstalledApp } from './lib/platform';
  * dynamic-import failure fires this event instead of throwing. Reloading once
  * picks up the current chunk instead of leaving the user stuck on a dead page.
  */
+// Fixed size like a native app — no pinch or double-tap zoom on phones.
+preventZoom();
+
 window.addEventListener('vite:preloadError', () => {
   window.location.reload();
 });
