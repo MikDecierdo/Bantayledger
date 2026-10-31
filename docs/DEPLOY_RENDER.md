@@ -82,3 +82,33 @@ VITE_API_URL=https://YOUR-SERVICE.onrender.com/api
 ```
 
 Then build the Android app — see `docs/ANDROID_BUILD.md`.
+
+## 7. Email for "Forgot password" (Brevo, free)
+
+Brevo's free plan sends up to 300 emails a day. Render's free plan blocks the
+usual email (SMTP) ports, so the server uses Brevo's web API instead
+(`MAIL_MAILER=brevo`, `laravel-server/app/Mail/BrevoApiTransport.php`).
+
+1. Sign up at https://www.brevo.com (free plan).
+2. **Senders, Domains & Dedicated IPs → Senders → Add a sender**: the email
+   people will see the message from. Brevo emails a code to confirm it.
+3. **SMTP & API → API keys → Generate a new API key** (name it
+   `BantayLedger Render`). Copy it: it is shown once.
+4. In Render, open **bantayledger-api → Environment** and make sure these
+   exist (add any that are missing), then **Save, rebuild and deploy**:
+
+| Key | Value |
+| --- | --- |
+| `MAIL_MAILER` | `brevo` |
+| `BREVO_API_KEY` | the API key from step 3 |
+| `MAIL_FROM_ADDRESS` | the sender email from step 2 |
+| `MAIL_FROM_NAME` | `BantayLedger AI` |
+| `FRONTEND_URL` | `https://bantayledger-web.onrender.com` |
+
+To test: on the sign-in page tap **Forgot password?**, enter your email, and
+open the link in the email (it expires after 60 minutes). If no email arrives,
+check the Spam folder, and Brevo → **Transactional → Logs**.
+
+A Gmail address works as the sender, but some emails may land in Spam because
+Gmail can't vouch for Brevo. Sending from your own domain (verified in Brevo)
+fixes that.

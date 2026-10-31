@@ -74,6 +74,22 @@ export const authClient = {
     return { userId: res.userId };
   },
 
+  /** Emails a reset link. Answers the same whether or not the email has an account. */
+  async requestPasswordReset(email: string): Promise<void> {
+    await api.post('/auth/forgot-password', { email: email.trim() });
+  },
+
+  /** Sets a new password from the emailed link and signs in. */
+  async resetPassword(token: string, email: string, password: string): Promise<{ userId: string }> {
+    const res = await api.post<{ userId: string; accessToken: string }>('/auth/reset-password', {
+      token,
+      email: email.trim(),
+      password,
+    });
+    setToken(res.accessToken);
+    return { userId: res.userId };
+  },
+
   async signOut(): Promise<void> {
     try {
       await api.post('/auth/logout');

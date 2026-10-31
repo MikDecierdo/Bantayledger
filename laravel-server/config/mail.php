@@ -70,6 +70,11 @@ return [
             'path' => env('MAIL_SENDMAIL_PATH', '/usr/sbin/sendmail -bs -i'),
         ],
 
+        // Brevo's HTTPS API; Render's free plan blocks SMTP ports.
+        'brevo' => [
+            'transport' => 'brevo',
+        ],
+
         'log' => [
             'transport' => 'log',
             'channel' => env('MAIL_LOG_CHANNEL'),

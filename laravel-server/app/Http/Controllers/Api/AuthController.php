@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 
 /**
@@ -88,6 +89,54 @@ class AuthController extends Controller
         $token = $user->createToken('api')->plainTextToken;
 
         return response()->json(['userId' => $user->user_id, 'accessToken' => $token]);
+    }
+
+    /**
+     * "Forgot password": emails a one-time reset link (valid 60 minutes) to the
+     * website's /reset-password page. Always answers the same way whether or
+     * not the email has an account, so it can't be used to look up accounts.
+     */
+    public function forgotPassword(Request $request)
+    {
+        $data = $request->validate(['email' => 'required|email']);
+
+        try {
+            Password::broker()->sendResetLink(['email' => strtolower(trim($data['email']))]);
+        } catch (\Throwable $e) {
+            report($e);
+            throw ApiException::badGateway('We could not send the email right now. Please try again in a few minutes.');
+        }
+
+        return response()->json(['ok' => true]);
+    }
+
+    /** Sets a new password from the emailed link, then signs the user in. */
+    public function resetPassword(Request $request)
+    {
+        $data = $request->validate([
+            'token' => 'required|string',
+            'email' => 'required|email',
+            'password' => ['required', 'string', 'min:8', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/\d/', 'regex:/[^A-Za-z0-9]/'],
+        ], [
+            'password.regex' => __('Use a stronger password: at least 8 characters with an uppercase letter, a lowercase letter, a number and a symbol.'),
+        ]);
+
+        $resetUser = null;
+        $status = Password::broker()->reset(
+            ['email' => strtolower(trim($data['email'])), 'token' => $data['token'], 'password' => $data['password']],
+            function (User $user, string $password) use (&$resetUser) {
+                $user->forceFill(['password' => Hash::make($password), 'remember_token' => Str::random(60)])->save();
+                $resetUser = $user;
+            },
+        );
+
+        if ($status !== Password::PASSWORD_RESET || ! $resetUser) {
+            throw ApiException::unprocessable('This reset link is invalid or has expired. Request a new one from the sign-in page.');
+        }
+
+        $token = $resetUser->createToken('api')->plainTextToken;
+
+        return response()->json(['userId' => $resetUser->user_id, 'accessToken' => $token]);
     }
 
     public function logout(Request $request)
