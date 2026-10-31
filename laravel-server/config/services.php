@@ -39,6 +39,13 @@ return [
         'base_url' => env('AI_BASE_URL'),
     ],
 
+    // "Continue with Google": the OAuth client ids whose ID tokens we accept
+    // (the Web client id; comma-separate several). Empty = Google sign-in off.
+    'google' => [
+        'client_ids' => array_values(array_filter(array_map('trim', explode(',', (string) env('GOOGLE_CLIENT_IDS', ''))))),
+        'tokeninfo_url' => env('GOOGLE_TOKENINFO_URL', 'https://oauth2.googleapis.com/tokeninfo'),
+    ],
+
     'slack' => [
         'notifications' => [
             'bot_user_oauth_token' => env('SLACK_BOT_USER_OAUTH_TOKEN'),

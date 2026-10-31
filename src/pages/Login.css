@@ -1,6 +1,14 @@
+/* Ionic pins <body> and the page wrapper (no page scrolling), so the
+   sign-in, sign-up and password screens scroll inside their own container —
+   otherwise a long form on a phone runs past the bottom with no way down to
+   its button. */
 .bl-login {
-  min-height: 100vh;
-  min-height: 100dvh;
+  height: 100vh;
+  height: 100dvh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   display: grid;
   grid-template-columns: 1fr;
   background: var(--bl-bg);

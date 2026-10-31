@@ -52,6 +52,8 @@ export interface AuthState {
   isDemoMode: boolean;
 
   signIn: (email: string, password: string) => Promise<void>;
+  /** "Continue with Google"; `needsBusinessName` means ask for the store name and call again. */
+  signInWithGoogle: (idToken: string, businessName?: string) => Promise<'ok' | 'needsBusinessName'>;
   signUp: (input: SignUpInput) => Promise<{ needsEmailConfirmation: boolean }>;
   signOut: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
@@ -156,6 +158,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     [loadUserContext],
   );
 
+  const signInWithGoogle = useCallback(
+    async (idToken: string, businessName?: string) => {
+      const outcome = await authClient.signInWithGoogle(idToken, businessName);
+      if (outcome === 'ok') await loadUserContext();
+      return outcome;
+    },
+    [loadUserContext],
+  );
+
   const signUp = useCallback(
     async (input: SignUpInput) => {
       await authClient.signUp(input);
@@ -247,6 +258,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       isManager: role === 'OWNER',
       isDemoMode: false,
       signIn,
+      signInWithGoogle,
       signUp,
       signOut,
       requestPasswordReset,
@@ -263,6 +275,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       activeBusiness,
       role,
       signIn,
+      signInWithGoogle,
       signUp,
       signOut,
       requestPasswordReset,

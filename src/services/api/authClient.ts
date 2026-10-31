@@ -1,5 +1,5 @@
 import type { BusinessRole, BusinessRow, ProfileRow } from '../../types/database';
-import { api, setToken } from './client';
+import { ApiError, api, setToken } from './client';
 
 /**
  * Auth against the Laravel backend (Sanctum tokens). Replaces both the
@@ -63,6 +63,27 @@ export const authClient = {
     });
     setToken(res.accessToken);
     return { userId: res.userId };
+  },
+
+  /**
+   * "Continue with Google". A new Google user must name their store first:
+   * then this returns `needsBusinessName` and the same token is sent again
+   * with the name.
+   */
+  async signInWithGoogle(idToken: string, businessName?: string): Promise<'ok' | 'needsBusinessName'> {
+    try {
+      const res = await api.post<{ userId: string; accessToken: string }>('/auth/google', {
+        idToken,
+        businessName: businessName?.trim() || undefined,
+      });
+      setToken(res.accessToken);
+      return 'ok';
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 422 && (err.data as { needsBusinessName?: boolean } | undefined)?.needsBusinessName) {
+        return 'needsBusinessName';
+      }
+      throw err;
+    }
   },
 
   async signIn(email: string, password: string): Promise<{ userId: string }> {

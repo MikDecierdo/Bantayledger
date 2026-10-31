@@ -1,0 +1,56 @@
+/* "Continue with Google" (GoogleButton.tsx): Google's look — white button,
+   grey outline, colour logo — so people recognise it at once. */
+
+.bl-google { display: grid; gap: var(--bl-s3); margin: var(--bl-s2) 0 var(--bl-s4); }
+
+.bl-google__or {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  color: var(--bl-text-secondary);
+  font-size: var(--bl-fs-sm);
+}
+.bl-google__or::before,
+.bl-google__or::after { content: ''; flex: 1; height: 1px; background: var(--bl-border); }
+
+.bl-google__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bl-s3);
+  width: 100%;
+  min-height: 48px;
+  padding: 0 var(--bl-s4);
+  border: 1px solid #DADCE0;
+  border-radius: var(--bl-r-md);
+  background: #fff;
+  color: #1F1F1F;
+  font: inherit;
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-semibold);
+  cursor: pointer;
+  transition: background var(--bl-dur-fast) var(--bl-ease), border-color var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-google__btn:hover:not(:disabled) { background: #F8FAFF; border-color: #C6CACF; }
+.bl-google__btn:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+.bl-google__btn:disabled { opacity: 0.7; cursor: progress; }
+
+.bl-google__step {
+  display: grid;
+  gap: var(--bl-s3);
+  padding: var(--bl-s4);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+  background: var(--bl-surface-muted);
+}
+.bl-google__step-title { margin: 0; font-weight: var(--bl-fw-semibold); }
+.bl-google__back {
+  justify-self: center;
+  border: 0;
+  background: none;
+  color: var(--bl-green-dark);
+  font: inherit;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+  cursor: pointer;
+}
