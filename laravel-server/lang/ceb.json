@@ -184,5 +184,21 @@
   "We could not send the email right now. Please try again in a few minutes.": "Dili namo mapadala ang email karon. Palihug sulayi pag-usab human sa pipila ka minuto.",
   "This reset link is invalid or has expired. Request a new one from the sign-in page.": "Dili na balido o expired na kini nga reset link. Pangayo og bag-o sa sign-in page.",
   "All rights reserved.": "Gitagana ang tanang katungod.",
-  "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Kung dili mogana ang button nga \":actionText\", kopyaha ug i-paste ang URL sa ubos\nsa imong web browser:"
+  "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Kung dili mogana ang button nga \":actionText\", kopyaha ug i-paste ang URL sa ubos\nsa imong web browser:",
+  "Reset your password": "I-reset ang imong password",
+  "Use this link within :minutes minutes to choose a new password.": "Gamita kini nga link sulod sa :minutes ka minuto aron mopili og bag-ong password.",
+  "Business & forecast tracker": "Tigsubay sa negosyo ug forecast",
+  "Password reset": "Pag-reset sa password",
+  "We received a request to reset the password for your BantayLedger AI account,": "Nakadawat mi og hangyo nga i-reset ang password sa imong BantayLedger AI account,",
+  "Tap the button below to choose a new one.": "I-tap ang button sa ubos aron mopili og bag-o.",
+  "Open the link below to choose a new one.": "Ablihi ang link sa ubos aron mopili og bag-o.",
+  "Expires": "Mo-expire",
+  "In :minutes minutes": "Sulod sa :minutes ka minuto",
+  "Works": "Magamit",
+  "One time only": "Kausa ra",
+  "Didn't ask for this?": "Dili ikaw ang nangayo niini?",
+  "You can ignore this email. Your password won't change, and someone may have typed your email by mistake.": "Mahimo nimong ibaliwala kini nga email. Dili mausab ang imong password, ug basin adunay nasayop og type sa imong email.",
+  "Button not working? Copy this link into your browser:": "Dili mogana ang button? Kopyaha kini nga link sa imong browser:",
+  "For Philippine sari-sari stores and small shops": "Para sa mga sari-sari store ug gagmayng tindahan sa Pilipinas",
+  "You received this because a password reset was requested for :email.": "Nadawat nimo kini kay adunay nangayo nga i-reset ang password para sa :email."
 }
