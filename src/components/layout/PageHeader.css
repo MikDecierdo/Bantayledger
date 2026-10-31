@@ -92,6 +92,32 @@
   }
 }
 
+/* ---- Desktop fit mode ------------------------------------------------------
+   Nothing scrolls, so the bar no longer needs to stick: a compact, static
+   title bar flush with the top of the window. Pages with breadcrumbs get the
+   same compact type, but stay in the flow under their breadcrumb. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  :root { --bl-header-h: 64px; }
+
+  .bl-pageheader:not(:has(.bl-pageheader__eyebrow)) { position: relative; }
+  .bl-pageheader:not(:has(.bl-pageheader__eyebrow))::before { display: none; }
+
+  .bl-pageheader .bl-page-title { font-size: var(--bl-fs-xl); line-height: 1.25; }
+  .bl-pageheader__desc { font-size: var(--bl-fs-sm); margin-top: 2px; }
+
+  .bl-pageheader:has(.bl-pageheader__eyebrow) {
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+  .bl-pageheader:has(.bl-pageheader__eyebrow) .bl-pageheader__eyebrow { margin-bottom: 2px; }
+  .bl-pageheader:has(.bl-pageheader__eyebrow) .bl-pageheader__desc {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bl-pageheader:has(.bl-pageheader__eyebrow) .bl-pageheader__actions { flex-wrap: nowrap; flex-shrink: 0; }
+}
+
 @media print {
   .bl-pageheader { position: static !important; height: auto !important; margin: 0 0 var(--bl-s4) !important; padding: 0 !important; }
 }

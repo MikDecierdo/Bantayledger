@@ -8,6 +8,7 @@ import AlertCard from '../components/dashboard/AlertCard';
 import PageHeader from '../components/layout/PageHeader';
 import PinnedSummary from '../components/layout/PinnedSummary';
 import { Card } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
 import { alertError, confirmAction } from '../lib/swal';
@@ -151,7 +152,7 @@ export function Alerts() {
   };
 
   return (
-    <>
+    <Workspace>
       {header}
 
       {/* Severity totals, each labelled — never color alone. */}
@@ -175,15 +176,21 @@ export function Alerts() {
         </div>
       </PinnedSummary>
 
-      <div className="bl-alerts__filters">
-        <ChipFilter
-          label={t('Filter alerts by priority')}
-          value={filter}
-          onChange={setFilter}
-          options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))}
-        />
-      </div>
-
+      <Bento>
+      <Card
+        fill
+        className="bl-alerts__panel"
+        action={
+          <div className="bl-alerts__filters">
+            <ChipFilter
+              label={t('Filter alerts by priority')}
+              value={filter}
+              onChange={setFilter}
+              options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))}
+            />
+          </div>
+        }
+      >
       <ResultCount shown={filtered.length} total={visible.length} noun="alerts" />
 
       {filtered.length === 0 ? (
@@ -216,7 +223,9 @@ export function Alerts() {
           ))}
         </ul>
       )}
-    </>
+      </Card>
+      </Bento>
+    </Workspace>
   );
 }
 

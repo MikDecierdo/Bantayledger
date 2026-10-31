@@ -26,6 +26,10 @@ export interface ExpenseOverview {
     monthChangePct: number;
     largestCategory: ExpenseCategory;
     largestCategoryAmount: number;
+    /** This month's sales profit (sales minus capital). */
+    profitMonth: number;
+    /** Profit not yet spent on expenses this month; the most one more expense may be. */
+    availableProfit: number;
   };
   byCategory: SeriesPoint[];
   last6Months: SeriesPoint[];

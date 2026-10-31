@@ -204,6 +204,7 @@ export function TeamSettings() {
           resetAddForm();
         }}
         title={t('Add staff')}
+        icon="team"
         description={t('Staff can record sales, purchases, expenses and stock. They cannot change products or the team.')}
         footer={
           <>
@@ -290,6 +291,7 @@ export function TeamSettings() {
           setErrors({});
         }}
         title={t('Reset password')}
+        icon="password"
         description={resetFor ? t('Set a new password for {{name}}. They will be signed out everywhere.', { name: resetFor.fullName }) : ''}
         footer={
           <>

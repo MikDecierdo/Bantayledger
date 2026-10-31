@@ -25,6 +25,7 @@ import Toolbar, {
 } from '../components/common/Toolbar';
 import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
 import { alertError, alertSuccess, confirmAction, promptNumber, promptText } from '../lib/swal';
@@ -627,9 +628,16 @@ export function Inventory() {
   }
 
   return (
-    <>
+    <Workspace>
       {header}
 
+      <Bento>
+      <Card
+        fill
+        padding="none"
+        as="h2"
+        title={t('Products')}
+        action={
       <Toolbar>
         <ToolbarSearch>
           <SearchInput
@@ -653,7 +661,8 @@ export function Inventory() {
           />
         </ToolbarFilters>
       </Toolbar>
-
+        }
+      >
       <div className="bl-inv__chips">
         <ChipFilter
           label={t('Filter by stock status')}
@@ -938,6 +947,8 @@ export function Inventory() {
           </ul>
         </>
       )}
+      </Card>
+      </Bento>
 
       {/* ---- Add / edit product form -------------------------------------- */}
       <Modal
@@ -945,6 +956,7 @@ export function Inventory() {
         onClose={closeModal}
         size="lg"
         title={editingProductId ? t('Edit Product') : t('Add Product')}
+        icon="product"
         description={
           editingProductId
             ? t("Update this product's details.")
@@ -1220,7 +1232,7 @@ export function Inventory() {
           ))}
         </form>
       </Modal>
-    </>
+    </Workspace>
   );
 }
 

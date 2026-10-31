@@ -11,6 +11,21 @@
   overflow: hidden;
 }
 
+.bl-chart__box { position: relative; }
+
+/* Desktop fit mode: the chart grows to the height its card is given. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-chart--fill {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+  .bl-chart--fill .bl-chart__plot { flex: 1 1 0; min-height: 120px; }
+  .bl-chart--fill .bl-chart__box { height: 100%; overflow: hidden; }
+  .bl-chart--fill .bl-chart__data { flex-shrink: 0; margin-top: var(--bl-s2); }
+}
+
 .bl-chart__plot svg {
   display: block;
   width: 100%;

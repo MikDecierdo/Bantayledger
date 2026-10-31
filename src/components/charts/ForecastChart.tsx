@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useElementWidth } from '../../hooks/useElementWidth';
+import { useElementSize } from '../../hooks/useElementSize';
 import type { ForecastPoint } from '../../types';
 import { ChartFrame, ChartTable, ChartTooltip } from './ChartFrame';
 import {
@@ -19,6 +19,8 @@ interface ForecastChartProps {
   format: (value: number) => string;
   axisFormat?: (value: number) => string;
   height?: number;
+  /** Grow to the card's height in desktop fit mode (see TrendChart). */
+  fill?: boolean;
   /** Name of the measure, e.g. "Bottles sold" or "Unit price". */
   measure: string;
   summary: string;
@@ -35,11 +37,13 @@ export function ForecastChart({
   data,
   format,
   axisFormat,
-  height = 220,
+  height: fixedHeight = 220,
+  fill = false,
   measure,
   summary,
 }: ForecastChartProps) {
-  const [ref, width] = useElementWidth<HTMLDivElement>();
+  const [ref, width, boxHeight] = useElementSize<HTMLDivElement>();
+  const height = fill && boxHeight >= 120 ? Math.round(boxHeight) : fixedHeight;
   const [hover, setHover] = useState<number | null>(null);
 
   const fmtAxis = axisFormat ?? format;
@@ -105,6 +109,7 @@ export function ForecastChart({
 
   return (
     <ChartFrame
+      className={fill ? 'bl-chart--fill' : undefined}
       summary={summary}
       legend={[
         { label: t('Recorded'), color: CHART.primary, style: 'solid' },
@@ -126,7 +131,7 @@ export function ForecastChart({
         />
       }
     >
-      <div ref={ref} style={{ position: 'relative' }}>
+      <div ref={ref} className="bl-chart__box">
         <svg
           width={width}
           height={height}

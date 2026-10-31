@@ -42,6 +42,8 @@ export function Card({
   children,
   className,
   padding = 'normal',
+  fill = false,
+  as: Heading = 'h3',
 }: {
   title?: string;
   description?: string;
@@ -49,6 +51,13 @@ export function Card({
   children: ReactNode;
   className?: string;
   padding?: 'normal' | 'tight' | 'none';
+  /**
+   * Desktop fit mode: the card takes the height the page layout gives it, the
+   * heading row stays put and the content scrolls inside the card.
+   */
+  fill?: boolean;
+  /** Heading level for the title; h2 when the card stands in for a section. */
+  as?: 'h2' | 'h3';
 }) {
   return (
     <div
@@ -56,6 +65,7 @@ export function Card({
         'bl-card',
         padding === 'tight' ? 'bl-card--tight' : '',
         padding === 'none' ? 'bl-card--flush' : '',
+        fill ? 'bl-card--fill' : '',
         className ?? '',
       ]
         .filter(Boolean)
@@ -64,13 +74,13 @@ export function Card({
       {(title || action) && (
         <div className="bl-card__header">
           <div className="bl-card__header-text">
-            {title && <h3 className="bl-card-title">{title}</h3>}
+            {title && <Heading className="bl-card-title">{title}</Heading>}
             {description && <p className="bl-caption">{description}</p>}
           </div>
           {action}
         </div>
       )}
-      {children}
+      {fill ? <div className="bl-card__body bl-scroll">{children}</div> : children}
     </div>
   );
 }

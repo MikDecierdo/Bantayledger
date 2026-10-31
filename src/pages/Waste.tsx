@@ -18,6 +18,7 @@ import StatCard from '../components/dashboard/StatCard';
 import PageHeader from '../components/layout/PageHeader';
 import PinnedSummary from '../components/layout/PinnedSummary';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, Rail, Workspace } from '../components/layout/Workspace';
 import { wasteReasons } from '../data/mockWaste';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
@@ -158,7 +159,7 @@ export function Waste() {
   const { summary, byReason, last6Months } = overview;
 
   return (
-    <>
+    <Workspace>
       {header}
 
       <PinnedSummary>
@@ -197,28 +198,14 @@ export function Waste() {
         </Section>
       </PinnedSummary>
 
-      <div className="bl-grid bl-grid--split bl-grid--gap-lg">
-        <Section title={t('Losses over time')} description={t('Estimated cost over the last 6 months')}>
-          <Card>
-            <BarChart
-              data={last6Months}
-              format={(v) => peso(v)}
-              axisFormat={pesoCompact}
-              seriesName="Cost of losses"
-              summary={t('Bar chart of monthly cost of spoiled and damaged items from April to September 2026, peaking at ₱710 in June and falling to ₱303 in September.')}
-              height={230}
-            />
-          </Card>
-        </Section>
-
-        <Section title={t('By reason')} description={t('Month to date')}>
-          <Card>
-            <BarList data={byReason} format={(v) => peso(v)} />
-          </Card>
-        </Section>
-      </div>
-
-      <Section title={t('Spoiled & damaged items')}>
+      <Bento>
+        <Card
+          fill
+          padding="none"
+          as="h2"
+          className="bl-span-8"
+          title={t('Spoiled & damaged items')}
+          action={
         <Toolbar>
           <ToolbarSearch>
             <SearchInput
@@ -241,7 +228,8 @@ export function Waste() {
             />
           </ToolbarFilters>
         </Toolbar>
-
+          }
+        >
         {filtered.length > 0 && (
           <div className="bl-tx__totals">
             <div>
@@ -356,12 +344,31 @@ export function Waste() {
             </ul>
           </>
         )}
-      </Section>
+        </Card>
+
+        <Rail className="bl-span-4 bl-first-small">
+          <Card fill title={t('Losses over time')} description={t('Estimated cost over the last 6 months')}>
+            <BarChart
+              data={last6Months}
+              format={(v) => peso(v)}
+              axisFormat={pesoCompact}
+              seriesName="Cost of losses"
+              summary={t('Bar chart of monthly cost of spoiled and damaged items from April to September 2026, peaking at ₱710 in June and falling to ₱303 in September.')}
+              height={200}
+              fill
+            />
+          </Card>
+          <Card fill title={t('By reason')} description={t('Month to date')}>
+            <BarList data={byReason} format={(v) => peso(v)} />
+          </Card>
+        </Rail>
+      </Bento>
 
       <Modal
         isOpen={addOpen}
         onClose={() => setAddOpen(false)}
         title={t('Record Spoiled/Damaged Item')}
+        icon="waste"
         description={t('Record stock that can no longer be sold so losses are visible.')}
         footer={
           <>
@@ -427,7 +434,7 @@ export function Waste() {
           />
         </form>
       </Modal>
-    </>
+    </Workspace>
   );
 }
 

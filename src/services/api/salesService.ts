@@ -15,6 +15,13 @@ export interface SalesOverview {
     averageBasket: number;
     todayCash: number;
     todayGCash: number;
+    /** Money spent on the goods sold (buying price locked in at sale time). */
+    capitalToday: number;
+    profitToday: number;
+    capitalWeek: number;
+    profitWeek: number;
+    capitalMonth: number;
+    profitMonth: number;
   };
   last7Days: SeriesPoint[];
   last6Months: SeriesPoint[];
@@ -27,11 +34,21 @@ export interface SaleItemInput {
   unitPrice: number;
 }
 
+export interface SalePaymentInput {
+  method: 'Cash' | 'GCash';
+  amount: number;
+  /** Required for GCash: the last 4 digits of the GCash reference number. */
+  reference?: string;
+}
+
 export interface SaleInput {
   items: SaleItemInput[];
-  paymentMethod: PaymentMethod;
+  /** One method for the whole sale. Use `payments` instead for a split payment. */
+  paymentMethod?: PaymentMethod;
   /** Required for GCash: the last 4 digits of the GCash reference number. */
   paymentReference?: string;
+  /** A cash part and a GCash part that together equal the sale total. */
+  payments?: SalePaymentInput[];
   saleDate?: string;
   notes?: string;
   reference?: string;

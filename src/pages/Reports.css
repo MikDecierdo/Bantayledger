@@ -72,3 +72,17 @@
 @media print {
   .bl-rep__filters { position: static; }
 }
+
+/* ---- Desktop fit mode ------------------------------------------------------
+   Filters, period figures and report tabs stack tightly; the chosen report
+   fills the rest of the screen. The period is already in the filters, so
+   the summary heading is dropped. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-rep > .bl-section .bl-section__head { display: none; }
+  .bl-rep__filters { padding: var(--bl-s3) var(--bl-s4); }
+  .bl-rep__filters-row { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .bl-rep__sum { padding: var(--bl-s3) var(--bl-s4); gap: 2px; }
+  .bl-rep__sum .bl-metric { font-size: var(--bl-fs-xl); margin: 0; }
+  .bl-rep__sum .bl-caption { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bl-rep__tabs { padding-bottom: 0; }
+}

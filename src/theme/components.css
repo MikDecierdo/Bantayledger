@@ -157,6 +157,8 @@
   border: 1px solid var(--bl-border);
   border-radius: var(--bl-r-lg);
   padding: var(--bl-s5);
+  /* A hairline lift so white cards read as surfaces on the pale page. */
+  box-shadow: var(--bl-shadow-xs);
 }
 
 .bl-card--raised { box-shadow: var(--bl-shadow-sm); }
@@ -192,6 +194,54 @@
 
 .bl-card__header-text { min-width: 0; }
 .bl-card__header-text p { margin-top: 2px; }
+
+/* ---- Fill card (desktop fit mode) -----------------------------------------
+   Takes the height the page grid gives it: the heading row stays put and the
+   body scrolls inside the card. Elsewhere the body is an ordinary block. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-card--fill {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    padding: var(--bl-s4);
+  }
+  .bl-card--fill > .bl-card__header { flex-shrink: 0; margin-bottom: var(--bl-s3); align-items: center; }
+  .bl-card--fill > .bl-card__body {
+    flex: 1 1 0;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  .bl-card--fill > .bl-card__body > * { flex-shrink: 0; }
+
+  /* Flush cards (tables, lists): the header keeps its padding, the content
+     runs edge to edge. */
+  .bl-card--fill.bl-card--flush { padding: 0; }
+  .bl-card--fill.bl-card--flush > .bl-card__header {
+    padding: var(--bl-s3) var(--bl-s4);
+    margin: 0;
+    border-bottom: 1px solid var(--bl-border);
+  }
+
+  /* Tables scroll with the card body so the column headings can stick. */
+  .bl-card--fill .bl-table-wrap { overflow: visible; }
+  .bl-card--fill .bl-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: var(--bl-surface-muted);
+    box-shadow: inset 0 -1px 0 var(--bl-border);
+  }
+  .bl-card--fill .bl-table tbody td { padding-top: 10px; padding-bottom: 10px; }
+  /* A nested card inside a fill card (e.g. a table's own Card) loses its frame. */
+  .bl-card--fill .bl-card__body > .bl-responsive-table > .bl-card,
+  .bl-card--fill .bl-card__body > .bl-card { border: 0; border-radius: 0; box-shadow: none; overflow: visible; }
+
+  .bl-card--fill .bl-state { margin: auto 0; }
+}
 
 /* A product tile in the POS cart grid: a card button sized and centered for
    a thumbnail + short label, rather than card's usual free-flowing content. */
@@ -462,19 +512,20 @@
 
 .bl-form-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--bl-s4);
 }
+.bl-form-grid > * { min-width: 0; }
 @media (min-width: 600px) {
   .bl-form-grid--2,
-  .bl-form-grid--3 { grid-template-columns: 1fr 1fr; }
+  .bl-form-grid--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .bl-form-grid__full { grid-column: 1 / -1; }
 }
 /* Used by the Add/Edit Product form only, which is wide enough at desktop
    (the normalized 880px modal tier) to pack a third column in — other
    modals stay on `--2` so they're unaffected. */
 @media (min-width: 1024px) {
-  .bl-form-grid--3 { grid-template-columns: repeat(3, 1fr); }
+  .bl-form-grid--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 /* checkbox / switch */

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Services\ProfitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -42,6 +43,16 @@ class ExpenseController extends Controller
             'expenseDate' => 'nullable|date',
         ]);
 
+        // An expense can only be paid out of the profit still available that month.
+        $expenseDate = $data['expenseDate'] ?? now()->format('Y-m-d');
+        $available = ProfitService::availableForMonth($business, $expenseDate)['available'];
+        if ((float) $data['amount'] > $available) {
+            throw ApiException::unprocessable(
+                'This is more than your available profit of :amount. Record more sales first, or enter a smaller amount.',
+                ['amount' => '₱'.number_format($available, 2)]
+            );
+        }
+
         DB::table('expenses')->insert([
             'expense_id' => (string) Str::uuid(),
             'business_id' => $business,
@@ -49,7 +60,7 @@ class ExpenseController extends Controller
             'category' => $data['category'],
             'description' => trim($data['description']),
             'amount' => $data['amount'],
-            'expense_date' => $data['expenseDate'] ?? now()->format('Y-m-d'),
+            'expense_date' => $expenseDate,
         ]);
 
         return response()->noContent(201);
@@ -108,6 +119,8 @@ class ExpenseController extends Controller
             $last6Months[] = ['label' => $d->format('M'), 'value' => $byMonth[$d->format('Y-m')] ?? 0];
         }
 
+        $month = ProfitService::availableForMonth($business, $today);
+
         return [
             'summary' => [
                 'today' => $todayTotal,
@@ -116,6 +129,8 @@ class ExpenseController extends Controller
                 'monthChangePct' => $pct($monthToDate, $prevMonth),
                 'largestCategory' => $byCategoryList[0]['label'] ?? 'Utilities',
                 'largestCategoryAmount' => $byCategoryList[0]['value'] ?? 0,
+                'profitMonth' => $month['profit'],
+                'availableProfit' => $month['available'],
             ],
             'byCategory' => $byCategoryList,
             'last6Months' => $last6Months,

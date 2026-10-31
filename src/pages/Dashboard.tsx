@@ -32,6 +32,7 @@ import StatCard from '../components/dashboard/StatCard';
 import PageHeader from '../components/layout/PageHeader';
 import PinnedSummary from '../components/layout/PinnedSummary';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { exportDashboardReceipt } from '../lib/exportDashboard';
@@ -107,7 +108,7 @@ export function Dashboard() {
   const hasForecasts = Boolean(topDemand || topPrice || topCost);
 
   return (
-    <>
+    <Workspace className="bl-dash">
       {/*
         The greeting is the first thing on the page. On phones the page title is
         hidden (the sticky bar carries it), so the greeting is repeated here as
@@ -127,6 +128,22 @@ export function Dashboard() {
         hideDescriptionOnMobile
         actions={
           <>
+            <Button
+              variant="secondary"
+              className="bl-fit-only"
+              icon={bagOutline}
+              onClick={() => history.push('/purchases', { openAdd: true })}
+            >
+              {t('New Purchase')}
+            </Button>
+            <Button
+              variant="secondary"
+              className="bl-fit-only"
+              icon={walletOutline}
+              onClick={() => history.push('/expenses', { openAdd: true })}
+            >
+              {t('Add Expense')}
+            </Button>
             <Button
               variant="secondary"
               icon={documentTextOutline}
@@ -153,7 +170,7 @@ export function Dashboard() {
         "Record Sale" isn't repeated here since it's already the header's
         primary action above.
       */}
-      <div className="bl-grid bl-grid--quickactions">
+      <div className="bl-grid bl-grid--quickactions bl-fit-hide">
         <Button
           variant="secondary"
           icon={bagOutline}
@@ -235,200 +252,141 @@ export function Dashboard() {
         </Section>
       </PinnedSummary>
 
-      {/* ---- Urgent alerts ----------------------------------------------- */}
-      <Section
-        title={t('Urgent alerts')}
-        description={t('Issues that may affect sales in the next few days')}
-        action={
-          <Link to="/alerts" className="bl-viewall">
-            {t('View all')}
-            <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
-          </Link>
-        }
-      >
-        {criticalAlerts.length === 0 ? (
-          <EmptyState
-            icon={checkmarkCircleOutline}
-            title={t('No critical alerts')}
-            description={t('Nothing needs your immediate attention. We will let you know if that changes.')}
-            compact
-          />
-        ) : (
-          <div className="bl-grid bl-grid--2">
-            {criticalAlerts.map((alert) => (
-              <AlertCard key={alert.id} alert={alert} />
-            ))}
-          </div>
-        )}
-      </Section>
-
-      {/* ---- Sales / expenses overview ------------------------------------- */}
-      <div className="bl-grid bl-grid--split bl-grid--gap-lg bl-dash__split">
-        <Section title={t('Sales overview')} description={t('Total sales over the last 7 days')}>
-          <Card>
-            <div className="bl-dash__chart-head">
-              <div>
-                <span className="bl-label">{t('This week')}</span>
-                <p className="bl-metric">{peso(sales.week)}</p>
-              </div>
-              <dl className="bl-dash__chart-facts">
-                <div>
-                  <dt>{t('Transactions today')}</dt>
-                  <dd>{sales.transactionsToday}</dd>
-                </div>
-                <div>
-                  <dt>{t('Average basket')}</dt>
-                  <dd>{peso(sales.averageBasket)}</dd>
-                </div>
-              </dl>
-            </div>
-
-            <TrendChart
-              data={salesLast7Days}
-              format={(v) => peso(v)}
-              axisFormat={pesoCompact}
-              seriesName="Total sales"
-              summary={t('Line chart of gross sales over the last seven days, rising from ₱3,620 on Thursday to ₱4,250 on Wednesday, peaking at ₱5,240 on Saturday.')}
-              height={210}
-            />
-          </Card>
-        </Section>
-
-        <Section title={t('Expense overview')} description={t('Month to date by category')}>
-          <Card>
-            <div className="bl-dash__expense-head">
-              <div>
-                <span className="bl-label">{t('Month to date')}</span>
-                <p className="bl-metric">{peso(expenses.monthToDate)}</p>
-              </div>
-              <p className="bl-caption">
-                {t('Largest: {{largestCategory}} ({{v2}})', { largestCategory: expenses.largestCategory, v2: peso(expenses.largestCategoryAmount) })}
-              </p>
-            </div>
-            <BarList data={expensesByCategory.slice(0, 5)} format={(v) => peso(v)} />
-            <Link to="/expenses" className="bl-viewall bl-dash__card-link">
-              {t('View all expenses')}
+      <Bento rows="minmax(0, 1fr) minmax(0, 1fr)">
+        {/* ---- Sales / expenses overview ----------------------------------- */}
+        <Card
+          fill
+          as="h2"
+          className="bl-span-6"
+          title={t('Sales overview')}
+          description={t('Total sales over the last 7 days')}
+          action={
+            <Link to="/sales" className="bl-viewall">
+              {t('View all')}
               <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
             </Link>
-          </Card>
-        </Section>
-      </div>
-
-      {/* ---- Inventory risks ------------------------------------------------ */}
-      <Section
-        title={t('Inventory risks')}
-        description={t('Products below their minimum stock level')}
-        action={
-          <Link to="/inventory" className="bl-viewall">
-            {t('Open inventory')}
-            <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
-          </Link>
-        }
-      >
-        {atRisk.length === 0 ? (
-          <EmptyState
-            icon={checkmarkCircleOutline}
-            title={t('All products are healthy')}
-            description={t('Every product is above its minimum stock level.')}
-            compact
-          />
-        ) : (
-          <Card padding="none">
-            <ul className="bl-risklist">
-              {atRisk.map((product) => {
-                const cover = product.currentStock / (product.averageDailyDemand || 1);
-                return (
-                  <li key={product.id}>
-                    <Link to={`/inventory/${product.id}`} className="bl-risklist__row">
-                      <span className="bl-risklist__main">
-                        <span className="bl-risklist__name">{product.name}</span>
-                        <span className="bl-caption">
-                          {t('{{stock}} of {{min}} {{unit}} minimum', {
-                            stock: number(product.currentStock),
-                            min: number(product.minimumStock),
-                            unit: product.unit,
-                          })}
-                        </span>
-                      </span>
-
-                      <span className="bl-risklist__cover bl-hide-mobile">
-                        <span className="bl-caption">{t('Days of cover')}</span>
-                        <span className="bl-risklist__cover-value">
-                          {product.currentStock === 0 ? '0' : number(cover)}
-                        </span>
-                      </span>
-
-                      <StatusBadge status={product.status} />
-                      <IonIcon
-                        icon={arrowForwardOutline}
-                        className="bl-risklist__chev"
-                        aria-hidden="true"
-                      />
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          </Card>
-        )}
-      </Section>
-
-      {/* ---- Forecasts ------------------------------------------------------ */}
-      <Section
-        title={t('Forecast highlights')}
-        description={t('What your records suggest is coming next')}
-        action={
-          <Link to="/forecast" className="bl-viewall">
-            {t('Full forecast')}
-            <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
-          </Link>
-        }
-      >
-        {!hasForecasts ? (
-          <EmptyState
-            icon={trendingUpOutline}
-            title={t('No forecasts yet')}
-            description={t('Forecasts appear once there is enough sales and purchase history to learn from. Keep recording your day-to-day figures.')}
-            compact
-          />
-        ) : (
-          <div className="bl-grid bl-grid--3">
-            {topDemand && (
-              <div className="bl-dash__forecast-col">
-                <h3 className="bl-dash__forecast-label">
-                  <IonIcon icon={trendingUpOutline} aria-hidden="true" />
-                  {t('Expected sales')}
-                </h3>
-                <DemandForecastCard forecast={topDemand} />
+          }
+        >
+          <div className="bl-dash__chart-head">
+            <div>
+              <span className="bl-label">{t('This week')}</span>
+              <p className="bl-metric">{peso(sales.week)}</p>
+            </div>
+            <dl className="bl-dash__chart-facts">
+              <div>
+                <dt>{t('Transactions today')}</dt>
+                <dd>{sales.transactionsToday}</dd>
               </div>
-            )}
-
-            {topPrice && (
-              <div className="bl-dash__forecast-col">
-                <h3 className="bl-dash__forecast-label">
-                  <IonIcon icon={walletOutline} aria-hidden="true" />
-                  {t('Price forecast')}
-                </h3>
-                <PriceForecastCard forecast={topPrice} />
+              <div>
+                <dt>{t('Average basket')}</dt>
+                <dd>{peso(sales.averageBasket)}</dd>
               </div>
-            )}
-
-            {topCost && (
-              <div className="bl-dash__forecast-col">
-                <h3 className="bl-dash__forecast-label">
-                  <IonIcon icon={cartOutline} aria-hidden="true" />
-                  {t('Purchasing cost forecast')}
-                </h3>
-                <CostForecastCard forecast={topCost} />
-              </div>
-            )}
+            </dl>
           </div>
-        )}
-      </Section>
 
-      {/* ---- AI insight + recent transactions ------------------------------- */}
-      <div className="bl-grid bl-grid--split bl-grid--gap-lg">
-        <Section
+          <TrendChart
+            data={salesLast7Days}
+            format={(v) => peso(v)}
+            axisFormat={pesoCompact}
+            seriesName="Total sales"
+            summary={t('Line chart of gross sales over the last seven days, rising from ₱3,620 on Thursday to ₱4,250 on Wednesday, peaking at ₱5,240 on Saturday.')}
+            height={210}
+            fill
+          />
+        </Card>
+
+        <Card
+          fill
+          as="h2"
+          className="bl-span-3"
+          title={t('Expense overview')}
+          description={t('Month to date by category')}
+          action={
+            <Link to="/expenses" className="bl-viewall">
+              {t('View all')}
+              <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
+            </Link>
+          }
+        >
+          <div className="bl-dash__expense-head">
+            <div>
+              <span className="bl-label">{t('Month to date')}</span>
+              <p className="bl-metric">{peso(expenses.monthToDate)}</p>
+            </div>
+            <p className="bl-caption">
+              {t('Largest: {{largestCategory}} ({{v2}})', { largestCategory: expenses.largestCategory, v2: peso(expenses.largestCategoryAmount) })}
+            </p>
+          </div>
+          <BarList data={expensesByCategory.slice(0, 5)} format={(v) => peso(v)} />
+        </Card>
+
+        {/* ---- Urgent alerts + inventory risks ---------------------------- */}
+        <Card
+          fill
+          padding="none"
+          as="h2"
+          className="bl-span-3"
+          title={t('Needs attention')}
+          description={t('Urgent alerts and products below their minimum')}
+          action={
+            <Link to="/alerts" className="bl-viewall">
+              {t('View all')}
+              <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
+            </Link>
+          }
+        >
+          {criticalAlerts.length === 0 && atRisk.length === 0 ? (
+            <EmptyState
+              icon={checkmarkCircleOutline}
+              title={t('No critical alerts')}
+              description={t('Every product is above its minimum stock level.')}
+              compact
+            />
+          ) : (
+            <>
+              {criticalAlerts.length > 0 && (
+                <div className="bl-dash__alerts">
+                  {criticalAlerts.map((alert) => (
+                    <AlertCard key={alert.id} alert={alert} compact />
+                  ))}
+                </div>
+              )}
+              {atRisk.length > 0 && (
+                <ul className="bl-risklist">
+                  {atRisk.map((product) => {
+                    const cover = product.currentStock / (product.averageDailyDemand || 1);
+                    return (
+                      <li key={product.id}>
+                        <Link to={`/inventory/${product.id}`} className="bl-risklist__row">
+                          <span className="bl-risklist__main">
+                            <span className="bl-risklist__name">{product.name}</span>
+                            <span className="bl-caption">
+                              {t('{{stock}} of {{min}} {{unit}} minimum', {
+                                stock: number(product.currentStock),
+                                min: number(product.minimumStock),
+                                unit: product.unit,
+                              })}
+                              {' · '}
+                              {t('Days of cover')} {product.currentStock === 0 ? '0' : number(cover)}
+                            </span>
+                          </span>
+                          <StatusBadge status={product.status} />
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </>
+          )}
+        </Card>
+
+        {/* ---- Recent transactions ---------------------------------------- */}
+        <Card
+          fill
+          padding="none"
+          as="h2"
+          className="bl-span-4"
           title={t('Recent transactions')}
           description={t('Latest recorded sales')}
           action={
@@ -438,34 +396,96 @@ export function Dashboard() {
             </Link>
           }
         >
-          <Card padding="none">
-            <ul className="bl-txlist">
-              {data.recentSales.map((sale) => (
-                <li key={sale.id} className="bl-txlist__row">
-                  <span className="bl-txlist__icon" aria-hidden="true">
-                    <IonIcon icon={cartOutline} />
+          <ul className="bl-txlist">
+            {data.recentSales.map((sale) => (
+              <li key={sale.id} className="bl-txlist__row">
+                <span className="bl-txlist__icon" aria-hidden="true">
+                  <IonIcon icon={cartOutline} />
+                </span>
+                <span className="bl-txlist__main">
+                  <span className="bl-txlist__title">
+                    {sale.items[0]?.productName ?? t('Sale')}
+                    {sale.items.length > 1 && (
+                      <span className="bl-txlist__more">{t('+{{v1}} more', { v1: sale.items.length - 1 })}</span>
+                    )}
                   </span>
-                  <span className="bl-txlist__main">
-                    <span className="bl-txlist__title">
-                      {sale.items[0]?.productName ?? t('Sale')}
-                      {sale.items.length > 1 && (
-                        <span className="bl-txlist__more">{t('+{{v1}} more', { v1: sale.items.length - 1 })}</span>
-                      )}
-                    </span>
-                    <span className="bl-caption">
-                      {sale.reference} · {label(sale.paymentMethod)} · {sale.time}
-                    </span>
+                  <span className="bl-caption">
+                    {sale.reference} · {label(sale.paymentMethod)} · {sale.time}
                   </span>
-                  <span className="bl-txlist__amount">{peso(sale.total)}</span>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        </Section>
+                </span>
+                <span className="bl-txlist__amount">{peso(sale.total)}</span>
+              </li>
+            ))}
+          </ul>
+        </Card>
 
-        <Section
+        {/* ---- Forecasts ---------------------------------------------------- */}
+        <Card
+          fill
+          as="h2"
+          className="bl-span-5"
+          title={t('Forecast highlights')}
+          description={t('What your records suggest is coming next')}
+          action={
+            <Link to="/forecast" className="bl-viewall">
+              {t('Full forecast')}
+              <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
+            </Link>
+          }
+        >
+          {!hasForecasts ? (
+            <EmptyState
+              icon={trendingUpOutline}
+              title={t('No forecasts yet')}
+              description={t('Forecasts appear once there is enough sales and purchase history to learn from. Keep recording your day-to-day figures.')}
+              compact
+            />
+          ) : (
+            <div className="bl-dash__forecasts">
+              {topDemand && (
+                <div className="bl-dash__forecast-col">
+                  <h3 className="bl-dash__forecast-label">
+                    <IonIcon icon={trendingUpOutline} aria-hidden="true" />
+                    {t('Expected sales')}
+                  </h3>
+                  <DemandForecastCard forecast={topDemand} />
+                </div>
+              )}
+
+              {topPrice && (
+                <div className="bl-dash__forecast-col">
+                  <h3 className="bl-dash__forecast-label">
+                    <IonIcon icon={walletOutline} aria-hidden="true" />
+                    {t('Price forecast')}
+                  </h3>
+                  <PriceForecastCard forecast={topPrice} />
+                </div>
+              )}
+
+              {topCost && (
+                <div className="bl-dash__forecast-col">
+                  <h3 className="bl-dash__forecast-label">
+                    <IonIcon icon={cartOutline} aria-hidden="true" />
+                    {t('Purchasing cost forecast')}
+                  </h3>
+                  <CostForecastCard forecast={topCost} />
+                </div>
+              )}
+            </div>
+          )}
+        </Card>
+
+        {/* ---- AI insights -------------------------------------------------- */}
+        <Card
+          fill
+          as="h2"
+          className="bl-span-3"
           title={t('AI insights')}
-          description={t('Generated from your recorded data')}
+          description={
+            topInsight
+              ? t('Forecasts and insights last updated {{v1}}.', { v1: relativeTime(topInsight.generatedAt) })
+              : t('Generated from your recorded data')
+          }
           action={
             <Link to="/ai-insights" className="bl-viewall">
               {t('View all')}
@@ -488,16 +508,9 @@ export function Dashboard() {
               ))}
             </div>
           )}
-        </Section>
-      </div>
-
-      {topInsight && (
-        <p className="bl-dash__updated bl-caption">
-          <IonIcon icon={sparklesOutline} aria-hidden="true" />
-          {t('Forecasts and insights last updated {{v1}}.', { v1: relativeTime(topInsight.generatedAt) })}
-        </p>
-      )}
-    </>
+        </Card>
+      </Bento>
+    </Workspace>
   );
 }
 

@@ -6,6 +6,7 @@ import {
   lockClosedOutline,
   notificationsOutline,
   personOutline,
+  peopleOutline,
   phonePortraitOutline,
 } from 'ionicons/icons';
 import { useState, type ReactNode } from 'react';
@@ -15,6 +16,8 @@ import { ConfirmDialog } from '../components/common/Modal';
 import { useToast } from '../components/common/ToastProvider';
 import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
+import { useFitMode } from '../hooks/useBreakpoint';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService } from '../services/dataService';
@@ -89,8 +92,24 @@ export function Settings() {
 
   const save = () => showToast(t('Changes saved.'));
 
+  // Desktop fit mode shows one group at a time beside a list of groups, so
+  // the page fits the screen; elsewhere every group is listed in turn.
+  const fit = useFitMode();
+  type GroupId = 'account' | 'business' | 'notifications' | 'display' | 'team' | 'security' | 'about';
+  const [group, setGroup] = useState<GroupId>('account');
+  const groups: { id: GroupId; icon: string; title: string }[] = [
+    { id: 'account', icon: personOutline, title: t('Account') },
+    { id: 'business', icon: businessOutline, title: t('Business settings') },
+    { id: 'notifications', icon: notificationsOutline, title: t('Notification settings') },
+    { id: 'display', icon: phonePortraitOutline, title: t('Display settings') },
+    { id: 'team', icon: peopleOutline, title: t('Team') },
+    { id: 'security', icon: lockClosedOutline, title: t('Security') },
+    { id: 'about', icon: informationCircleOutline, title: t('About') },
+  ];
+  const show = (id: GroupId) => !fit || group === id;
+
   return (
-    <>
+    <Workspace>
       <PageHeader
         title={t('Settings')}
         description={t('Control how BantayLedger AI behaves, alerts you and displays your numbers.')}
@@ -101,7 +120,31 @@ export function Settings() {
         }
       />
 
-      <div className="bl-set__layout">
+      <Bento className="bl-set__bento">
+      {fit && (
+        <Card padding="none" className="bl-span-3 bl-set__nav">
+          <nav aria-label={t('Settings')}>
+            <ul>
+              {groups.map((g) => (
+                <li key={g.id}>
+                  <button
+                    type="button"
+                    className={`bl-set__navitem ${group === g.id ? 'bl-set__navitem--active' : ''}`}
+                    aria-current={group === g.id ? 'true' : undefined}
+                    onClick={() => setGroup(g.id)}
+                  >
+                    <IonIcon icon={g.icon} aria-hidden="true" />
+                    <span>{g.title}</span>
+                    <IonIcon icon={chevronForwardOutline} className="bl-set__navchev" aria-hidden="true" />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </Card>
+      )}
+      <div className="bl-set__layout bl-span-9 bl-scroll">
+        {show('account') && (
         <SettingGroup
           icon={personOutline}
           title={t('Account')}
@@ -135,7 +178,9 @@ export function Settings() {
             }
           />
         </SettingGroup>
+        )}
 
+        {show('business') && (
         <SettingGroup
           icon={businessOutline}
           title={t('Business settings')}
@@ -196,7 +241,9 @@ export function Settings() {
             }
           />
         </SettingGroup>
+        )}
 
+        {show('notifications') && (
         <SettingGroup
           icon={notificationsOutline}
           title={t('Notification settings')}
@@ -229,7 +276,9 @@ export function Settings() {
             }
           />
         </SettingGroup>
+        )}
 
+        {show('display') && (
         <SettingGroup
           icon={phonePortraitOutline}
           title={t('Display settings')}
@@ -269,8 +318,10 @@ export function Settings() {
           />
         </SettingGroup>
 
-        <TeamSettings />
+        )}
+        {show('team') && <TeamSettings />}
 
+        {show('security') && (
         <SettingGroup
           icon={lockClosedOutline}
           title={t('Security')}
@@ -304,7 +355,9 @@ export function Settings() {
             }
           />
         </SettingGroup>
+        )}
 
+        {show('about') && (
         <SettingGroup
           icon={informationCircleOutline}
           title={t('About')}
@@ -325,7 +378,9 @@ export function Settings() {
             }
           />
         </SettingGroup>
+        )}
       </div>
+      </Bento>
 
       <ConfirmDialog
         isOpen={signOutOpen}
@@ -338,7 +393,7 @@ export function Settings() {
         }}
         onCancel={() => setSignOutOpen(false)}
       />
-    </>
+    </Workspace>
   );
 }
 

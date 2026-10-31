@@ -8,6 +8,7 @@ import { ChipFilter, ResultCount } from '../components/common/Toolbar';
 import AIInsightCard from '../components/dashboard/AIInsightCard';
 import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { toUserMessage } from '../lib/errors';
@@ -115,11 +116,12 @@ export function AIInsights() {
   };
 
   return (
-    <>
+    <Workspace>
       {header}
 
+      <Bento>
       {/* How insights are produced — stated plainly, not as a chat interface. */}
-      <Card className="bl-ai__about" padding="tight">
+      <Card className="bl-ai__about bl-span-3" padding="tight">
         <span className="bl-ai__about-icon" aria-hidden="true">
           <IonIcon icon={bulbOutline} />
         </span>
@@ -134,15 +136,20 @@ export function AIInsights() {
         </div>
       </Card>
 
-      <div className="bl-ai__filters">
-        <ChipFilter
-          label={t('Filter insights by category')}
-          value={filter}
-          onChange={setFilter}
-          options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))}
-        />
-      </div>
-
+      <Card
+        fill
+        className="bl-span-9 bl-ai__panel"
+        action={
+          <div className="bl-ai__filters">
+            <ChipFilter
+              label={t('Filter insights by category')}
+              value={filter}
+              onChange={setFilter}
+              options={FILTERS.map((f) => ({ ...f, count: counts[f.value] }))}
+            />
+          </div>
+        }
+      >
       <ResultCount shown={filtered.length} total={data.length} noun="insights" />
 
       {data.length === 0 ? (
@@ -173,7 +180,9 @@ export function AIInsights() {
           {t('Last generated {{v1}}.', { v1: relativeTime(data[0].generatedAt) })}
         </p>
       )}
-    </>
+      </Card>
+      </Bento>
+    </Workspace>
   );
 }
 

@@ -97,3 +97,14 @@
   color: var(--bl-green-accent);
   flex-shrink: 0;
 }
+
+.bl-pd__cost { display: grid; gap: var(--bl-s2); margin-top: var(--bl-s4); }
+.bl-pd__cost:first-child { margin-top: 0; }
+
+/* ---- Desktop fit mode ------------------------------------------------------ */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-pd > .bl-crumbs { margin-bottom: calc(-1 * var(--bl-s2)) !important; }
+  .bl-pd__stat { padding: var(--bl-s3) var(--bl-s4); }
+  .bl-pd__forecast-head { flex-shrink: 0; margin-bottom: var(--bl-s2); }
+  .bl-pd .bl-metric { font-size: var(--bl-fs-xl); }
+}

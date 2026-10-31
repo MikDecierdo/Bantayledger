@@ -1,6 +1,9 @@
-import type { Sale, SeriesPoint } from '../types';
+import type { Sale, SaleItem, SeriesPoint } from '../types';
 
-export const mockSales: Sale[] = [
+type SampleItem = Omit<SaleItem, 'unitCost'>;
+type SampleSale = Omit<Sale, 'items' | 'capital' | 'profit' | 'payments'> & { items: SampleItem[] };
+
+const sampleSales: SampleSale[] = [
   {
     id: 's-1041',
     reference: 'SL-2026-1041',
@@ -165,6 +168,16 @@ export const mockSales: Sale[] = [
     cashier: 'Store Owner',
   },
 ];
+
+/** Sample lines assume a 70% buying price so the profit view has numbers to show. */
+export const mockSales: Sale[] = sampleSales.map((sale) => {
+  const items = sale.items.map((item) => ({ ...item, unitCost: Math.round(item.unitPrice * 0.7 * 100) / 100 }));
+  const capital = Math.round(items.reduce((sum, item) => sum + item.quantity * item.unitCost, 0) * 100) / 100;
+  const payments: Sale['payments'] = [
+    { method: sale.paymentMethod === 'GCash' ? 'GCash' : 'Cash', amount: sale.total, reference: sale.paymentReference },
+  ];
+  return { ...sale, items, capital, profit: Math.round((sale.total - capital) * 100) / 100, payments };
+});
 
 export const salesSummary = {
   today: 4250,

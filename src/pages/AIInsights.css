@@ -38,3 +38,10 @@
 .bl-ai__grid > .bl-insight { height: 100%; }
 
 .bl-ai__foot { margin-top: var(--bl-s5); }
+
+/* The filter chips are the card's heading row; on narrow screens they scroll
+   sideways inside it rather than widening the page. On desktop the list
+   scrolls inside the card. */
+.bl-ai__panel > .bl-card__header { justify-content: flex-start; min-width: 0; }
+.bl-ai__panel > .bl-card__header > .bl-card__header-text { display: none; }
+.bl-ai__filters { margin: 0; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }

@@ -1,0 +1,10 @@
+{
+  "{{cost}} each": ["{{cost}} bawat isa", "{{cost}} kada usa"],
+  "Action": ["Aksyon", "Aksyon"],
+  "Capital": ["Puhunan", "Puhunan"],
+  "Capital and profit per product": ["Puhunan at tubo bawat produkto", "Puhunan ug ganansya kada produkto"],
+  "Margin {{pct}}%": ["Margin {{pct}}%", "Margin {{pct}}%"],
+  "Qty": ["Bil.", "Gidaghanon"],
+  "View": ["Tingnan", "Tan-awa"],
+  "View sale {{reference}}": ["Tingnan ang benta {{reference}}", "Tan-awa ang baligya {{reference}}"]
+}

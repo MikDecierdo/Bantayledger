@@ -42,3 +42,10 @@
     margin-top: 0;
   }
 }
+
+/* The filter chips are the card's heading row; on narrow screens they scroll
+   sideways inside it rather than widening the page. On desktop the list
+   scrolls inside the card. */
+.bl-alerts__panel > .bl-card__header { justify-content: flex-start; min-width: 0; }
+.bl-alerts__panel > .bl-card__header > .bl-card__header-text { display: none; }
+.bl-alerts__filters { margin: 0; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }

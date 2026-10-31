@@ -53,9 +53,10 @@ class ApiException extends Exception
         return self::make(409, $message, $replace);
     }
 
-    public static function unprocessable(string $message): self
+    /** @param array<string, scalar|null> $replace */
+    public static function unprocessable(string $message, array $replace = []): self
     {
-        return self::make(422, $message);
+        return self::make(422, $message, $replace);
     }
 
     public static function tooManyRequests(string $message): self

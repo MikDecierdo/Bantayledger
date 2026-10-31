@@ -1,11 +1,20 @@
 ion-modal.bl-modal {
   --background: var(--bl-surface);
   --border-radius: 0;
-  --box-shadow: var(--bl-shadow-lg);
+  --box-shadow: 0 24px 60px rgba(23, 34, 30, 0.28);
   --width: 100%;
   --height: 100%;
   /* Ionic reads the dim from these, not from --ion-backdrop-*. */
-  --backdrop-opacity: 0.32;
+  --backdrop-opacity: 0.4;
+  /* Window colours: brand green by default, red for confirmations that delete. */
+  --m-tint: var(--bl-green-light);
+  --m-accent: var(--bl-green-dark);
+  --m-border: #D5E8DF;
+}
+ion-modal.bl-modal--danger {
+  --m-tint: var(--bl-danger-bg);
+  --m-accent: var(--bl-danger);
+  --m-border: #F1D2D2;
 }
 
 ion-modal.bl-modal::part(backdrop) {
@@ -15,76 +24,162 @@ ion-modal.bl-modal::part(backdrop) {
 @keyframes bl-modal-in {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    transform: translateY(12px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: none;
   }
 }
 
 .bl-modal__shell {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  max-height: 100%;
+  height: auto;
+  max-height: calc(100dvh - 24px);
+  max-width: 100%;
   background: var(--bl-surface);
+  overflow: hidden;
   animation: bl-modal-in var(--bl-dur-slow) var(--bl-ease);
+}
+
+/* Little handle on phones: the window rises from the bottom like a sheet. */
+.bl-modal__grip {
+  display: block;
+  width: 40px;
+  height: 4px;
+  margin: 8px auto 0;
+  border-radius: 2px;
+  background: var(--bl-border-strong);
+  flex-shrink: 0;
 }
 
 .bl-modal__header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  align-items: center;
   gap: var(--bl-s3);
-  padding: var(--bl-s5);
-  padding-top: calc(var(--bl-s5) + var(--bl-safe-top));
-  border-bottom: 1px solid var(--bl-border);
+  padding: var(--bl-s4) var(--bl-s4) var(--bl-s4) var(--bl-s5);
+  background: linear-gradient(180deg, var(--m-tint), var(--bl-surface));
+  border-bottom: 1px solid var(--m-border);
   flex-shrink: 0;
 }
 
-.bl-modal__header-text p { margin-top: 3px; }
+.bl-modal__icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 13px;
+  background: var(--m-accent);
+  color: #fff;
+  font-size: 22px;
+  box-shadow: 0 4px 10px rgba(23, 34, 30, 0.14);
+}
+
+.bl-modal__header-text { flex: 1 1 auto; min-width: 0; }
+.bl-modal__header-text h2 { overflow-wrap: anywhere; }
+.bl-modal__header-text p { margin-top: 3px; overflow-wrap: anywhere; }
 
 .bl-modal__close {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   flex-shrink: 0;
   display: grid;
   place-items: center;
   border: 0;
-  border-radius: var(--bl-r-md);
-  background: transparent;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
   color: var(--bl-text-secondary);
   cursor: pointer;
-  font-size: 20px;
+  font-size: 22px;
   transition: background var(--bl-dur-fast) var(--bl-ease);
 }
-.bl-modal__close:hover { background: var(--bl-green-light); color: var(--bl-green-dark); }
+.bl-modal__close:hover { background: #fff; color: var(--m-accent); }
 
 .bl-modal__body {
-  padding: var(--bl-s5);
+  padding: var(--bl-s4);
+  background: var(--bl-surface-muted);
+  /* Never sideways: wide content must wrap or reflow instead. Vertical
+     scrolling is only a last resort when the content is taller than the screen. */
+  overflow-x: hidden;
   overflow-y: auto;
-  flex: 1 1 auto;
+  flex: 0 1 auto;
   min-height: 0;
+  min-width: 0;
+  display: grid;
+  gap: var(--bl-s3);
+  align-content: start;
+}
+.bl-modal__body > * { min-width: 0; max-width: 100%; }
+.bl-modal__body img,
+.bl-modal__body table { max-width: 100%; }
+
+/* Groups of fields sit in white cards on the tinted body. */
+.bl-modal__body > form,
+.bl-modal__body > .bl-form-grid,
+.bl-modal__body > .bl-support,
+.bl-modal__section {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  padding: var(--bl-s4);
+}
+.bl-modal__section { display: grid; gap: var(--bl-s3); }
+.bl-modal__section-title {
+  margin: 0;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+  color: var(--bl-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .bl-modal__footer {
   display: flex;
   gap: var(--bl-s3);
   justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
   padding: var(--bl-s4) var(--bl-s5);
   padding-bottom: calc(var(--bl-s4) + var(--bl-safe-bottom));
   border-top: 1px solid var(--bl-border);
-  background: var(--bl-surface-muted);
+  background: var(--bl-surface);
   flex-shrink: 0;
 }
 
-/* On phones the footer buttons stack full width for easier tapping. */
+/* On phones the footer buttons share the row (big, easy to tap); anything
+   else in the footer, like the Add Sale total, gets a row of its own. */
 @media (max-width: 479px) {
   .bl-modal__footer {
-    flex-direction: column-reverse;
+    flex-wrap: wrap;
+    align-items: stretch;
+    gap: var(--bl-s2);
+    padding: var(--bl-s3) var(--bl-s4);
+    padding-bottom: calc(var(--bl-s3) + var(--bl-safe-bottom));
   }
-  .bl-modal__footer .bl-btn { width: 100%; min-height: 46px; }
+  .bl-modal__footer > :not(.bl-btn) { flex: 1 0 100%; }
+  .bl-modal__footer .bl-btn { flex: 1 1 0; min-width: 0; min-height: 48px; }
+}
+
+/* Phones: a sheet that rises from the bottom, as tall as its content. */
+@media (max-width: 599px) {
+  ion-modal.bl-modal {
+    --height: auto;
+    --max-height: calc(100dvh - 12px);
+    --border-radius: 22px 22px 0 0;
+    align-items: flex-end;
+  }
+  /* The Add Sale workspace needs the whole screen. */
+  ion-modal.bl-modal--xl {
+    --height: 100%;
+    --border-radius: 0;
+    align-items: stretch;
+  }
+  ion-modal.bl-modal--xl .bl-modal__shell { height: 100%; max-height: 100%; }
+  ion-modal.bl-modal--xl .bl-modal__grip { display: none; }
+  .bl-modal__shell { max-height: calc(100dvh - 12px); }
+  .bl-modal__header { padding-left: var(--bl-s4); }
 }
 
 /* Centred dialog from small tablets upward. */
@@ -92,17 +187,20 @@ ion-modal.bl-modal::part(backdrop) {
   ion-modal.bl-modal {
     --border-radius: var(--bl-r-xl);
     --max-width: calc(100vw - 48px);
-    --max-height: calc(100vh - 64px);
+    --max-height: calc(100dvh - 64px);
   }
-  ion-modal.bl-modal--sm { --width: 440px; --height: auto; }
-  ion-modal.bl-modal--md { --width: 560px; --height: auto; }
-  ion-modal.bl-modal--lg { --width: 760px; --height: auto; }
-  ion-modal.bl-modal--xl { --width: 760px; --height: auto; }
+  /* Widths follow the screen (never wider than it); heights follow the content. */
+  ion-modal.bl-modal--sm { --width: min(440px, calc(100vw - 48px)); --height: auto; }
+  ion-modal.bl-modal--md { --width: min(560px, calc(100vw - 48px)); --height: auto; }
+  ion-modal.bl-modal--lg { --width: min(760px, calc(100vw - 48px)); --height: auto; }
+  ion-modal.bl-modal--xl { --width: min(760px, calc(100vw - 48px)); --height: auto; }
 
-  .bl-modal__shell { max-height: calc(100vh - 64px); }
-  .bl-modal__header,
-  .bl-modal__body { padding-top: var(--bl-s5); }
-  .bl-modal__footer { padding-bottom: var(--bl-s4); }
+  .bl-modal__grip { display: none; }
+  /* Content-sized card: only shrinks (and then scrolls its body) when taller than the screen. */
+  .bl-modal__shell { height: auto; max-height: calc(100dvh - 64px); }
+  .bl-modal__header { padding: var(--bl-s4) var(--bl-s5); }
+  .bl-modal__body { padding: var(--bl-s4) var(--bl-s5); }
+  .bl-modal__body .bl-form-grid { gap: var(--bl-s3); }
 }
 
 /* True desktop: `md` is the standard form modal (two columns of fields, kept
@@ -110,13 +208,14 @@ ion-modal.bl-modal::part(backdrop) {
    (Add Product), `xl` the Add Sale workspace. `sm` stays the quick-prompt
    tier. */
 @media (min-width: 1024px) {
-  ion-modal.bl-modal { --max-height: calc(100vh - 48px); }
-  ion-modal.bl-modal--md { --width: 600px; }
-  ion-modal.bl-modal--lg { --width: 880px; }
-  ion-modal.bl-modal--sm { --width: 480px; }
-  ion-modal.bl-modal--xl { --width: min(1200px, calc(100vw - 48px)); --height: calc(100vh - 48px); }
+  ion-modal.bl-modal { --max-height: calc(100dvh - 32px); }
+  ion-modal.bl-modal--md { --width: min(600px, calc(100vw - 48px)); }
+  ion-modal.bl-modal--lg { --width: min(880px, calc(100vw - 48px)); }
+  ion-modal.bl-modal--sm { --width: min(480px, calc(100vw - 48px)); }
+  ion-modal.bl-modal--xl { --width: min(1200px, calc(100vw - 48px)); --height: calc(100dvh - 32px); }
   /* Fixed frame: the body itself never scrolls; the content scrolls in its own regions. */
-  ion-modal.bl-modal--xl .bl-modal__body { overflow: hidden; display: flex; flex-direction: column; }
+  ion-modal.bl-modal--xl .bl-modal__body { overflow: hidden; display: flex; flex-direction: column; flex: 1 1 auto; background: var(--bl-surface); }
+  ion-modal.bl-modal--xl .bl-modal__shell { height: 100%; }
 
-  .bl-modal__shell { max-height: calc(100vh - 48px); }
+  .bl-modal__shell { max-height: calc(100dvh - 32px); }
 }

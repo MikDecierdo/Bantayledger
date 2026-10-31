@@ -52,3 +52,25 @@ export function useBreakpoint() {
     usesBottomNav: bp === 'mobile',
   };
 }
+
+/**
+ * Desktop "fit" mode: wide and tall enough for pages to fill the window
+ * without scrolling (see components/layout/Workspace.css). Keep in sync with
+ * the CSS media queries.
+ */
+export const FIT_QUERY = '(min-width: 1024px) and (min-height: 640px)';
+
+export function useFitMode() {
+  const [fit, setFit] = useState(() =>
+    typeof window === 'undefined' ? false : window.matchMedia(FIT_QUERY).matches,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(FIT_QUERY);
+    const onChange = () => setFit(mq.matches);
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
+
+  return fit;
+}
