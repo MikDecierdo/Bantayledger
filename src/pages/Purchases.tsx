@@ -34,7 +34,7 @@ const STATUS_TONE = { received: 'success', pending: 'warning', cancelled: 'neutr
 
 export function Purchases() {
   const { activeBusiness, user, refresh } = useAuth();
-  const location = useLocation<{ openAdd?: boolean; presetProductId?: string } | undefined>();
+  const location = useLocation<{ openAdd?: boolean; presetProductId?: string; presetQuantity?: number } | undefined>();
 
   const { data, loading, error, reload } = useAsyncData(
     () => Promise.all([dataService.getPurchases(), dataService.getPurchasesOverview()]),
@@ -123,6 +123,9 @@ export function Purchases() {
     setAddOpen(true);
     if (location.state.presetProductId && products) {
       chooseProduct(location.state.presetProductId);
+      // From an event stock-up list: the suggested amount.
+      const quantity = location.state.presetQuantity;
+      if (quantity && quantity > 0) setForm((f) => ({ ...f, quantity: String(quantity) }));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state, products]);
