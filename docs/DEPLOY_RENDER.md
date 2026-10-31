@@ -38,11 +38,20 @@ The file `bantayledger_cloud.sql` (in your Downloads folder) holds your
 current business data (no login tokens — everyone signs in again online).
 In the project folder, run (it asks for the Aiven password):
 
+Open **Command Prompt** (Windows key → type `cmd`; not PowerShell, which
+can't use `<`) and paste on one line:
+
 ```
-C:\xampp\mysql\bin\mysql.exe --host=HOST --port=PORT --user=avnadmin -p --ssl-ca=C:\path\to\ca.pem defaultdb < C:\Users\Kim Victus\Downloads\bantayledger_cloud.sql
+"C:\xampp\mysql\bin\mysql.exe" --host=HOST --port=PORT --user=avnadmin -p --ssl-ca="C:\Users\Kim Victus\Downloads\ca.pem" --plugin-dir="C:\xampp\mysql\lib\plugin" defaultdb < "C:\Users\Kim Victus\Downloads\bantayledger_cloud.sql"
 ```
 
-Replace `HOST`, `PORT` and the `ca.pem` path with your values.
+Replace `HOST` and `PORT` with your values. At **Enter password:** paste the
+Aiven password (nothing shows while typing) and press Enter. No message means
+it worked.
+
+Common problems: "Access denied" = wrong password; "Can't connect" = wrong
+host/port or the service isn't Running yet; "Plugin caching_sha2_password
+could not be loaded" = the `--plugin-dir=…` part is missing.
 
 ## 4. Create the server on Render
 
