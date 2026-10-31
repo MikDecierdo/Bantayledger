@@ -28,6 +28,7 @@ import { Card, Section } from '../components/layout/Section';
 import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
+import { useForecastRefresh } from '../hooks/useForecastRefresh';
 import { toUserMessage } from '../lib/errors';
 import { dataService } from '../services/dataService';
 import { number, peso, pesoCompact, relativeTime } from '../utils/format';
@@ -45,12 +46,10 @@ const HORIZONS: { value: Horizon; label: string }[] = [
 export function Forecast() {
   const { activeBusiness } = useAuth();
   const { showToast } = useToast();
-  const { data, loading, error, reload } = useAsyncData(async () => {
-    // Regenerates only if the last run is over a day old. A failure here
-    // shouldn't block showing the forecasts that already exist.
-    await dataService.refreshForecasts(true).catch(() => undefined);
-    return dataService.getForecasts();
-  }, [activeBusiness?.id]);
+  // Saved forecasts show straight away; they are brought up to date in the
+  // background and re-read quietly if anything changed.
+  const { data, loading, error, reload, refresh } = useAsyncData(() => dataService.getForecasts(), [activeBusiness?.id]);
+  const updating = useForecastRefresh(activeBusiness?.id, refresh);
   const [horizon, setHorizon] = useState<Horizon>('7d');
   const [selected, setSelected] = useState(0);
   const [productTab, setProductTab] = useState<'demand' | 'price' | 'cost'>('demand');
@@ -85,10 +84,10 @@ export function Forecast() {
           <Button
             variant="secondary"
             icon={refreshOutline}
-            loading={refreshing}
+            loading={refreshing || updating}
             onClick={() => void handleRefresh()}
           >
-            {refreshing ? t('Refreshing') : t('Refresh forecast')}
+            {refreshing || updating ? t('Updating') : t('Refresh forecast')}
           </Button>
         </>
       }

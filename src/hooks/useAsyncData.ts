@@ -7,6 +7,8 @@ export interface AsyncState<T> {
   loading: boolean;
   error: Error | null;
   reload: () => void;
+  /** Re-reads without showing the loading state; the current data stays on screen. */
+  refresh: () => Promise<void>;
 }
 
 /**
@@ -22,6 +24,11 @@ export function useAsyncData<T>(
   const [error, setError] = useState<Error | null>(null);
   const [nonce, setNonce] = useState(0);
   const mounted = useRef(true);
+  const latestLoader = useRef(loader);
+
+  useEffect(() => {
+    latestLoader.current = loader;
+  });
 
   useEffect(() => {
     mounted.current = true;
@@ -57,6 +64,15 @@ export function useAsyncData<T>(
 
   const reload = useCallback(() => setNonce((n) => n + 1), []);
 
+  const refresh = useCallback(async () => {
+    try {
+      const result = await latestLoader.current();
+      if (mounted.current) setData(result);
+    } catch {
+      // Keep showing what is already there.
+    }
+  }, []);
+
   // Records saved offline just reached the server (or the connection came
   // back): fetch fresh numbers.
   useEffect(() => {
@@ -64,5 +80,5 @@ export function useAsyncData<T>(
     return () => window.removeEventListener(DATA_CHANGED_EVENT, reload);
   }, [reload]);
 
-  return { data, loading, error, reload };
+  return { data, loading, error, reload, refresh };
 }
