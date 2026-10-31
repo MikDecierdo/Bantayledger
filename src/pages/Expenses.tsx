@@ -19,6 +19,7 @@ import StatCard from '../components/dashboard/StatCard';
 import PageHeader from '../components/layout/PageHeader';
 import PinnedSummary from '../components/layout/PinnedSummary';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, Rail, Workspace } from '../components/layout/Workspace';
 import { expenseCategories } from '../data/mockExpenses';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
@@ -71,6 +72,10 @@ export function Expenses() {
     }
     if (!form.amount || Number(form.amount) <= 0) {
       setFormError(t('Enter an amount greater than zero.'));
+      return;
+    }
+    if (overBudget) {
+      setFormError(t('This is more than your available profit of {{amount}}.', { amount: peso(available) }));
       return;
     }
 
@@ -151,8 +156,17 @@ export function Expenses() {
 
   const { summary, byCategory, last6Months } = overview;
 
+  // The overview covers this month, so the limit is applied to expenses dated
+  // in this month; for another month the server checks it when saving.
+  const thisMonth = new Date().toISOString().slice(0, 7);
+  const capApplies = form.date.slice(0, 7) === thisMonth;
+  const available = summary.availableProfit;
+  const typed = Number(form.amount) || 0;
+  const overBudget = capApplies && typed > available;
+  const usedPct = available > 0 ? Math.min(100, (typed / available) * 100) : typed > 0 ? 100 : 0;
+
   return (
-    <>
+    <Workspace>
       {header}
 
       <PinnedSummary>
@@ -181,6 +195,14 @@ export function Expenses() {
               footnote={summary.largestCategory}
             />
             <StatCard
+              label={t('Available profit to spend')}
+              value={peso(summary.availableProfit)}
+              emphasis="plain"
+              tone={summary.availableProfit > 0 ? 'brand' : 'warning'}
+              footnote={t('Profit this month: {{amount}}', { amount: peso(summary.profitMonth) })}
+              href="/sales"
+            />
+            <StatCard
               label={t('Recorded entries')}
               value={String(expenses.length)}
               emphasis="plain"
@@ -190,28 +212,14 @@ export function Expenses() {
         </Section>
       </PinnedSummary>
 
-      <div className="bl-grid bl-grid--split bl-grid--gap-lg">
-        <Section title={t('Expense trend')} description={t('Monthly totals over the last 6 months')}>
-          <Card>
-            <BarChart
-              data={last6Months}
-              format={(v) => peso(v)}
-              axisFormat={pesoCompact}
-              seriesName="Total expenses"
-              summary={t('Bar chart of monthly expenses from April to September 2026, between ₱25,600 and ₱28,100, with September at ₱27,470.')}
-              height={230}
-            />
-          </Card>
-        </Section>
-
-        <Section title={t('By category')} description={t('Month to date')}>
-          <Card>
-            <BarList data={byCategory} format={(v) => peso(v)} />
-          </Card>
-        </Section>
-      </div>
-
-      <Section title={t('Recent expenses')}>
+      <Bento>
+        <Card
+          fill
+          padding="none"
+          as="h2"
+          className="bl-span-8"
+          title={t('Recent expenses')}
+          action={
         <Toolbar>
           <ToolbarSearch>
             <SearchInput
@@ -234,7 +242,8 @@ export function Expenses() {
             />
           </ToolbarFilters>
         </Toolbar>
-
+          }
+        >
         {filtered.length > 0 && (
           <div className="bl-tx__totals">
             <div>
@@ -328,19 +337,38 @@ export function Expenses() {
             </ul>
           </>
         )}
-      </Section>
+        </Card>
+
+        <Rail className="bl-span-4 bl-first-small">
+          <Card fill title={t('Expense trend')} description={t('Monthly totals over the last 6 months')}>
+            <BarChart
+              data={last6Months}
+              format={(v) => peso(v)}
+              axisFormat={pesoCompact}
+              seriesName="Total expenses"
+              summary={t('Bar chart of monthly expenses from April to September 2026, between ₱25,600 and ₱28,100, with September at ₱27,470.')}
+              height={200}
+              fill
+            />
+          </Card>
+          <Card fill title={t('By category')} description={t('Month to date')}>
+            <BarList data={byCategory} format={(v) => peso(v)} />
+          </Card>
+        </Rail>
+      </Bento>
 
       <Modal
         isOpen={addOpen}
         onClose={() => setAddOpen(false)}
         title={t('Add Expense')}
+        icon="expense"
         description={t('Record a business expense so your monthly totals stay accurate.')}
         footer={
           <>
             <Button variant="secondary" onClick={() => setAddOpen(false)} disabled={saving}>
               {t('Cancel')}
             </Button>
-            <Button variant="primary" onClick={() => void handleSave()} loading={saving}>
+            <Button variant="primary" onClick={() => void handleSave()} loading={saving} disabled={overBudget}>
               {saving ? t('Saving') : t('Save Expense')}
             </Button>
           </>
@@ -358,6 +386,29 @@ export function Expenses() {
               {formError}
             </p>
           )}
+
+          <div
+            className={`bl-profit bl-form-grid__full${overBudget ? ' bl-profit--over' : available <= 0 ? ' bl-profit--none' : ''}`}
+            role="status"
+          >
+            <div className="bl-profit__row">
+              <span className="bl-label">{t('Available profit to spend')}</span>
+              <strong className="bl-profit__value">{peso(available)}</strong>
+            </div>
+            <div className="bl-profit__bar" aria-hidden="true">
+              <span style={{ width: `${usedPct}%` }} />
+            </div>
+            <p className="bl-caption">
+              {overBudget
+                ? t('This is {{amount}} more than your available profit. Enter a smaller amount.', { amount: peso(typed - available) })
+                : available <= 0
+                  ? t('There is no profit left to spend this month. Record more sales first.')
+                  : t('Profit this month {{profit}} minus expenses so far. You can spend up to {{amount}}.', {
+                      profit: peso(summary.profitMonth),
+                      amount: peso(available),
+                    })}
+            </p>
+          </div>
 
           <DateField
             label={t('Date')}
@@ -385,12 +436,14 @@ export function Expenses() {
           <CurrencyField
             label={t('Amount')}
             required
+            max={capApplies ? available : undefined}
+            error={overBudget ? t('Over your available profit.') : undefined}
             value={form.amount}
             onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
           />
         </form>
       </Modal>
-    </>
+    </Workspace>
   );
 }
 

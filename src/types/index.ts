@@ -72,6 +72,16 @@ export interface SaleItem {
   productName: string;
   quantity: number;
   unitPrice: number;
+  /** Buying price locked in when the sale was made. */
+  unitCost: number;
+}
+
+/** One part of what a customer paid: a sale can be part Cash, part GCash. */
+export interface SalePayment {
+  method: 'Cash' | 'GCash';
+  amount: number;
+  /** Last 4 digits of the GCash reference; null for cash. */
+  reference: string | null;
 }
 
 export interface Sale {
@@ -81,7 +91,12 @@ export interface Sale {
   time: string;
   items: SaleItem[];
   total: number;
-  paymentMethod: 'Cash' | 'GCash' | 'Card';
+  /** What the goods sold cost, and what is left after it. */
+  capital: number;
+  profit: number;
+  /** `Mixed` when the sale was paid partly in cash and partly by GCash. */
+  paymentMethod: 'Cash' | 'GCash' | 'Card' | 'Mixed';
+  payments: SalePayment[];
   /** Last 4 digits of the GCash reference number; null for other payment methods and older sales. */
   paymentReference: string | null;
   cashier: string;

@@ -24,16 +24,18 @@
 }
 
 .swal2-container.swal2-backdrop-show {
-  /* Matches ion-modal's backdrop: #17221E at 0.32. */
-  background: rgba(23, 34, 30, 0.32);
+  /* Matches ion-modal's backdrop: #17221E at 0.4. */
+  background: rgba(23, 34, 30, 0.4);
 }
 
 .swal2-popup.bl-swal {
   width: min(440px, calc(100vw - 32px));
   padding: var(--bl-s6);
   border-radius: var(--bl-r-xl);
-  background: var(--bl-surface);
-  box-shadow: var(--bl-shadow-lg);
+  /* Same soft green tint at the top as the window headers in Modal.css. */
+  background: linear-gradient(180deg, var(--bl-green-light) 0, var(--bl-surface) 140px);
+  border: 1px solid #D5E8DF;
+  box-shadow: 0 24px 60px rgba(23, 34, 30, 0.28);
   font-family: var(--bl-font);
   color: var(--bl-text);
 }

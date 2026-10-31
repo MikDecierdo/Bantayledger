@@ -5,16 +5,16 @@ import {
   searchOutline,
   trashOutline,
 } from 'ionicons/icons';
+import type { ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import TrendChart from '../components/charts/TrendChart';
 import Button from '../components/common/Button';
 import { CurrencyField, DateField, SearchInput, SelectField, TextField } from '../components/common/Field';
 import { Modal } from '../components/common/Modal';
-import { GCashLogo, PesoCashLogo } from '../components/common/PaymentLogos';
+import { GCashLogo, PaymentBadges, PesoCashLogo } from '../components/common/PaymentLogos';
 import ProductThumbnail from '../components/common/ProductThumbnail';
 import { EmptyState, ErrorState, LoadingState, SkeletonRows } from '../components/common/States';
-import { Badge } from '../components/common/StatusBadge';
 import Toolbar, {
   ChipFilter,
   ResultCount,
@@ -26,14 +26,14 @@ import StatCard from '../components/dashboard/StatCard';
 import PageHeader from '../components/layout/PageHeader';
 import PinnedSummary from '../components/layout/PinnedSummary';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, MiniStats, Rail, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
 import { alertSuccess } from '../lib/swal';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { salesService } from '../services/api';
-import type { Product } from '../types';
-import type { PaymentMethod } from '../types/database';
+import type { Product, Sale } from '../types';
 import { number, peso, pesoCompact, shortDate } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
@@ -68,6 +68,9 @@ function cashChange(received: string, total: number): CashChange {
 
 const CASH_QUICK_AMOUNTS = [50, 100, 200, 500, 1000];
 
+/** How the customer pays: all cash, all GCash, or part of each. */
+type PaymentMode = 'Cash' | 'GCash' | 'Split';
+
 function todayIso(): string {
   return new Date().toISOString().slice(0, 10);
 }
@@ -90,6 +93,7 @@ export function Sales() {
   const [payment, setPayment] = useState('all');
   const [range, setRange] = useState<Range>('week');
   const [addOpen, setAddOpen] = useState(false);
+  const [viewSale, setViewSale] = useState<Sale | null>(null);
 
   /** Arriving from a Dashboard quick action — open the Add form immediately. */
   useEffect(() => {
@@ -98,8 +102,9 @@ export function Sales() {
 
   const [cart, setCart] = useState<CartLine[]>([]);
   const [saleDate, setSaleDate] = useState(todayIso());
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('Cash');
+  const [paymentMode, setPaymentMode] = useState<PaymentMode>('Cash');
   const [paymentReference, setPaymentReference] = useState('');
+  const [gcashAmount, setGcashAmount] = useState('');
   const [cashReceived, setCashReceived] = useState('');
   const [tileQuery, setTileQuery] = useState('');
   const [tileCategory, setTileCategory] = useState('all');
@@ -111,17 +116,24 @@ export function Sales() {
     setTileQuery('');
     setTileCategory('all');
     setSaleDate(todayIso());
-    setPaymentMethod('Cash');
+    setPaymentMode('Cash');
     setPaymentReference('');
+    setGcashAmount('');
     setCashReceived('');
     setFormError(null);
   };
 
-  const choosePaymentMethod = (method: PaymentMethod) => {
-    setPaymentMethod(method);
+  const choosePaymentMode = (mode: PaymentMode) => {
+    setPaymentMode(mode);
     // Only a GCash payment has a reference; don't carry a stale one over.
-    if (method !== 'GCash') setPaymentReference('');
-    if (method !== 'Cash') setCashReceived('');
+    if (mode === 'Cash') {
+      setPaymentReference('');
+      setGcashAmount('');
+    }
+    if (mode === 'GCash') {
+      setCashReceived('');
+      setGcashAmount('');
+    }
   };
 
   const closeAddModal = () => {
@@ -186,7 +198,11 @@ export function Sales() {
   };
 
   const cartTotal = cart.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
-  const cash = cashChange(cashReceived, cartTotal);
+  // Split payment: the GCash part is typed, the cash part is whatever is left.
+  const gcashPart = paymentMode === 'Split' ? Math.round(Number(gcashAmount || 0) * 100) / 100 : 0;
+  const cashPart = paymentMode === 'Split' ? Math.round((cartTotal - gcashPart) * 100) / 100 : cartTotal;
+  const splitValid = gcashPart > 0 && cashPart > 0;
+  const cash = cashChange(cashReceived, cashPart);
 
   const cartQtyFor = (productId: string) => cart.find((l) => l.productId === productId)?.quantity ?? 0;
 
@@ -213,7 +229,12 @@ export function Sales() {
       return;
     }
 
-    if (paymentMethod === 'GCash' && !/^\d{4}$/.test(paymentReference)) {
+    if (paymentMode === 'Split' && !splitValid) {
+      setFormError(t('Enter how much was paid by GCash. It must be more than zero and less than the total.'));
+      return;
+    }
+
+    if (paymentMode !== 'Cash' && !/^\d{4}$/.test(paymentReference)) {
       setFormError(t('Enter the last 4 digits of the GCash reference number.'));
       return;
     }
@@ -232,12 +253,21 @@ export function Sales() {
           quantity: l.quantity,
           unitPrice: l.unitPrice,
         })),
-        paymentMethod,
-        paymentReference: paymentMethod === 'GCash' ? paymentReference : undefined,
+        ...(paymentMode === 'Split'
+          ? {
+              payments: [
+                { method: 'GCash' as const, amount: gcashPart, reference: paymentReference },
+                { method: 'Cash' as const, amount: cashPart },
+              ],
+            }
+          : {
+              paymentMethod: paymentMode,
+              paymentReference: paymentMode === 'GCash' ? paymentReference : undefined,
+            }),
         saleDate,
       });
       const changeNote =
-        paymentMethod === 'Cash' && cash.state === 'change' && cash.centavos > 0
+        paymentMode !== 'GCash' && cash.state === 'change' && cash.centavos > 0
           ? ` ${t('Change to give: {{amount}}.', { amount: peso(cash.centavos / 100) })}`
           : '';
       closeAddModal();
@@ -264,10 +294,10 @@ export function Sales() {
       const matchesQuery =
         !q ||
         sale.reference.toLowerCase().includes(q) ||
-        (sale.paymentReference ?? '').includes(q) ||
+        sale.payments.some((p) => (p.reference ?? '').includes(q)) ||
         sale.cashier.toLowerCase().includes(q) ||
         sale.items.some((i) => i.productName.toLowerCase().includes(q));
-      const matchesPayment = payment === 'all' || sale.paymentMethod === payment;
+      const matchesPayment = payment === 'all' || sale.payments.some((p) => p.method === payment);
       return matchesQuery && matchesPayment;
     });
   }, [sales, query, payment]);
@@ -312,83 +342,62 @@ export function Sales() {
   const chartData = range === 'week' ? last7Days : last6Months;
 
   return (
-    <div>
+    <Workspace>
       {header}
 
       <PinnedSummary>
-      <Section title={t('Sales summary')}>
-        <div className="bl-grid bl-grid--kpi bl-grid--kpi5">
-          <StatCard
-            label={t('Today')}
-            value={peso(summary.today)}
-            changePct={summary.todayChangePct}
-            changeLabel={t('vs yesterday')}
-            emphasis="hero"
-            icon={cartOutline}
-            spark={last7Days.map((d) => d.value)}
-          />
-          <StatCard
-            label={t('Cash today')}
-            logo={<PesoCashLogo />}
-            accent="cash"
-            value={peso(summary.todayCash)}
-            emphasis="plain"
-            footnote={t('{{transactionsToday}} transactions today', { transactionsToday: summary.transactionsToday })}
-          />
-          <StatCard
-            label={t('GCash today')}
-            logo={<GCashLogo />}
-            accent="gcash"
-            value={peso(summary.todayGCash)}
-            emphasis="plain"
-            footnote={t('{{transactionsToday}} transactions today', { transactionsToday: summary.transactionsToday })}
-          />
-          <StatCard
-            label={t('This week')}
-            value={peso(summary.week)}
-            changePct={summary.weekChangePct}
-            changeLabel={t('vs last week')}
-          />
-          <StatCard
-            label={t('This month')}
-            value={peso(summary.month)}
-            changePct={summary.monthChangePct}
-            changeLabel={t('vs last month')}
-          />
-          <Card
-            className="bl-sales-trend-card"
-            title={t('Sales trend')}
-            action={
-              <Segmented
-                label={t('Sales trend range')}
-                value={range}
-                onChange={setRange}
-                options={[
-                  { value: 'week', label: t('Last 7 days') },
-                  { value: 'month', label: t('Last 6 months') },
-                ]}
-              />
-            }
-          >
-            <div className="bl-sales-trend-card__chart">
-              <TrendChart
-                data={chartData}
-                format={(v) => peso(v)}
-                axisFormat={pesoCompact}
-                seriesName="Total sales"
-                summary={
-                  range === 'week'
-                    ? t('Line chart of total sales over the last seven days, ranging from ₱3,410 on Monday to ₱5,240 on Saturday.') : t('Line chart of total monthly sales from April to September 2026, ranging from ₱96,400 to ₱110,320.')
-                }
-                height={120}
-              />
-            </div>
-          </Card>
-        </div>
-      </Section>
+        <Section title={t('Sales summary')}>
+          <div className="bl-grid bl-grid--kpi">
+            <StatCard
+              label={t('Today')}
+              value={peso(summary.today)}
+              changePct={summary.todayChangePct}
+              changeLabel={t('vs yesterday')}
+              emphasis="hero"
+              icon={cartOutline}
+              spark={last7Days.map((d) => d.value)}
+            />
+            <StatCard
+              label={t('Cash today')}
+              logo={<PesoCashLogo />}
+              accent="cash"
+              value={peso(summary.todayCash)}
+              emphasis="plain"
+              footnote={t('{{transactionsToday}} transactions today', { transactionsToday: summary.transactionsToday })}
+            />
+            <StatCard
+              label={t('GCash today')}
+              logo={<GCashLogo />}
+              accent="gcash"
+              value={peso(summary.todayGCash)}
+              emphasis="plain"
+              footnote={t('{{transactionsToday}} transactions today', { transactionsToday: summary.transactionsToday })}
+            />
+            <StatCard
+              label={t('This week')}
+              value={peso(summary.week)}
+              changePct={summary.weekChangePct}
+              changeLabel={t('vs last week')}
+            />
+            <StatCard
+              label={t('This month')}
+              value={peso(summary.month)}
+              changePct={summary.monthChangePct}
+              changeLabel={t('vs last month')}
+            />
+          </div>
+        </Section>
       </PinnedSummary>
 
-      <Section title={t('Transactions')} description={t('Most recent first')}>
+      <Bento>
+        <Card
+          fill
+          padding="none"
+          as="h2"
+          className="bl-span-8"
+          title={t('Transactions')}
+          description={t('Most recent first')}
+          action={
         <Toolbar>
           <ToolbarSearch>
             <SearchInput
@@ -412,7 +421,8 @@ export function Sales() {
             />
           </ToolbarFilters>
         </Toolbar>
-
+          }
+        >
         <ResultCount shown={filtered.length} total={sales.length} noun="sales" />
 
         {filtered.length === 0 ? (
@@ -453,6 +463,9 @@ export function Sales() {
                         <th scope="col" className="bl-td-num">
                           {t('Total')}
                         </th>
+                        <th scope="col" className="bl-td-num bl-tx__col-action">
+                          <span className="bl-sr-only">{t('Action')}</span>
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
@@ -474,12 +487,19 @@ export function Sales() {
                           </td>
                           <td className="bl-tx__col-cashier">{sale.cashier}</td>
                           <td>
-                            <Badge tone="neutral">
-                              {label(sale.paymentMethod)}
-                              {sale.paymentReference ? ` ····${sale.paymentReference}` : ''}
-                            </Badge>
+                            <PaymentBadges payments={sale.payments} />
                           </td>
                           <td className="bl-td-num bl-table__primary">{peso(sale.total)}</td>
+                          <td className="bl-td-num bl-tx__col-action">
+                            <Button
+                              variant="secondary"
+                              size="sm"
+                              aria-label={t('View sale {{reference}}', { reference: sale.reference })}
+                              onClick={() => setViewSale(sale)}
+                            >
+                              {t('View')}
+                            </Button>
+                          </td>
                         </tr>
                       ))}
                     </tbody>
@@ -519,8 +539,7 @@ export function Sales() {
                       <div className="bl-drow__cell">
                         <dt>{t('Payment')}</dt>
                         <dd>
-                          {label(sale.paymentMethod)}
-                          {sale.paymentReference ? ` ····${sale.paymentReference}` : ''}
+                          <PaymentBadges payments={sale.payments} />
                         </dd>
                       </div>
                       <div className="bl-drow__cell">
@@ -528,18 +547,162 @@ export function Sales() {
                         <dd className="bl-tx__soft">{sale.cashier}</dd>
                       </div>
                     </dl>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      aria-label={t('View sale {{reference}}', { reference: sale.reference })}
+                      onClick={() => setViewSale(sale)}
+                    >
+                      {t('View')}
+                    </Button>
                   </article>
                 </li>
               ))}
             </ul>
           </>
         )}
-      </Section>
+        </Card>
+
+        <Rail className="bl-span-4 bl-first-small">
+          <Card
+            className="bl-rail__fixed"
+            title={t('Capital and profit')}
+            description={t('Capital is what you paid for the goods you sold. Profit is what is left after the capital.')}
+          >
+            <MiniStats
+              items={[
+                { label: t('Capital this month'), value: peso(summary.capitalMonth), foot: t('Cost of goods sold') },
+                {
+                  label: t('Profit this month'),
+                  value: peso(summary.profitMonth),
+                  foot: t('Sales minus capital'),
+                  tone: summary.profitMonth > 0 ? 'brand' : undefined,
+                },
+                { label: t('Capital today'), value: peso(summary.capitalToday) },
+                {
+                  label: t('Profit today'),
+                  value: peso(summary.profitToday),
+                  foot: t('Profit this week: {{amount}}', { amount: peso(summary.profitWeek) }),
+                },
+              ]}
+            />
+          </Card>
+
+          <Card
+            fill
+            title={t('Sales trend')}
+            action={
+              <Segmented
+                label={t('Sales trend range')}
+                value={range}
+                onChange={setRange}
+                options={[
+                  { value: 'week', label: t('Last 7 days') },
+                  { value: 'month', label: t('Last 6 months') },
+                ]}
+              />
+            }
+          >
+            <TrendChart
+              data={chartData}
+              format={(v) => peso(v)}
+              axisFormat={pesoCompact}
+              seriesName="Total sales"
+              summary={
+                range === 'week'
+                  ? t('Line chart of total sales over the last seven days, ranging from ₱3,410 on Monday to ₱5,240 on Saturday.') : t('Line chart of total monthly sales from April to September 2026, ranging from ₱96,400 to ₱110,320.')
+              }
+              height={180}
+              fill
+            />
+          </Card>
+        </Rail>
+      </Bento>
+
+      <Modal
+        isOpen={viewSale !== null}
+        onClose={() => setViewSale(null)}
+        title={t('Sale details')}
+        icon="sale"
+        description={viewSale ? `${viewSale.reference} · ${shortDate(viewSale.date)} ${viewSale.time}` : ''}
+        size="md"
+        footer={
+          <Button variant="secondary" onClick={() => setViewSale(null)}>
+            {t('Close')}
+          </Button>
+        }
+      >
+        {viewSale && (
+          <div className="bl-saleview">
+            <div className="bl-saleview__summary">
+              <div>
+                <span className="bl-label">{t('Sales')}</span>
+                <strong>{peso(viewSale.total)}</strong>
+              </div>
+              <div>
+                <span className="bl-label">{t('Capital')}</span>
+                <strong>{peso(viewSale.capital)}</strong>
+              </div>
+              <div className={viewSale.profit < 0 ? 'bl-saleview__loss' : 'bl-saleview__gain'}>
+                <span className="bl-label">{t('Profit')}</span>
+                <strong>{peso(viewSale.profit)}</strong>
+                <span className="bl-caption">
+                  {t('Margin {{pct}}%', {
+                    pct: viewSale.total > 0 ? Math.round((viewSale.profit / viewSale.total) * 1000) / 10 : 0,
+                  })}
+                </span>
+              </div>
+            </div>
+
+            <section className="bl-modal__section">
+              <h3 className="bl-modal__section-title">
+                {viewSale.payments.length > 1 ? t('Paid with cash and GCash') : t('Paid with')}
+              </h3>
+              <PaymentBadges payments={viewSale.payments} variant="row" showAmounts />
+              <p className="bl-caption">
+                {t('Cashier')}: {viewSale.cashier}
+              </p>
+            </section>
+
+            <ul className="bl-saleview__items" aria-label={t('Capital and profit per product')}>
+              {viewSale.items.map((item) => {
+                const lineProfit = item.quantity * (item.unitPrice - item.unitCost);
+                return (
+                  <li key={item.productId} className="bl-saleview__item">
+                    <span className="bl-saleview__name">{item.productName}</span>
+                    <dl className="bl-saleview__figures">
+                      <div>
+                        <dt>{t('Qty')} × {t('Price')}</dt>
+                        <dd>
+                          {number(item.quantity)} × {peso(item.unitPrice)}
+                        </dd>
+                      </div>
+                      <div>
+                        <dt>{t('Capital')}</dt>
+                        <dd>
+                          {peso(item.quantity * item.unitCost)}
+                          <span className="bl-caption">{t('{{cost}} each', { cost: peso(item.unitCost) })}</span>
+                        </dd>
+                      </div>
+                      <div className={lineProfit < 0 ? 'bl-saleview__loss' : 'bl-saleview__gain'}>
+                        <dt>{t('Profit')}</dt>
+                        <dd>{peso(lineProfit)}</dd>
+                      </div>
+                    </dl>
+                  </li>
+                );
+              })}
+            </ul>
+
+          </div>
+        )}
+      </Modal>
 
       <Modal
         isOpen={addOpen}
         onClose={closeAddModal}
         title={t('Add Sale')}
+        icon="cart"
         description={t('Tap products to add them to the cart, then check out as one sale.')}
         size="xl"
         footer={
@@ -689,17 +852,60 @@ export function Sales() {
             <h3 className="bl-pos__side-title">{t('Sale details')}</h3>
             <div className="bl-pos__side-fields">
               <DateField label={t('Date')} required value={saleDate} onChange={(e) => setSaleDate(e.target.value)} />
-              <SelectField
-                label={t('Payment method')}
-                required
-                value={paymentMethod}
-                onChange={(e) => choosePaymentMethod(e.target.value as PaymentMethod)}
-                options={[
-                  { value: 'Cash', label: label('Cash') },
-                  { value: 'GCash', label: label('GCash') },
-                ]}
-              />
-              {paymentMethod === 'GCash' && (
+              <div className="bl-paychoice" role="radiogroup" aria-label={t('How did the customer pay?')}>
+                <span className="bl-label">{t('How did the customer pay?')}</span>
+                <div className="bl-paychoice__grid">
+                  {(
+                    [
+                      { mode: 'Cash', text: t('Cash'), logo: <PesoCashLogo size={26} /> },
+                      { mode: 'GCash', text: t('GCash'), logo: <GCashLogo size={26} /> },
+                      {
+                        mode: 'Split',
+                        text: t('Cash + GCash'),
+                        logo: (
+                          <span className="bl-paychoice__duo">
+                            <PesoCashLogo size={20} />
+                            <GCashLogo size={20} />
+                          </span>
+                        ),
+                      },
+                    ] as { mode: PaymentMode; text: string; logo: ReactNode }[]
+                  ).map((opt) => (
+                    <button
+                      key={opt.mode}
+                      type="button"
+                      role="radio"
+                      aria-checked={paymentMode === opt.mode}
+                      className={`bl-paychoice__btn${paymentMode === opt.mode ? ' is-on' : ''}`}
+                      onClick={() => choosePaymentMode(opt.mode)}
+                    >
+                      <span className="bl-paychoice__logo">{opt.logo}</span>
+                      <span>{opt.text}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {paymentMode === 'Split' && (
+                <div className="bl-paysplit">
+                  <CurrencyField
+                    label={t('Paid by GCash')}
+                    required
+                    value={gcashAmount}
+                    onChange={(e) => setGcashAmount(e.target.value)}
+                    error={gcashAmount !== '' && !splitValid ? t('Must be more than zero and less than the total.') : undefined}
+                  />
+                  <p className="bl-paysplit__sum" role="status" aria-live="polite">
+                    {splitValid
+                      ? t('Total {{total}} = {{cash}} cash + {{gcash}} GCash', {
+                          total: peso(cartTotal),
+                          cash: peso(cashPart),
+                          gcash: peso(gcashPart),
+                        })
+                      : t('Total {{total}}. Type the GCash part; the rest is paid in cash.', { total: peso(cartTotal) })}
+                  </p>
+                </div>
+              )}
+              {paymentMode !== 'Cash' && (
                 <TextField
                   label={t('GCash reference (last 4 digits)')}
                   required
@@ -711,7 +917,7 @@ export function Sales() {
                   onChange={(e) => setPaymentReference(e.target.value.replace(/\D/g, '').slice(0, 4))}
                 />
               )}
-              {paymentMethod === 'Cash' && (
+              {paymentMode !== 'GCash' && (
                 <div className="bl-pos__cash">
                   <CurrencyField
                     label={t('Cash received')}
@@ -723,8 +929,8 @@ export function Sales() {
                     <button
                       type="button"
                       className="bl-pos__chip"
-                      disabled={cartTotal <= 0}
-                      onClick={() => setCashReceived(cartTotal.toFixed(2))}
+                      disabled={cashPart <= 0}
+                      onClick={() => setCashReceived(cashPart.toFixed(2))}
                     >
                       {t('Exact')}
                     </button>
@@ -766,7 +972,7 @@ export function Sales() {
           </aside>
         </div>
       </Modal>
-    </div>
+    </Workspace>
   );
 }
 

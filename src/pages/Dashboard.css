@@ -183,16 +183,26 @@
 
 /* ---- Footer note --------------------------------------------------------- */
 
-.bl-dash__updated {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding-top: var(--bl-s2);
-}
-.bl-dash__updated ion-icon { font-size: 14px; color: var(--bl-green-accent); }
 
-/* Chart columns keep equal height on the split grid. */
-@media (min-width: 1024px) {
-  .bl-dash__split > .bl-section { display: flex; flex-direction: column; }
-  .bl-dash__split > .bl-section > .bl-card { flex: 1; }
+/* ---- Bento pieces ---------------------------------------------------------- */
+
+.bl-dash__chart-head,
+.bl-dash__expense-head { flex-shrink: 0; }
+
+/* Forecast highlights: the three forecasts side by side where there is room. */
+.bl-dash__forecasts { display: grid; gap: var(--bl-s3); grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 640px) {
+  .bl-dash__forecasts { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+}
+
+/* Critical alerts above the low-stock list in "Needs attention". */
+.bl-dash__alerts { display: grid; gap: var(--bl-s2); padding: var(--bl-s3); border-bottom: 1px solid var(--bl-border); }
+.bl-card:not(.bl-card--flush) .bl-dash__alerts { padding: 0 0 var(--bl-s3); }
+
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-dash .bl-dash__chart-head,
+  .bl-dash .bl-dash__expense-head { margin-bottom: var(--bl-s3); }
+  .bl-dash .bl-metric { font-size: var(--bl-fs-xl); }
+  .bl-dash .bl-risklist__row { padding-block: 10px; }
+  .bl-dash .bl-txlist__row { padding-block: 10px; }
 }

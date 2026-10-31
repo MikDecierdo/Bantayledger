@@ -1,0 +1,12 @@
+{
+  "Products": ["Mga Produkto", "Mga Produkto"],
+  "Needs attention": ["Kailangang tingnan", "Kinahanglan tan-awon"],
+  "Urgent alerts and products below their minimum": ["Mga apurahang alerto at produktong mas mababa sa minimum", "Mga dinaliang alerto ug produktong ubos sa minimum"],
+  "Product forecasts": ["Forecast ng bawat produkto", "Forecast sa matag produkto"],
+  "Prices": ["Presyo", "Presyo"],
+  "Cost": ["Gastos", "Gasto"],
+  "Forecast results": ["Resulta ng forecast", "Resulta sa forecast"],
+  "Trends": ["Takbo", "Dagan"],
+  "Accuracy": ["Katumpakan", "Katukma"],
+  "No supplier linked to this product yet.": ["Wala pang supplier na nakakabit sa produktong ito.", "Wala pay supplier nga nakadugtong niining produkto."]
+}

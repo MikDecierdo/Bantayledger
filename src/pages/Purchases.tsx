@@ -18,6 +18,7 @@ import StatCard from '../components/dashboard/StatCard';
 import PageHeader from '../components/layout/PageHeader';
 import PinnedSummary from '../components/layout/PinnedSummary';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, Rail, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
 import { alertError, alertSuccess, confirmAction } from '../lib/swal';
@@ -253,7 +254,7 @@ export function Purchases() {
   const { summary, last6Months } = overview;
 
   return (
-    <>
+    <Workspace>
       {header}
 
       <PinnedSummary>
@@ -290,59 +291,14 @@ export function Purchases() {
         </Section>
       </PinnedSummary>
 
-      <Section
-        title={t('Monthly supplies budget')}
-        description={t('An overall cap on what you buy in each month — a heads-up, not a hard stop.')}
-      >
-        <Card>
-          <div className="bl-row bl-row--between bl-tx__budget">
-            <div>
-              {budget === null ? (
-                <p className="bl-support">{t('No budget set yet.')}</p>
-              ) : (
-                <p className="bl-support">
-                  <strong className="bl-table__primary">{peso(summary.monthToDate)}</strong> spent of{' '}
-                  <strong className="bl-table__primary">{peso(budget)}</strong>{' '}{t('this month')}
-                </p>
-              )}
-            </div>
-            <div className="bl-row bl-tx__budget-actions">
-              {budget !== null && (
-                <Badge tone={summary.monthToDate >= budget ? 'danger' : summary.monthToDate >= budget * 0.8 ? 'warning' : 'success'}>
-                  {summary.monthToDate >= budget
-                    ? t('Over budget')
-                    : summary.monthToDate >= budget * 0.8
-                      ? t('Approaching limit') : t('On track')}
-                </Badge>
-              )}
-              <Button variant="secondary" size="sm" icon={createOutline} onClick={openBudgetModal}>
-                {budget === null ? t('Set budget') : t('Edit')}
-              </Button>
-            </div>
-          </div>
-
-          {budget !== null && summary.monthToDate >= budget && (
-            <p className="bl-form-error" role="alert">
-              {t('You\'ve reached your {{v1}} monthly supplies budget — {{v2}} spent so far this month.', { v1: peso(budget), v2: peso(summary.monthToDate) })}
-            </p>
-          )}
-        </Card>
-      </Section>
-
-      <Section title={t('Purchasing spend')} description={t('Monthly totals over the last 6 months')}>
-        <Card>
-          <BarChart
-            data={last6Months}
-            format={(v) => peso(v)}
-            axisFormat={pesoCompact}
-            seriesName="Purchasing spend"
-            summary={t('Bar chart of monthly purchasing spend from April to September 2026, rising from ₱61,200 in April to ₱72,150 in August, with September at ₱18,566 so far.')}
-            height={220}
-          />
-        </Card>
-      </Section>
-
-      <Section title={t('Recent purchases')}>
+      <Bento>
+        <Card
+          fill
+          padding="none"
+          as="h2"
+          className="bl-span-8"
+          title={t('Recent purchases')}
+          action={
         <Toolbar>
           <ToolbarSearch>
             <SearchInput
@@ -365,7 +321,8 @@ export function Purchases() {
             />
           </ToolbarFilters>
         </Toolbar>
-
+          }
+        >
         {filtered.length > 0 && (
           <div className="bl-tx__totals">
             <div>
@@ -526,12 +483,65 @@ export function Purchases() {
             </ul>
           </>
         )}
-      </Section>
+        </Card>
+
+        <Rail className="bl-span-4 bl-first-small">
+          <Card
+            className="bl-rail__fixed"
+            title={t('Monthly supplies budget')}
+            description={t('An overall cap on what you buy in each month — a heads-up, not a hard stop.')}
+          >
+              <div className="bl-row bl-row--between bl-tx__budget">
+                <div>
+                  {budget === null ? (
+                    <p className="bl-support">{t('No budget set yet.')}</p>
+                  ) : (
+                    <p className="bl-support">
+                      <strong className="bl-table__primary">{peso(summary.monthToDate)}</strong> spent of{' '}
+                      <strong className="bl-table__primary">{peso(budget)}</strong>{' '}{t('this month')}
+                    </p>
+                  )}
+                </div>
+                <div className="bl-row bl-tx__budget-actions">
+                  {budget !== null && (
+                    <Badge tone={summary.monthToDate >= budget ? 'danger' : summary.monthToDate >= budget * 0.8 ? 'warning' : 'success'}>
+                      {summary.monthToDate >= budget
+                        ? t('Over budget')
+                        : summary.monthToDate >= budget * 0.8
+                          ? t('Approaching limit') : t('On track')}
+                    </Badge>
+                  )}
+                  <Button variant="secondary" size="sm" icon={createOutline} onClick={openBudgetModal}>
+                    {budget === null ? t('Set budget') : t('Edit')}
+                  </Button>
+                </div>
+              </div>
+
+              {budget !== null && summary.monthToDate >= budget && (
+                <p className="bl-form-error" role="alert">
+                  {t('You\'ve reached your {{v1}} monthly supplies budget — {{v2}} spent so far this month.', { v1: peso(budget), v2: peso(summary.monthToDate) })}
+                </p>
+              )}
+          </Card>
+          <Card fill title={t('Purchasing spend')} description={t('Monthly totals over the last 6 months')}>
+            <BarChart
+              data={last6Months}
+              format={(v) => peso(v)}
+              axisFormat={pesoCompact}
+              seriesName="Purchasing spend"
+              summary={t('Bar chart of monthly purchasing spend from April to September 2026, rising from ₱61,200 in April to ₱72,150 in August, with September at ₱18,566 so far.')}
+              height={220}
+              fill
+            />
+          </Card>
+        </Rail>
+      </Bento>
 
       <Modal
         isOpen={addOpen}
         onClose={() => setAddOpen(false)}
         title={t('Add Purchase')}
+        icon="purchase"
         description={t('Record stock bought in so cost forecasts stay accurate.')}
         footer={
           <>
@@ -611,6 +621,7 @@ export function Purchases() {
         isOpen={budgetOpen}
         onClose={() => setBudgetOpen(false)}
         title={t('Monthly supplies budget')}
+        icon="budget"
         description={t('A heads-up when you\'re close to or over it — recording a purchase is never blocked.')}
         size="sm"
         footer={
@@ -646,7 +657,7 @@ export function Purchases() {
           />
         </form>
       </Modal>
-    </>
+    </Workspace>
   );
 }
 

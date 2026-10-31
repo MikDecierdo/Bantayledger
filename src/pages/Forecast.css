@@ -65,11 +65,15 @@
   .bl-fcast__detail-stats > div { flex: 1 1 90px; }
 }
 
-.bl-fcast__cards { margin-top: var(--bl-s4); }
+.bl-fcast__cards {
+  display: grid;
+  gap: var(--bl-s3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+}
 
 /* ---- Cost total ---------------------------------------------------------- */
 
-.bl-fcast__total-card { background: var(--bl-green-soft); }
+
 
 .bl-fcast__total {
   display: flex;
@@ -124,3 +128,26 @@
 }
 
 .bl-fcast__updated { margin: calc(-1 * var(--bl-s3)) 0 var(--bl-s4); }
+
+/* Total estimated purchasing cost, above the per-product cost cards. */
+.bl-fcast__total {
+  padding: var(--bl-s3) var(--bl-s4);
+  margin-bottom: var(--bl-s3);
+  background: var(--bl-green-soft);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+}
+
+/* ---- Desktop fit mode ------------------------------------------------------ */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-fcast__sum { padding: var(--bl-s3) var(--bl-s4); gap: 2px; }
+  .bl-fcast__sum .bl-metric { font-size: var(--bl-fs-xl); margin: 0; }
+  .bl-fcast__sum .bl-caption { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* The chart takes what the picker and the figures leave. */
+  .bl-fcast__picker { flex-shrink: 0; margin-bottom: var(--bl-s3); }
+  .bl-fcast__detail { display: flex; flex-direction: column; flex: 1 1 0; min-height: 0; }
+  .bl-fcast__detail-head { flex-shrink: 0; margin-bottom: var(--bl-s2); }
+  .bl-fcast .bl-chart__legend { flex-shrink: 0; }
+  .bl-fcast .bl-accuracy { gap: var(--bl-s4); }
+}

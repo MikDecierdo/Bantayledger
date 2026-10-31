@@ -167,5 +167,9 @@
   "Your purchase history points to about :pct% higher cost over the next quarter.": "Ipinapakita ng kasaysayan ng pagbili mo na mga :pct% na mas mataas ang gastos sa susunod na quarter.",
   "Use a stronger password: at least 8 characters with an uppercase letter, a lowercase letter, a number and a symbol.": "Gumamit ng mas matibay na password: hindi bababa sa 8 character na may malaking titik, maliit na titik, numero, at simbolo.",
   "Enter a valid Philippine mobile number, e.g. +63 917 123 4567.": "Maglagay ng wastong mobile number sa Pilipinas, hal. +63 917 123 4567.",
-  "The owner cannot be removed.": "Hindi maaaring tanggalin ang may-ari."
+  "The owner cannot be removed.": "Hindi maaaring tanggalin ang may-ari.",
+  "This is more than your available profit of :amount. Record more sales first, or enter a smaller amount.": "Higit ito sa magagamit mong tubo na :amount. Mag-record muna ng mas maraming benta, o maglagay ng mas maliit na halaga.",
+  "Choose how the customer paid.": "Piliin kung paano nagbayad ang customer.",
+  "Use each payment method only once. Put the whole amount for that method in one line.": "Isang beses lang gamitin ang bawat paraan ng pagbabayad. Ilagay ang buong halaga ng paraang iyon sa isang linya.",
+  "The cash and GCash amounts must add up to the sale total of :total.": "Dapat pantay sa kabuuang benta na :total ang pinagsamang halaga ng cash at GCash."
 }

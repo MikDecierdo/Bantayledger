@@ -102,3 +102,11 @@
 .bl-prof__nav-item--danger { color: var(--bl-danger); }
 .bl-prof__nav-item--danger .bl-prof__nav-icon { color: var(--bl-danger); }
 .bl-prof__nav-item--danger:hover { background: var(--bl-danger-bg); }
+
+/* The account card's own heading needs padding since the list runs flush. */
+.bl-prof__account > .bl-card__header { padding: var(--bl-s4) var(--bl-s5) 0; margin-bottom: var(--bl-s2); }
+
+/* Desktop fit mode: the grid keeps its natural height instead of stretching. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-ws > .bl-prof__grid { align-content: start; }
+}

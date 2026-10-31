@@ -158,3 +158,28 @@
   .bl-stat--gcash::after,
   .bl-stat--cash::after { width: 96px; height: 82px; right: -14px; bottom: -16px; }
 }
+
+/* ---- Desktop fit mode: a compact summary strip ---------------------------
+   One row of equal cards with the figure as the hero; the sparkline goes
+   (the trend charts on the page carry that story) and padding tightens. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-stat,
+  .bl-stat--hero { padding: var(--bl-s3) var(--bl-s4); gap: 6px; }
+  .bl-stat__top { min-height: 26px; }
+  .bl-stat__icon { width: 26px; height: 26px; font-size: 14px; }
+  .bl-stat__value,
+  .bl-stat--hero .bl-stat__value--hero { font-size: 1.375rem; }
+  .bl-stat--plain .bl-stat__value { font-size: var(--bl-fs-lg); }
+  .bl-stat .bl-spark { display: none; }
+  .bl-stat__foot { flex-wrap: nowrap; overflow: hidden; white-space: nowrap; }
+  .bl-stat__foot .bl-caption { overflow: hidden; text-overflow: ellipsis; }
+  .bl-stat__logo svg { height: 30px; width: auto; }
+  .bl-stat--gcash::after,
+  .bl-stat--cash::after { width: 96px; height: 80px; right: -12px; bottom: -18px; }
+}
+@media (min-width: 1024px) and (min-height: 860px) {
+  .bl-stat,
+  .bl-stat--hero { padding: var(--bl-s4); gap: var(--bl-s2); }
+  .bl-stat__value,
+  .bl-stat--hero .bl-stat__value--hero { font-size: var(--bl-fs-2xl); }
+}

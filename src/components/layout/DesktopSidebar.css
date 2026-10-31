@@ -216,3 +216,23 @@
 .bl-avatar--sm { width: 32px; height: 32px; font-size: var(--bl-fs-xs); }
 .bl-avatar--lg { width: 72px; height: 72px; font-size: var(--bl-fs-xl); }
 .bl-avatar--solid { background: var(--bl-green); color: #fff; }
+
+/* ---- Short desktop windows --------------------------------------------------
+   The whole menu fits a 1366x768 laptop without scrolling: shorter rows, a
+   horizontal logo lockup and a slimmer footer. The nav keeps its own scroll
+   only as a fallback for even shorter windows. */
+@media (min-width: 1024px) and (max-height: 960px) {
+  .bl-sidebar__brand { padding: var(--bl-s3) var(--bl-s3); min-height: 0; }
+  .bl-sidebar__brand .bl-logo--stacked { flex-direction: row; gap: 10px; text-align: left; }
+  .bl-sidebar__brand .bl-logo--stacked .bl-logo__text { align-items: flex-start; }
+  .bl-sidebar__brand .bl-logo__mark { width: 40px !important; height: 40px !important; }
+  .bl-sidebar__brand .bl-logo--lg .bl-logo__name { font-size: var(--bl-fs-lg); }
+  .bl-sidebar__nav { padding: var(--bl-s3); }
+  .bl-sidebar__group + .bl-sidebar__group { margin-top: var(--bl-s3); }
+  .bl-sidebar__group-title { margin-bottom: var(--bl-s1); }
+  .bl-sidenav { min-height: 34px; }
+  .bl-sidenav__icon { font-size: 18px; }
+  .bl-sidebar__footer { padding: var(--bl-s2) var(--bl-s3); }
+  .bl-sidebar__user { padding: var(--bl-s2); margin-top: var(--bl-s1); }
+  .bl-sidebar-toggle { top: 22px; }
+}

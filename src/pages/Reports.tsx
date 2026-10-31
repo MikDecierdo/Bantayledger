@@ -19,6 +19,7 @@ import { useToast } from '../components/common/ToastProvider';
 import { Segmented } from '../components/common/Toolbar';
 import PageHeader from '../components/layout/PageHeader';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { exportReportReceipt } from '../lib/exportReports';
@@ -292,14 +293,14 @@ export function Reports() {
   }
 
   return (
-    <div className={printing ? 'bl-rep bl-rep--printing' : 'bl-rep'}>
+    <Workspace className={printing ? 'bl-rep bl-rep--printing' : 'bl-rep'}>
       {header}
       <p className="bl-rep__printmeta">
         {activeBusiness?.name} · {periodLabel}
       </p>
       {filters}
       {body}
-    </div>
+    </Workspace>
   );
 }
 
@@ -324,68 +325,78 @@ function ReportBody({
 
   const sections: Record<ReportTab, ReactNode> = {
     sales: (
-      <Section title={t('Sales report')} description={t('Revenue per {{unit}} and by product category', { unit })}>
-        <div className="bl-grid bl-grid--split bl-grid--gap-lg">
-          <Card title={t('Revenue per {{unit}}', { unit })}>
-            <TrendChart
-              data={sales.series}
-              format={(v) => peso(v)}
-              axisFormat={pesoCompact}
-              seriesName="Revenue"
-              summary={describe(sales.series, t('Revenue'), unit)}
-              height={250}
-            />
-          </Card>
-          <Card title={t('Revenue by category')} description={periodLabel}>
-            {sales.byCategory.length === 0 ? (
-              <p className="bl-caption">{t('No sales in this period.')}</p>
-            ) : (
-              <BarList data={sales.byCategory} format={(v) => peso(v)} />
-            )}
-          </Card>
-        </div>
-      </Section>
+      <Bento>
+        <Card
+          fill
+          as="h2"
+          className="bl-span-8"
+          title={t('Revenue per {{unit}}', { unit })}
+          description={t('Revenue per {{unit}} and by product category', { unit })}
+        >
+          <TrendChart
+            data={sales.series}
+            format={(v) => peso(v)}
+            axisFormat={pesoCompact}
+            seriesName="Revenue"
+            summary={describe(sales.series, t('Revenue'), unit)}
+            height={250}
+            fill
+          />
+        </Card>
+        <Card fill className="bl-span-4" title={t('Revenue by category')} description={periodLabel}>
+          {sales.byCategory.length === 0 ? (
+            <p className="bl-caption">{t('No sales in this period.')}</p>
+          ) : (
+            <BarList data={sales.byCategory} format={(v) => peso(v)} />
+          )}
+        </Card>
+      </Bento>
     ),
     expenses: (
-      <Section
-        title={t('Expense report')}
-        description={
-          filtered
-            ? t('Operating costs — all categories (expenses aren’t linked to products)')
-            : t('Operating costs per {{unit}} and by category', { unit })
-        }
-      >
-        <div className="bl-grid bl-grid--split bl-grid--gap-lg">
-          <Card title={t('Expenses per {{unit}}', { unit })}>
-            <BarChart
-              data={expenses.series}
-              format={(v) => peso(v)}
-              axisFormat={pesoCompact}
-              seriesName="Expenses"
-              summary={describe(expenses.series, t('Expenses'), unit)}
-              height={250}
-            />
-          </Card>
-          <Card title={t('Expenses by category')} description={rangeLabel(range)}>
-            {expenses.byCategory.length === 0 ? (
-              <p className="bl-caption">{t('No expenses in this period.')}</p>
-            ) : (
-              <BarList data={expenses.byCategory} format={(v) => peso(v)} />
-            )}
-          </Card>
-        </div>
-      </Section>
+      <Bento>
+        <Card
+          fill
+          as="h2"
+          className="bl-span-8"
+          title={t('Expenses per {{unit}}', { unit })}
+          description={
+            filtered
+              ? t('Operating costs — all categories (expenses aren’t linked to products)')
+              : t('Operating costs per {{unit}} and by category', { unit })
+          }
+        >
+          <BarChart
+            data={expenses.series}
+            format={(v) => peso(v)}
+            axisFormat={pesoCompact}
+            seriesName="Expenses"
+            summary={describe(expenses.series, t('Expenses'), unit)}
+            height={250}
+            fill
+          />
+        </Card>
+        <Card fill className="bl-span-4" title={t('Expenses by category')} description={rangeLabel(range)}>
+          {expenses.byCategory.length === 0 ? (
+            <p className="bl-caption">{t('No expenses in this period.')}</p>
+          ) : (
+            <BarList data={expenses.byCategory} format={(v) => peso(v)} />
+          )}
+        </Card>
+      </Bento>
     ),
     inventory: (
-      <Section
-        title={t('Inventory report')}
-        description={
-          filtered
-            ? t('Stock position as of today · {{category}} — not tied to the date range', { category: range.categoryName })
-            : t('Stock position as of today — not tied to the date range')
-        }
-      >
-        <Card padding="none">
+      <Bento>
+        <Card
+          fill
+          padding="none"
+          as="h2"
+          title={t('Inventory report')}
+          description={
+            filtered
+              ? t('Stock position as of today · {{category}} — not tied to the date range', { category: range.categoryName })
+              : t('Stock position as of today — not tied to the date range')
+          }
+        >
           <div className="bl-table-wrap bl-scroll">
             <table className="bl-table">
               <caption className="bl-sr-only">{t('Stock position and value for every tracked product')}</caption>
@@ -441,11 +452,16 @@ function ReportBody({
             </table>
           </div>
         </Card>
-      </Section>
+      </Bento>
     ),
     purchasing: (
-      <Section title={t('Purchasing report')} description={t('Received stock orders per {{unit}}', { unit })}>
-        <Card title={t('Purchasing spend per {{unit}}', { unit })}>
+      <Bento>
+        <Card
+          fill
+          as="h2"
+          title={t('Purchasing spend per {{unit}}', { unit })}
+          description={t('Received stock orders per {{unit}}', { unit })}
+        >
           <BarChart
             data={purchases.series}
             format={(v) => peso(v)}
@@ -453,39 +469,40 @@ function ReportBody({
             seriesName="Purchasing spend"
             summary={describe(purchases.series, t('Purchasing spend'), unit)}
             height={260}
+            fill
           />
         </Card>
-      </Section>
+      </Bento>
     ),
     forecast: (
-      <Section
-        title={t('Forecast report')}
-        description={t('Forecasts look ahead, so they aren\'t affected by the filters above')}
-      >
-        <div className="bl-grid bl-grid--split bl-grid--gap-lg">
-          <Card title={t('Expected sales')} description={t('Next 7 days, per product')}>
-            {(forecasts?.demand ?? []).length === 0 ? (
-              <p className="bl-caption">
-                {t('No forecasts yet. Open the Forecast page to generate them from your sales history.')}
-              </p>
-            ) : (
-              <BarList
-                data={(forecasts?.demand ?? []).map((d) => ({ label: d.productName, value: d.forecastQuantity }))}
-                format={(v) => number(v)}
-                showShare={false}
-              />
-            )}
-          </Card>
-          <Card title={t('Forecast accuracy')}>
+      <Bento>
+        <Card fill as="h2" className="bl-span-6" title={t('Expected sales')} description={t('Next 7 days, per product')}>
+          {(forecasts?.demand ?? []).length === 0 ? (
             <p className="bl-caption">
-              {t('Accuracy is measured by comparing past forecasts against what actually sold. It appears once forecasts have been running for a few weeks.')}
+              {t('No forecasts yet. Open the Forecast page to generate them from your sales history.')}
             </p>
-            <p className="bl-rep__note">
-              {t('Forecasts are estimates based on your recorded history. They do not account for events outside your data, such as holidays or supplier shortages.')}
-            </p>
-          </Card>
-        </div>
-      </Section>
+          ) : (
+            <BarList
+              data={(forecasts?.demand ?? []).map((d) => ({ label: d.productName, value: d.forecastQuantity }))}
+              format={(v) => number(v)}
+              showShare={false}
+            />
+          )}
+        </Card>
+        <Card
+          fill
+          className="bl-span-6"
+          title={t('Forecast accuracy')}
+          description={t('Forecasts look ahead, so they aren\'t affected by the filters above')}
+        >
+          <p className="bl-caption">
+            {t('Accuracy is measured by comparing past forecasts against what actually sold. It appears once forecasts have been running for a few weeks.')}
+          </p>
+          <p className="bl-rep__note">
+            {t('Forecasts are estimates based on your recorded history. They do not account for events outside your data, such as holidays or supplier shortages.')}
+          </p>
+        </Card>
+      </Bento>
     ),
   };
 

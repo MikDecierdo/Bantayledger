@@ -20,6 +20,7 @@ import { Badge } from '../components/common/StatusBadge';
 import { useToast } from '../components/common/ToastProvider';
 import PageHeader from '../components/layout/PageHeader';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { moreNav } from '../components/layout/navItems';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
@@ -140,7 +141,7 @@ export function Profile() {
   }
 
   return (
-    <>
+    <Workspace>
       <PageHeader
         title={t('Profile')}
         description={t('Your account details and the business this app is tracking.')}
@@ -180,9 +181,8 @@ export function Profile() {
       </Card>
 
       {/* ---- Details --------------------------------------------------------- */}
-      <div className="bl-grid bl-grid--2 bl-grid--gap-lg">
-        <Section title={t('Profile information')}>
-          <Card>
+      <Bento rows="auto" className="bl-prof__grid">
+          <Card as="h2" className="bl-span-4" title={t('Profile information')}>
             <dl className="bl-prof__list">
               <div>
                 <dt>
@@ -207,10 +207,8 @@ export function Profile() {
               </div>
             </dl>
           </Card>
-        </Section>
 
-        <Section title={t('Business information')}>
-          <Card>
+          <Card as="h2" className="bl-span-4" title={t('Business information')}>
             <dl className="bl-prof__list">
               <div>
                 <dt>
@@ -235,8 +233,30 @@ export function Profile() {
               </div>
             </dl>
           </Card>
-        </Section>
-      </div>
+
+          <Card as="h2" padding="none" className="bl-span-4 bl-prof__account" title={t('Account')}>
+          <ul className="bl-prof__nav">
+            <li>
+              <Link to="/settings" className="bl-prof__nav-item">
+                <IonIcon icon={shieldCheckmarkOutline} className="bl-prof__nav-icon" aria-hidden="true" />
+                <span>{t('Settings and security')}</span>
+                <IonIcon icon={chevronForwardOutline} className="bl-prof__nav-chev" aria-hidden="true" />
+              </Link>
+            </li>
+            <li>
+              <button
+                type="button"
+                className="bl-prof__nav-item bl-prof__nav-item--danger"
+                onClick={() => void handleLogout()}
+              >
+                <IonIcon icon={logOutOutline} className="bl-prof__nav-icon" aria-hidden="true" />
+                <span>{t('Logout')}</span>
+                <IonIcon icon={chevronForwardOutline} className="bl-prof__nav-chev" aria-hidden="true" />
+              </button>
+            </li>
+          </ul>
+          </Card>
+      </Bento>
 
       {/* ---- Mobile-only navigation to the rest of the app ------------------- */}
       <Section
@@ -259,35 +279,11 @@ export function Profile() {
         </Card>
       </Section>
 
-      <Section title={t('Account')}>
-        <Card padding="none">
-          <ul className="bl-prof__nav">
-            <li>
-              <Link to="/settings" className="bl-prof__nav-item">
-                <IonIcon icon={shieldCheckmarkOutline} className="bl-prof__nav-icon" aria-hidden="true" />
-                <span>{t('Settings and security')}</span>
-                <IonIcon icon={chevronForwardOutline} className="bl-prof__nav-chev" aria-hidden="true" />
-              </Link>
-            </li>
-            <li>
-              <button
-                type="button"
-                className="bl-prof__nav-item bl-prof__nav-item--danger"
-                onClick={() => void handleLogout()}
-              >
-                <IonIcon icon={logOutOutline} className="bl-prof__nav-icon" aria-hidden="true" />
-                <span>{t('Logout')}</span>
-                <IonIcon icon={chevronForwardOutline} className="bl-prof__nav-chev" aria-hidden="true" />
-              </button>
-            </li>
-          </ul>
-        </Card>
-      </Section>
-
       <Modal
         isOpen={editOpen}
         onClose={() => setEditOpen(false)}
         title={t('Edit Profile')}
+        icon="profile"
         description={t('Update your details and business information.')}
         footer={
           <>
@@ -374,7 +370,7 @@ export function Profile() {
           </fieldset>
         </form>
       </Modal>
-    </>
+    </Workspace>
   );
 }
 

@@ -17,6 +17,7 @@ import { Badge, CostDelta } from '../components/common/StatusBadge';
 import Toolbar, { ResultCount, ToolbarFilters, ToolbarSearch } from '../components/common/Toolbar';
 import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
 import { alertSuccess } from '../lib/swal';
@@ -153,9 +154,16 @@ export function Suppliers() {
   }
 
   return (
-    <>
+    <Workspace>
       {header}
 
+      <Bento>
+      <Card
+        fill
+        padding="none"
+        as="h2"
+        title={t('Suppliers')}
+        action={
       <Toolbar>
         <ToolbarSearch>
           <SearchInput
@@ -180,7 +188,8 @@ export function Suppliers() {
           />
         </ToolbarFilters>
       </Toolbar>
-
+        }
+      >
       <ResultCount shown={filtered.length} total={data.length} noun="suppliers" />
 
       {filtered.length === 0 ? (
@@ -316,12 +325,15 @@ export function Suppliers() {
           </ul>
         </>
       )}
+      </Card>
+      </Bento>
 
       {/* ---- Supplier detail ---------------------------------------------- */}
       <Modal
         isOpen={detail !== null}
         onClose={() => setDetail(null)}
         title={detail?.name ?? t('Supplier')}
+        icon="supplier"
         description={detail ? STATUS_META[detail.status].label : undefined}
         footer={
           <Button variant="secondary" onClick={() => setDetail(null)}>
@@ -411,6 +423,7 @@ export function Suppliers() {
         isOpen={addOpen}
         onClose={() => setAddOpen(false)}
         title={t('Add Supplier')}
+        icon="supplier"
         description={t('Record a supplier so their prices can be tracked over time.')}
         footer={
           <>
@@ -477,7 +490,7 @@ export function Suppliers() {
           />
         </form>
       </Modal>
-    </>
+    </Workspace>
   );
 }
 

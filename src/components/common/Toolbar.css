@@ -66,3 +66,20 @@
 @media print {
   .bl-toolbar { position: static; }
 }
+
+/* Inside a fill card's heading row (desktop fit mode) the toolbar is part of
+   the header: one row, no gap below. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-card--fill .bl-toolbar {
+    position: static;
+    margin: 0;
+    padding: 0;
+    min-height: 0;
+    background: none;
+    flex-wrap: nowrap;
+    flex: 1 1 auto;
+    justify-content: flex-end;
+  }
+  .bl-card--fill .bl-toolbar__search { flex: 0 1 300px; }
+  .bl-card--fill .bl-toolbar__filters { flex-wrap: nowrap; }
+}

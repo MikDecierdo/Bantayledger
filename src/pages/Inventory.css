@@ -127,3 +127,13 @@
   border-top: 1px dashed var(--bl-border);
 }
 .bl-inv__cardactions > .bl-btn:first-child { flex: 1; }
+
+/* Desktop fit mode: the status chips sit in a strip under the card's
+   heading row. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-card--fill .bl-inv__chips {
+    margin: 0;
+    padding: var(--bl-s2) var(--bl-s4);
+    border-bottom: 1px solid var(--bl-border);
+  }
+}

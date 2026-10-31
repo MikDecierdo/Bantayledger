@@ -1,0 +1,66 @@
+{
+  "Capital and profit": [
+    "Puhunan at tubo",
+    "Puhunan ug ganansya"
+  ],
+  "Capital is what you paid for the goods you sold. Profit is what is left after the capital.": [
+    "Ang puhunan ay ang ibinayad mo sa mga paninda na naibenta. Ang tubo ay ang natitira pagkatapos ng puhunan.",
+    "Ang puhunan mao ang imong gibayad sa mga baligya nga napalit. Ang ganansya mao ang nahabilin human sa puhunan."
+  ],
+  "Capital this month": [
+    "Puhunan ngayong buwan",
+    "Puhunan niining bulana"
+  ],
+  "Capital today": [
+    "Puhunan ngayon",
+    "Puhunan karon"
+  ],
+  "Cost of goods sold": [
+    "Gastos sa naibentang paninda",
+    "Gasto sa napalit nga baligya"
+  ],
+  "Over your available profit.": [
+    "Higit sa magagamit mong tubo.",
+    "Sobra sa imong magamit nga ganansya."
+  ],
+  "Profit this month": [
+    "Tubo ngayong buwan",
+    "Ganansya niining bulana"
+  ],
+  "Profit this month {{profit}} minus expenses so far. You can spend up to {{amount}}.": [
+    "Tubo ngayong buwan na {{profit}} bawas ang mga gastos sa ngayon. Maaari kang gumastos hanggang {{amount}}.",
+    "Ganansya niining bulana nga {{profit}} minus ang mga gasto karon. Makagasto ka hangtod {{amount}}."
+  ],
+  "Profit this month: {{amount}}": [
+    "Tubo ngayong buwan: {{amount}}",
+    "Ganansya niining bulana: {{amount}}"
+  ],
+  "Profit this week: {{amount}}": [
+    "Tubo ngayong linggo: {{amount}}",
+    "Ganansya niining semanaha: {{amount}}"
+  ],
+  "Profit today": [
+    "Tubo ngayon",
+    "Ganansya karon"
+  ],
+  "Sales minus capital": [
+    "Benta bawas ang puhunan",
+    "Baligya minus ang puhunan"
+  ],
+  "There is no profit left to spend this month. Record more sales first.": [
+    "Wala nang tubong magagamit ngayong buwan. Mag-record muna ng mas maraming benta.",
+    "Wala nay ganansya nga magamit niining bulana. Pag-record una og dugang baligya."
+  ],
+  "This is {{amount}} more than your available profit. Enter a smaller amount.": [
+    "Mas mataas ito ng {{amount}} sa magagamit mong tubo. Maglagay ng mas maliit na halaga.",
+    "Mas taas kini og {{amount}} kaysa imong magamit nga ganansya. Pagbutang og mas gamay nga kantidad."
+  ],
+  "This is more than your available profit of {{amount}}.": [
+    "Higit ito sa magagamit mong tubo na {{amount}}.",
+    "Sobra kini sa imong magamit nga ganansya nga {{amount}}."
+  ],
+  "Available profit to spend": [
+    "Tubong magagamit na gastusin",
+    "Ganansya nga magamit sa gasto"
+  ]
+}

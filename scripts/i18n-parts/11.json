@@ -1,0 +1,11 @@
+{
+  "Cash + GCash": ["Cash + GCash", "Cash + GCash"],
+  "Enter how much was paid by GCash. It must be more than zero and less than the total.": ["Ilagay kung magkano ang binayaran sa GCash. Dapat mas mataas ito sa zero at mas mababa sa kabuuan.", "Ibutang kung pila ang gibayad sa GCash. Kinahanglan mas taas kini sa zero ug mas ubos sa kinatibuk-an."],
+  "How did the customer pay?": ["Paano nagbayad ang customer?", "Unsaon pagbayad sa customer?"],
+  "Must be more than zero and less than the total.": ["Dapat mas mataas sa zero at mas mababa sa kabuuan.", "Kinahanglan mas taas sa zero ug mas ubos sa kinatibuk-an."],
+  "Paid by GCash": ["Binayaran sa GCash", "Gibayad sa GCash"],
+  "Paid with": ["Binayaran gamit ang", "Gibayad gamit ang"],
+  "Paid with cash and GCash": ["Binayaran gamit ang cash at GCash", "Gibayad gamit ang cash ug GCash"],
+  "Total {{total}} = {{cash}} cash + {{gcash}} GCash": ["Kabuuan {{total}} = {{cash}} cash + {{gcash}} GCash", "Kinatibuk-an {{total}} = {{cash}} cash + {{gcash}} GCash"],
+  "Total {{total}}. Type the GCash part; the rest is paid in cash.": ["Kabuuan {{total}}. Ilagay ang bahagi sa GCash; ang natira ay cash.", "Kinatibuk-an {{total}}. Ibutang ang bahin sa GCash; ang nahabilin cash."]
+}

@@ -62,6 +62,14 @@
   }
 }
 
+/* Fit mode: the page does not scroll, so the block sits in place with no
+   heading — the cards say what they are. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-pin { position: static; padding-bottom: 0; }
+  .bl-pin .bl-section { margin-bottom: 0; }
+  .bl-pin .bl-section__head { display: none; }
+}
+
 @media print {
   .bl-pin { position: static; }
 }

@@ -22,6 +22,7 @@ import { CostForecastCard, ForecastStat } from '../components/dashboard/Forecast
 import PageHeader from '../components/layout/PageHeader';
 import PinnedSummary from '../components/layout/PinnedSummary';
 import { Card, Section } from '../components/layout/Section';
+import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
 import { alertError, alertSuccess, confirmAction } from '../lib/swal';
@@ -157,7 +158,7 @@ export function ProductDetails() {
   };
 
   return (
-    <>
+    <Workspace className="bl-pd">
       <nav className="bl-crumbs" aria-label={t('Breadcrumb')}>
         <ol>
           <li>
@@ -247,84 +248,105 @@ export function ProductDetails() {
         </Section>
       </PinnedSummary>
 
-      {/* ---- Sales and movement --------------------------------------------- */}
-      <div className="bl-grid bl-grid--2 bl-grid--gap-lg">
-        <Section title={t('Sales trend')} description={t('Units sold over the last 7 days')}>
-          <Card>
-            <TrendChart
-              data={unitSales}
-              format={(v) => `${number(v)} ${product.unit}`}
-              axisFormat={(v) => number(v, 0)}
-              seriesName="Units sold"
-              summary={t('Line chart of {{name}} units sold over the last seven days, averaging about {{v2}} {{unit}} per day.', { name: product.name, v2: number(product.averageDailyDemand), unit: product.unit })}
-              height={200}
-            />
-          </Card>
-        </Section>
+      <Bento rows="minmax(0, 1fr) minmax(0, 1fr)">
+        {/* ---- Sales and movement ------------------------------------------- */}
+        <Card fill as="h2" className="bl-span-4" title={t('Sales trend')} description={t('Units sold over the last 7 days')}>
+          <TrendChart
+            data={unitSales}
+            format={(v) => `${number(v)} ${product.unit}`}
+            axisFormat={(v) => number(v, 0)}
+            seriesName="Units sold"
+            summary={t('Line chart of {{name}} units sold over the last seven days, averaging about {{v2}} {{unit}} per day.', { name: product.name, v2: number(product.averageDailyDemand), unit: product.unit })}
+            height={200}
+            fill
+          />
+        </Card>
 
-        <Section title={t('Inventory movement')} description={t('Stock on hand over the last 14 days')}>
-          <Card>
-            <TrendChart
-              data={movement.map((m) => ({ label: m.date, value: m.stock }))}
-              format={(v) => `${number(v)} ${product.unit}`}
-              axisFormat={(v) => number(v, 0)}
-              seriesName="Stock on hand"
-              summary={t('Line chart of {{name}} stock on hand over 14 days, currently {{v2}} {{unit}}.', { name: product.name, v2: number(product.currentStock), unit: product.unit })}
-              height={200}
-              variant="line"
-            />
-          </Card>
-        </Section>
-      </div>
+        <Card fill as="h2" className="bl-span-4" title={t('Inventory movement')} description={t('Stock on hand over the last 14 days')}>
+          <TrendChart
+            data={movement.map((m) => ({ label: m.date, value: m.stock }))}
+            format={(v) => `${number(v)} ${product.unit}`}
+            axisFormat={(v) => number(v, 0)}
+            seriesName="Stock on hand"
+            summary={t('Line chart of {{name}} stock on hand over 14 days, currently {{v2}} {{unit}}.', { name: product.name, v2: number(product.currentStock), unit: product.unit })}
+            height={200}
+            variant="line"
+            fill
+          />
+        </Card>
 
-      {/* ---- Forecasts ------------------------------------------------------ */}
-      {demand && (
-        <Section
+        {/* ---- Expected sales ------------------------------------------------- */}
+        <Card
+          fill
+          as="h2"
+          className="bl-span-4"
           title={t('Expected sales')}
-          description={t('Expected sales over the next {{horizonDays}} days', { horizonDays: demand.horizonDays })}
+          description={
+            demand
+              ? t('Expected sales over the next {{horizonDays}} days', { horizonDays: demand.horizonDays })
+              : undefined
+          }
         >
-          <Card>
-            <div className="bl-pd__forecast-head">
-              <div>
-                <span className="bl-label">{t('Expected sales')}</span>
-                <p className="bl-metric">
-                  {number(demand.forecastQuantity)}
-                  <span className="bl-fc__unit"> {demand.unit}</span>
-                </p>
-                <p className="bl-caption">
-                  {t('Expected range {{low}}–{{high}} {{unit}} · {{confidence}}% sure', {
-                    low: number(demand.rangeLow),
-                    high: number(demand.rangeHigh),
-                    unit: demand.unit,
-                    confidence: demand.confidence,
-                  })}
-                </p>
+          {!demand ? (
+            <p className="bl-support">{t('Once you have recorded enough sales, forecasts for each product will appear here.')}</p>
+          ) : (
+            <>
+              <div className="bl-pd__forecast-head">
+                <div>
+                  <p className="bl-metric">
+                    {number(demand.forecastQuantity)}
+                    <span className="bl-fc__unit"> {demand.unit}</span>
+                  </p>
+                  <p className="bl-caption">
+                    {t('Expected range {{low}}–{{high}} {{unit}} · {{confidence}}% sure', {
+                      low: number(demand.rangeLow),
+                      high: number(demand.rangeHigh),
+                      unit: demand.unit,
+                      confidence: demand.confidence,
+                    })}
+                  </p>
+                </div>
+                {demand.forecastQuantity > demand.currentStock ? (
+                  <Badge tone="warning">
+                    {t('Short by {{v1}} {{unit}}', { v1: number(demand.forecastQuantity - demand.currentStock), unit: demand.unit })}
+                  </Badge>
+                ) : (
+                  <Badge tone="success">{t('Stock is sufficient')}</Badge>
+                )}
               </div>
-              {demand.forecastQuantity > demand.currentStock ? (
-                <Badge tone="warning">
-                  {t('Short by {{v1}} {{unit}}', { v1: number(demand.forecastQuantity - demand.currentStock), unit: demand.unit })}
-                </Badge>
-              ) : (
-                <Badge tone="success">{t('Stock is sufficient')}</Badge>
-              )}
-            </div>
 
-            <ForecastChart
-              data={demand.series}
-              format={(v) => `${number(v)} ${demand.unit}`}
-              axisFormat={(v) => number(v, 0)}
-              measure="Units"
-              summary={t('Chart of {{name}} daily demand: seven days recorded, then a seven-day forecast totalling {{v2}} {{unit}} with a range of {{v4}} to {{v5}}.', { name: product.name, v2: number(demand.forecastQuantity), unit: demand.unit, v4: number(demand.rangeLow), v5: number(demand.rangeHigh) })}
-              height={230}
-            />
-          </Card>
-        </Section>
-      )}
+              <ForecastChart
+                data={demand.series}
+                format={(v) => `${number(v)} ${demand.unit}`}
+                axisFormat={(v) => number(v, 0)}
+                measure="Units"
+                summary={t('Chart of {{name}} daily demand: seven days recorded, then a seven-day forecast totalling {{v2}} {{unit}} with a range of {{v4}} to {{v5}}.', { name: product.name, v2: number(demand.forecastQuantity), unit: demand.unit, v4: number(demand.rangeLow), v5: number(demand.rangeHigh) })}
+                height={230}
+                fill
+              />
+            </>
+          )}
+        </Card>
 
-      <div className="bl-grid bl-grid--2 bl-grid--gap-lg">
-        {price && (
-          <Section title={t('Price forecast')} description={t('Supplier unit price from {{supplierName}}', { supplierName: price.supplierName })}>
-            <Card>
+        {/* ---- Price and purchasing cost ------------------------------------- */}
+        <Card
+          fill
+          as="h2"
+          className="bl-span-4"
+          title={t('Price forecast')}
+          description={
+            price
+              ? t('Supplier unit price from {{supplierName}}', { supplierName: price.supplierName })
+              : t('What your next order is likely to cost')
+          }
+        >
+          {!price && !cost && (
+            <p className="bl-support">
+              {t('Supplier price forecasts appear once there are enough recorded purchases to spot a trend.')}
+            </p>
+          )}
+          {price && (
+            <>
               <div className="bl-pd__pricegrid">
                 <ForecastStat label={t('Current price')} value={peso(price.currentPrice)} />
                 <ForecastStat
@@ -354,21 +376,32 @@ export function ProductDetails() {
                 summary={t('Chart of {{name}} supplier unit price: three months recorded at around {{v2}}, forecast to reach {{v3}} to {{v4}}.', { name: product.name, v2: peso(price.currentPrice), v3: peso(price.estimatedLow), v4: peso(price.estimatedHigh) })}
                 height={200}
               />
-            </Card>
-          </Section>
-        )}
+            </>
+          )}
+          {cost && (
+            <div className="bl-pd__cost">
+              <h3 className="bl-dash__forecast-label">{t('Purchasing cost forecast')}</h3>
+              <CostForecastCard forecast={cost} />
+            </div>
+          )}
+        </Card>
 
-        {cost && (
-          <Section title={t('Purchasing cost forecast')} description={t('What your next order is likely to cost')}>
-            <CostForecastCard forecast={cost} />
-          </Section>
-        )}
-      </div>
-
-      {/* ---- Supplier ------------------------------------------------------- */}
-      {supplier && (
-        <Section title={t('Supplier')}>
-          <Card>
+        {/* ---- Supplier ------------------------------------------------------- */}
+        <Card
+          fill
+          as="h2"
+          className="bl-span-4"
+          title={t('Supplier')}
+          action={
+            <Link to="/suppliers" className="bl-viewall">
+              {t('View suppliers')}
+              <IonIcon icon={chevronForwardOutline} aria-hidden="true" />
+            </Link>
+          }
+        >
+          {!supplier ? (
+            <p className="bl-support">{t('No supplier linked to this product yet.')}</p>
+          ) : (
             <div className="bl-pd__supplier">
               <div className="bl-pd__supplier-main">
                 <h3 className="bl-card-title">{supplier.name}</h3>
@@ -391,39 +424,40 @@ export function ProductDetails() {
                   <dd>{shortDate(supplier.lastOrderedAt)}</dd>
                 </div>
               </dl>
-              <Link to="/suppliers" className="bl-viewall">
-                {t('View suppliers')}
-                <IonIcon icon={chevronForwardOutline} aria-hidden="true" />
-              </Link>
             </div>
-          </Card>
-        </Section>
-      )}
+          )}
+        </Card>
 
-      {/* ---- AI recommendation ---------------------------------------------- */}
-      <Section title={t('AI recommendation')} description={t('Generated from this product\'s recorded data')}>
-        {insights.length === 0 ? (
-          <Card>
+        {/* ---- AI recommendation ---------------------------------------------- */}
+        <Card
+          fill
+          as="h2"
+          className="bl-span-4"
+          title={t('AI recommendation')}
+          description={t('Generated from this product\'s recorded data')}
+        >
+          {insights.length === 0 ? (
             <div className="bl-pd__noinsight">
               <IonIcon icon={cubeOutline} aria-hidden="true" />
               <p className="bl-support">
                 {t('No recommendation for this product yet. Insights appear once there is enough sales and purchase history.')}
               </p>
             </div>
-          </Card>
-        ) : (
-          <div className="bl-stack">
-            {insights.map((insight) => (
-              <AIInsightCard key={insight.id} insight={insight} />
-            ))}
-          </div>
-        )}
-      </Section>
+          ) : (
+            <div className="bl-stack">
+              {insights.map((insight) => (
+                <AIInsightCard key={insight.id} insight={insight} />
+              ))}
+            </div>
+          )}
+        </Card>
+      </Bento>
 
       <Modal
         isOpen={adjustOpen}
         onClose={() => setAdjustOpen(false)}
         title={t('Adjust Stock')}
+        icon="stock"
         description={t('Correct {{name}}\'s stock on hand. Recorded as an adjustment in its stock history.', { name: product.name })}
         size="sm"
         footer={
@@ -469,7 +503,7 @@ export function ProductDetails() {
           />
         </form>
       </Modal>
-    </>
+    </Workspace>
   );
 }
 

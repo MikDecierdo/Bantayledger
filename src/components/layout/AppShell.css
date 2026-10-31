@@ -81,6 +81,39 @@
   }
 }
 
+/*
+ * Desktop fit mode (>= 1024px wide, >= 640px tall): pages built on
+ * <Workspace> fill the window exactly, so the scroll area has nothing to
+ * scroll. It keeps overflow-y:auto as a safety net, so content is never cut
+ * off on a page or window size that does not fit.
+ */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-shell--sidebar .bl-shell__main,
+  .bl-shell--sidebar .bl-shell__main:is(*) {
+    --bl-main-pt: var(--bl-s4);
+    --bl-main-px: var(--bl-s6);
+    display: flex;
+    flex-direction: column;
+    padding: var(--bl-main-pt) var(--bl-main-px) var(--bl-s4);
+  }
+  .bl-shell--sidebar .bl-container {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .bl-shell--sidebar .bl-container > .bl-ws { flex: 1 1 auto; }
+  /* An app screen uses the whole window, up to very wide monitors. */
+  .bl-shell--sidebar .bl-container { max-width: 1760px; }
+}
+
+@media (min-width: 1440px) and (min-height: 640px) {
+  .bl-shell--sidebar .bl-shell__main:is(*) {
+    --bl-main-px: var(--bl-s8);
+    padding-inline: var(--bl-main-px);
+  }
+}
+
 /* ---- Shared responsive grids -------------------------------------------- */
 
 /*
@@ -232,4 +265,12 @@
   .bl-shell__main { background: #fff !important; padding: 0 !important; }
 
   .bl-container { max-width: none !important; }
+}
+
+/* Fit mode: every KPI row is a single strip of equal cards. */
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-grid--kpi { grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: var(--bl-s3); }
+  .bl-grid--kpi > *,
+  .bl-grid--kpi5 > :first-child,
+  .bl-grid--kpi5 > :nth-child(6) { grid-column: auto; }
 }

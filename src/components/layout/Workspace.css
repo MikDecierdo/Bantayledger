@@ -1,0 +1,145 @@
+/* ==========================================================================
+   Workspace — page frame and bento grid. See Workspace.tsx.
+
+   "Fit mode" (>= 1024px wide and >= 640px tall) is the desktop app layout:
+   the page fills the window and never scrolls; long lists scroll inside
+   their cards. Keep the media query in sync with AppShell.css, Section card
+   rules in components.css and charts.css.
+   ========================================================================== */
+
+.bl-ws { display: flex; flex-direction: column; min-width: 0; }
+
+/* The page header and summary keep the spacing they have everywhere else;
+   inside the workspace the gap does that job. */
+.bl-ws > .bl-pageheader { margin-bottom: var(--bl-s4); }
+
+/* ---- Bento grid ---------------------------------------------------------- */
+
+.bl-bento {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--bl-s4);
+  min-width: 0;
+}
+.bl-bento > * { min-width: 0; }
+
+.bl-rail { display: grid; gap: var(--bl-s4); min-width: 0; align-content: start; }
+.bl-rail > * { min-width: 0; }
+
+/* Tablets: two columns; the wide blocks keep a full row. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .bl-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bl-bento > .bl-span-7,
+  .bl-bento > .bl-span-8,
+  .bl-bento > .bl-span-9,
+  .bl-bento > .bl-span-12 { grid-column: 1 / -1; }
+}
+
+@media (min-width: 1024px) {
+  .bl-bento { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+  .bl-bento > * { grid-column: span 12; }
+  .bl-bento > .bl-span-2 { grid-column: span 2; }
+  .bl-bento > .bl-span-3 { grid-column: span 3; }
+  .bl-bento > .bl-span-4 { grid-column: span 4; }
+  .bl-bento > .bl-span-5 { grid-column: span 5; }
+  .bl-bento > .bl-span-6 { grid-column: span 6; }
+  .bl-bento > .bl-span-7 { grid-column: span 7; }
+  .bl-bento > .bl-span-8 { grid-column: span 8; }
+  .bl-bento > .bl-span-9 { grid-column: span 9; }
+  .bl-bento > .bl-rows-2 { grid-row: span 2; }
+}
+
+/* ---- Mini figures (rail cards) ------------------------------------------- */
+
+.bl-ministats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--bl-border);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+  overflow: hidden;
+}
+.bl-ministats__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--bl-s3);
+  background: var(--bl-surface);
+  min-width: 0;
+}
+.bl-ministats dd { margin: 0; }
+.bl-ministats__value {
+  font-size: var(--bl-fs-lg);
+  font-weight: var(--bl-fw-bold);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+  color: var(--bl-text);
+}
+.bl-ministats__value--brand { color: var(--bl-green-dark); }
+.bl-ministats__value--danger { color: var(--bl-danger); }
+.bl-ministats__value--warning { color: var(--bl-warning); }
+.bl-ministats__foot { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* On phones and tablets, summary rails read before the long list they sit
+   beside on desktop. */
+@media (max-width: 1023px) {
+  .bl-bento > .bl-first-small { order: -1; }
+}
+
+/* Show / hide only in desktop fit mode (e.g. the dashboard's quick actions
+   move into the page header there). */
+.bl-fit-only { display: none !important; }
+
+/* ---- Fit mode ------------------------------------------------------------ */
+
+@media (min-width: 1024px) and (min-height: 640px) {
+  .bl-ws {
+    height: 100%;
+    min-height: 0;
+    gap: var(--bl-s4);
+  }
+  .bl-ws > * { flex-shrink: 0; margin-bottom: 0 !important; }
+  /* PinnedSummary's zero-height scroll anchor would add an extra gap. */
+  .bl-ws > div[aria-hidden='true']:empty { display: none; }
+
+  /* The grid takes the rest of the page; its rows share that height. */
+  .bl-ws > .bl-bento {
+    flex: 1 1 0;
+    min-height: 0;
+    grid-template-rows: var(--bl-bento-rows, minmax(0, 1fr));
+    flex-shrink: 1;
+  }
+  .bl-bento > * { min-height: 0; }
+  .bl-fit-only { display: inline-flex !important; }
+  .bl-fit-hide { display: none !important; }
+
+  /* Rail: stacked cards share the column; a fixed-size card keeps its own
+     height (`bl-rail__fixed`), the others split what remains. */
+  .bl-rail {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    height: 100%;
+  }
+  .bl-rail > * { flex: 1 1 0; min-height: 0; }
+  .bl-rail > .bl-rail__fixed { flex: 0 0 auto; }
+
+  /* Card headings in the grid stay on one line. */
+  .bl-bento .bl-card__header .bl-caption { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .bl-card--fill.bl-card--flush .bl-resultcount { margin: 0; padding: var(--bl-s2) var(--bl-s4); }
+
+  /* Sections used inside the grid lose their page spacing. */
+  .bl-bento .bl-section { margin-bottom: 0; }
+}
+
+/* Short laptop screens: rail figures tighten so the chart below keeps room. */
+@media (min-width: 1024px) and (min-height: 640px) and (max-height: 820px) {
+  .bl-ministats__item { padding: var(--bl-s2) var(--bl-s3); gap: 0; }
+  .bl-ministats__value { font-size: var(--bl-fs-md); }
+  .bl-ministats__foot { display: none; }
+  .bl-rail .bl-card:not(.bl-card--fill) { padding: var(--bl-s3) var(--bl-s4); }
+  .bl-rail .bl-card:not(.bl-card--fill) > .bl-card__header { margin-bottom: var(--bl-s2); }
+  .bl-rail .bl-card__header .bl-caption { display: none; }
+}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, type ReactNode } from 'react';
-import { useBreakpoint } from '../../hooks/useBreakpoint';
+import { useBreakpoint, useFitMode } from '../../hooks/useBreakpoint';
 import './PinnedSummary.css';
 
 /**
@@ -14,10 +14,12 @@ import './PinnedSummary.css';
  *
  * It also publishes `--bl-sticky-top` on the scroll container so a sticky
  * filter bar or table heading further down stacks directly beneath it.
- * Below 1024px it renders its children plainly.
+ * Below 1024px it renders its children plainly, and so it does in desktop
+ * fit mode, where the page does not scroll at all.
  */
 export function PinnedSummary({ children }: { children: ReactNode }) {
   const { isDesktop } = useBreakpoint();
+  const fit = useFitMode();
   const anchorRef = useRef<HTMLDivElement>(null);
   const pinRef = useRef<HTMLDivElement>(null);
 
@@ -25,7 +27,7 @@ export function PinnedSummary({ children }: { children: ReactNode }) {
     const main = document.getElementById('bl-main');
     const pin = pinRef.current;
     const anchor = anchorRef.current;
-    if (!isDesktop || !main || !pin || !anchor) return;
+    if (!isDesktop || fit || !main || !pin || !anchor) return;
 
     const headerH =
       parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bl-header-h')) || 84;
@@ -72,7 +74,7 @@ export function PinnedSummary({ children }: { children: ReactNode }) {
       pin.style.removeProperty('--p');
       pin.style.removeProperty('margin-bottom');
     };
-  }, [isDesktop]);
+  }, [isDesktop, fit]);
 
   return (
     <>

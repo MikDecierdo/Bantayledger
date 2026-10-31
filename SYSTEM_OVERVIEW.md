@@ -120,6 +120,16 @@ Every application table's primary key is named after its table, and a foreign ke
 
 Laravel's own tables (`sessions`, `personal_access_tokens`, `password_reset_tokens`, `cache`, `jobs`) keep the framework's `id`; `sessions.user_id` is a real foreign key to `users.user_id`. The migration is `2026_10_16_000000_normalize_keys_and_foreign_keys` (reversible). **The API did not change:** responses still use `id`, `productId`, and so on; only the database column names did. New code must use the key names above (`DB::table('products')->where('product_id', ...)`); the `User` model exposes `id` as an alias of `user_id`.
 
+### Capital, profit and available profit (2026-10-30)
+- Every sale line stores `sale_items.unit_cost`, the product's buying price at the moment of the sale, so profit does not change when a buying price is edited later.
+- Capital = quantity x `unit_cost`. Profit = sales - capital. **Available profit** = this month's profit - this month's expenses (never below zero). One helper, `app/Services/ProfitService.php`, does this math for both screens.
+- `GET /sales/overview` adds `capital*` / `profit*` for today, week and month; `GET /expenses/overview` adds `profitMonth` and `availableProfit`.
+- **Split payments (2026-10-31):** a sale's payment is one or two rows in `sale_payments` (`Cash` and/or `GCash`, each with its amount, GCash with the last 4 digits). `sales.payment_method` is `Cash`, `GCash` or `Mixed`. `POST /sales` takes `payments: [{method, amount, reference?}]` (the parts must add up to the total, each method once) or the older single `paymentMethod`. Today's Cash / GCash cards sum `sale_payments`, so a split sale counts in both. Duplicate GCash reference detection also reads `sale_payments`.
+- **Desktop "fit to screen" layout (2026-10-31):** on screens at least 1024px wide and 640px tall, every page fills the window and the page itself never scrolls. Pages are built from `components/layout/Workspace.tsx`: `Workspace` (page frame), `Bento` (12-column grid that takes the remaining height, `bl-span-*` widths), `Rail` (stacked side cards) and `MiniStats`. `<Card fill>` keeps its heading still and scrolls its content inside the card, with sticky table headings. Charts take `fill` to grow to their card. Settings shows one group at a time beside a group list there. Phones, tablets and short windows keep normal page scrolling. The media query lives in `FIT_QUERY` (`hooks/useBreakpoint.ts`) and the CSS files.
+- **Windows (modals):** one component (`components/common/Modal.tsx` + `Modal.css`) draws every window: tinted header with a picture, white section cards on a light body, never any sideways scroll, height follows the content, and a bottom sheet on phones. Pass `icon` (and `tone="danger"` for confirmations). `PaymentBadge` / `PaymentBadges` (in `PaymentLogos.tsx`) show the Cash and GCash logos.
+- `GET /sales` returns `unitCost` per item and `capital` / `profit` per sale; the Sales list has a View button that opens these per product.
+- `POST /expenses` returns 422 when the amount is more than the available profit for the expense's month. The Add Expense window shows the indicator and caps the amount the same way.
+
 ---
 
 ## 5. AI & insights features
