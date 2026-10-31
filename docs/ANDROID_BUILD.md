@@ -28,6 +28,23 @@ In Android Studio, wait for Gradle to finish, then
 When it finishes, click **locate**: the file is
 `android/app/build/outputs/apk/debug/app-debug.apk`.
 
+### Without Android Studio (command line)
+
+The app needs **Java 21** (installed here as Microsoft OpenJDK 21) and the
+Android SDK (`C:\Users\Kim Victus\AppData\Local\Android\Sdk`). In Command
+Prompt, from the project folder:
+
+```
+npm run build
+npx cap sync android
+cd android
+set JAVA_HOME=C:\Program Files\Microsoft\jdk-21.0.13.21-hotspot
+set ANDROID_HOME=C:\Users\Kim Victus\AppData\Local\Android\Sdk
+gradlew assembleDebug
+```
+
+The APK appears at `android\app\build\outputs\apk\debug\app-debug.apk`.
+
 ## Install on a phone
 
 - **By cable:** turn on *Developer options → USB debugging* on the phone, plug
