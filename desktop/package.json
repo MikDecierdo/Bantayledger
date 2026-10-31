@@ -1,14 +1,14 @@
 {
   "name": "bantayledger-desktop",
   "productName": "BantayLedger AI",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "BantayLedger AI for Windows",
   "author": "MikDecierdo",
   "private": true,
   "main": "main.cjs",
   "scripts": {
     "start": "node copy-app.cjs && electron .",
-    "dist": "node copy-app.cjs && electron-builder --win nsis --x64"
+    "dist": "node copy-app.cjs && electron-builder --win nsis --x64 --publish never"
   },
   "build": {
     "appId": "ph.bantayledger.desktop",
@@ -38,10 +38,21 @@
     },
     "electronLanguages": [
       "en-US"
+    ],
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "MikDecierdo",
+        "repo": "bantayledger-downloads",
+        "releaseType": "release"
+      }
     ]
   },
   "devDependencies": {
     "electron": "^45.2.1",
     "electron-builder": "^26.18.0"
+  },
+  "dependencies": {
+    "electron-updater": "^6.8.11"
   }
 }

@@ -7,8 +7,14 @@
  * normal URLs (/dashboard, /sales…) work and offline storage (IndexedDB) is
  * kept between launches. Data comes from the online server set in
  * VITE_API_URL when the web app was built.
+ *
+ * Updates: electron-updater checks the public GitHub releases
+ * (MikDecierdo/bantayledger-downloads, see "publish" in package.json) on
+ * launch and every few hours, downloads a newer installer in the background,
+ * and the page then offers "Restart to update" (it also installs on quit).
  */
-const { app, BrowserWindow, Menu, net, protocol, shell } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, net, protocol, shell } = require('electron');
+const { autoUpdater } = require('electron-updater');
 const fs = require('node:fs');
 const path = require('node:path');
 const { pathToFileURL } = require('node:url');
@@ -88,10 +94,39 @@ function createWindow() {
   return win;
 }
 
+/** Automatic updates; only in the installed app (not `npm start`). */
+function setUpUpdates(win) {
+  autoUpdater.autoDownload = true;
+  autoUpdater.autoInstallOnAppQuit = true;
+
+  autoUpdater.on('update-downloaded', (info) => {
+    const notes = typeof info.releaseNotes === 'string' ? info.releaseNotes.replace(/<[^>]+>/g, ' ').trim() : '';
+    win.webContents.send('bl-update', { state: 'ready', version: info.version, notes });
+  });
+  autoUpdater.on('error', (err) => console.warn('Update check failed:', err && err.message));
+
+  ipcMain.handle('bl-install-update', () => autoUpdater.quitAndInstall(false, true));
+  ipcMain.handle('bl-check-update', async () => {
+    if (!app.isPackaged) return null;
+    try {
+      const result = await autoUpdater.checkForUpdates();
+      return result && result.isUpdateAvailable ? result.updateInfo.version : null;
+    } catch {
+      return null;
+    }
+  });
+
+  if (!app.isPackaged || process.env.BL_SMOKE) return;
+  const check = () => autoUpdater.checkForUpdates().catch(() => undefined);
+  win.webContents.once('did-finish-load', () => setTimeout(check, 5000));
+  setInterval(check, 6 * 60 * 60 * 1000);
+}
+
 app.whenReady().then(() => {
   Menu.setApplicationMenu(null);
   protocol.handle('app', serveApp);
   const win = createWindow();
+  setUpUpdates(win);
 
   app.on('second-instance', () => {
     if (win.isMinimized()) win.restore();

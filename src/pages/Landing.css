@@ -277,6 +277,18 @@
 }
 .bl-land__dl-icon--android { color: #3DDC84; background: #EDFBF3; }
 .bl-land__dl-icon--windows { color: #0078D4; background: #EAF3FC; }
+.bl-land__dl-icon--apple { color: #1D1D1F; background: #F2F2F4; }
+.bl-land__dl--featured { border-color: var(--bl-green); box-shadow: 0 0 0 3px var(--bl-green-soft); }
+.bl-land__inline-icon { position: relative; top: 2px; font-size: 1.05em; color: #0A84FF; }
+.bl-land__dl-hint {
+  margin: 0;
+  padding: var(--bl-s3) var(--bl-s4);
+  border-radius: var(--bl-r-md);
+  background: var(--bl-bg);
+  color: var(--bl-text-secondary);
+  font-size: var(--bl-fs-sm);
+  line-height: 1.5;
+}
 .bl-land__meta { margin: 2px 0 0; color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); }
 .bl-land__dl-steps {
   flex: 1;
@@ -290,7 +302,8 @@
 }
 .bl-land__dl-note { flex: 1; margin: 0; color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); line-height: 1.55; }
 
-@media (min-width: 900px) { .bl-land__downloads { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 640px) { .bl-land__downloads { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1180px) { .bl-land__downloads { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
 
 /* FAQ */
 .bl-land__faq-wrap { display: grid; gap: var(--bl-s8); }

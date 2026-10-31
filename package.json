@@ -1,7 +1,7 @@
 {
   "name": "bantayledger",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.2",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -10,10 +10,12 @@
     "preview": "vite preview",
     "cap:sync": "npm run build && npx cap sync",
     "check:i18n": "node scripts/extract-i18n.mjs --check",
-    "merge:i18n": "node scripts/merge-i18n.mjs"
+    "merge:i18n": "node scripts/merge-i18n.mjs",
+    "version:set": "node scripts/bump-version.mjs"
   },
   "dependencies": {
     "@capacitor/android": "^8.5.1",
+    "@capacitor/browser": "^8.0.5",
     "@capacitor/core": "^8.5.1",
     "@capacitor/ios": "^8.5.1",
     "@fontsource/inter": "^5.3.0",
