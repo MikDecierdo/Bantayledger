@@ -1,43 +1,170 @@
 {
-  "{{days}} days before": ["{{days}} araw bago", "{{days}} ka adlaw sa wala pa"],
-  "Add a local event": ["Magdagdag ng lokal na okasyon", "Pagdugang og lokal nga okasyon"],
-  "Add event": ["Magdagdag ng okasyon", "Pagdugang og okasyon"],
-  "April": ["Abril", "Abril"],
-  "August": ["Agosto", "Agosto"],
-  "Based on your recorded data · {{pct}}% sure": ["Batay sa naitala mong datos · {{pct}}% sigurado", "Base sa imong natala nga datos · {{pct}}% sigurado"],
-  "Choose": ["Pumili", "Pagpili"],
-  "Choose the day.": ["Piliin ang araw.", "Pilia ang adlaw."],
-  "Choose the month.": ["Piliin ang buwan.", "Pilia ang bulan."],
-  "Could not remove the event.": ["Hindi maalis ang okasyon.", "Dili makuha ang okasyon."],
-  "Could not save the event. Please try again.": ["Hindi ma-save ang okasyon. Pakisubukang muli.", "Dili ma-save ang okasyon. Palihug sulayi pag-usab."],
-  "Day": ["Araw", "Adlaw"],
-  "December": ["Disyembre", "Disyembre"],
-  "e.g. Barangay San Roque fiesta": ["hal. Pista ng Barangay San Roque", "pananglitan: Pista sa Barangay San Roque"],
-  "Enter a name for the event.": ["Ilagay ang pangalan ng okasyon.", "Isulat ang ngalan sa okasyon."],
-  "Event name": ["Pangalan ng okasyon", "Ngalan sa okasyon"],
-  "Event removed.": ["Naalis ang okasyon.", "Nakuha na ang okasyon."],
-  "Event saved. Its stock-up list will appear {{days}} days before.": ["Na-save ang okasyon. Lalabas ang listahan ng iimbakin {{days}} araw bago nito.", "Na-save ang okasyon. Mogawas ang lista sa i-stock {{days}} ka adlaw sa wala pa kini."],
-  "Events": ["Mga okasyon", "Mga okasyon"],
-  "Every {{month}} {{day}} · list appears {{days}} days before": ["Tuwing {{month}} {{day}} · lalabas ang listahan {{days}} araw bago", "Matag {{month}} {{day}} · mogawas ang lista {{days}} ka adlaw sa wala pa"],
-  "February": ["Pebrero", "Pebrero"],
-  "It repeats every year on the same date.": ["Inuulit ito taon-taon sa parehong petsa.", "Gibalik kini matag tuig sa samang petsa."],
-  "January": ["Enero", "Enero"],
-  "July": ["Hulyo", "Hulyo"],
-  "June": ["Hunyo", "Hunyo"],
-  "Local events": ["Mga lokal na okasyon", "Mga lokal nga okasyon"],
-  "March": ["Marso", "Marso"],
-  "May": ["Mayo", "Mayo"],
-  "Month": ["Buwan", "Bulan"],
-  "No local events yet.": ["Wala pang lokal na okasyon.", "Wala pay lokal nga okasyon."],
-  "No local events yet. Add your barangay fiesta so you get a stock-up list before it.": ["Wala pang lokal na okasyon. Idagdag ang pista ng inyong barangay para makakuha ng listahan ng iimbakin bago ito.", "Wala pay lokal nga okasyon. Idugang ang pista sa inyong barangay aron makakuha og lista sa i-stock sa wala pa kini."],
-  "November": ["Nobyembre", "Nobyembre"],
-  "October": ["Oktubre", "Oktubre"],
-  "Order": ["Umorder", "Pag-order"],
-  "Remove {{name}}?": ["Alisin ang {{name}}?", "Kuhaon ang {{name}}?"],
-  "Save event": ["I-save ang okasyon", "I-save ang okasyon"],
-  "September": ["Setyembre", "Septiyembre"],
-  "Show the stock-up list": ["Ipakita ang listahan ng iimbakin", "Ipakita ang lista sa i-stock"],
-  "What to stock": ["Ano ang iimbakin", "Unsa ang i-stock"],
-  "You will no longer get a stock-up list for this event.": ["Hindi ka na makakatanggap ng listahan ng iimbakin para sa okasyong ito.", "Dili na ka makadawat og lista sa i-stock para niini nga okasyon."],
-  "Your barangay fiesta and other local events. Before each one, AI Insights lists what to stock. Christmas, New Year, Undas and other national events are already included.": ["Ang pista ng inyong barangay at iba pang lokal na okasyon. Bago ang bawat isa, ililista ng AI Insights kung ano ang iimbakin. Kasama na ang Pasko, Bagong Taon, Undas at iba pang pambansang okasyon.", "Ang pista sa inyong barangay ug uban pang lokal nga okasyon. Sa wala pa ang matag usa, ilista sa AI Insights kung unsa ang i-stock. Apil na ang Pasko, Bag-ong Tuig, Undas ug uban pang nasudnong okasyon."]
+  "{{days}} days before": [
+    "{{days}} araw bago",
+    "{{days}} ka adlaw sa wala pa"
+  ],
+  "Add a local event": [
+    "Magdagdag ng lokal na okasyon",
+    "Pagdugang og lokal nga okasyon"
+  ],
+  "Add event": [
+    "Magdagdag ng okasyon",
+    "Pagdugang og okasyon"
+  ],
+  "April": [
+    "Abril",
+    "Abril"
+  ],
+  "August": [
+    "Agosto",
+    "Agosto"
+  ],
+  "Based on your recorded data · {{pct}}% sure": [
+    "Batay sa naitala mong datos · {{pct}}% sigurado",
+    "Base sa imong natala nga datos · {{pct}}% sigurado"
+  ],
+  "Choose": [
+    "Pumili",
+    "Pagpili"
+  ],
+  "Choose the day.": [
+    "Piliin ang araw.",
+    "Pilia ang adlaw."
+  ],
+  "Choose the month.": [
+    "Piliin ang buwan.",
+    "Pilia ang bulan."
+  ],
+  "Could not remove the event.": [
+    "Hindi maalis ang okasyon.",
+    "Dili makuha ang okasyon."
+  ],
+  "Could not save the event. Please try again.": [
+    "Hindi ma-save ang okasyon. Pakisubukang muli.",
+    "Dili ma-save ang okasyon. Palihug sulayi pag-usab."
+  ],
+  "Day": [
+    "Araw",
+    "Adlaw"
+  ],
+  "December": [
+    "Disyembre",
+    "Disyembre"
+  ],
+  "e.g. Barangay San Roque fiesta": [
+    "hal. Pista ng Barangay San Roque",
+    "pananglitan: Pista sa Barangay San Roque"
+  ],
+  "Enter a name for the event.": [
+    "Ilagay ang pangalan ng okasyon.",
+    "Isulat ang ngalan sa okasyon."
+  ],
+  "Event name": [
+    "Pangalan ng okasyon",
+    "Ngalan sa okasyon"
+  ],
+  "Event removed.": [
+    "Naalis ang okasyon.",
+    "Nakuha na ang okasyon."
+  ],
+  "Event saved. Its stock-up list will appear {{days}} days before.": [
+    "Na-save ang okasyon. Lalabas ang listahan ng iimbakin {{days}} araw bago nito.",
+    "Na-save ang okasyon. Mogawas ang lista sa i-stock {{days}} ka adlaw sa wala pa kini."
+  ],
+  "Events": [
+    "Mga okasyon",
+    "Mga okasyon"
+  ],
+  "Every {{month}} {{day}} · list appears {{days}} days before": [
+    "Tuwing {{month}} {{day}} · lalabas ang listahan {{days}} araw bago",
+    "Matag {{month}} {{day}} · mogawas ang lista {{days}} ka adlaw sa wala pa"
+  ],
+  "February": [
+    "Pebrero",
+    "Pebrero"
+  ],
+  "It repeats every year on the same date.": [
+    "Inuulit ito taon-taon sa parehong petsa.",
+    "Gibalik kini matag tuig sa samang petsa."
+  ],
+  "January": [
+    "Enero",
+    "Enero"
+  ],
+  "July": [
+    "Hulyo",
+    "Hulyo"
+  ],
+  "June": [
+    "Hunyo",
+    "Hunyo"
+  ],
+  "Local events": [
+    "Mga lokal na okasyon",
+    "Mga lokal nga okasyon"
+  ],
+  "March": [
+    "Marso",
+    "Marso"
+  ],
+  "May": [
+    "Mayo",
+    "Mayo"
+  ],
+  "Month": [
+    "Buwan",
+    "Bulan"
+  ],
+  "No local events yet.": [
+    "Wala pang lokal na okasyon.",
+    "Wala pay lokal nga okasyon."
+  ],
+  "No local events yet. Add your barangay fiesta so you get a stock-up list before it.": [
+    "Wala pang lokal na okasyon. Idagdag ang pista ng inyong barangay para makakuha ng listahan ng iimbakin bago ito.",
+    "Wala pay lokal nga okasyon. Idugang ang pista sa inyong barangay aron makakuha og lista sa i-stock sa wala pa kini."
+  ],
+  "November": [
+    "Nobyembre",
+    "Nobyembre"
+  ],
+  "October": [
+    "Oktubre",
+    "Oktubre"
+  ],
+  "Order": [
+    "Umorder",
+    "Pag-order"
+  ],
+  "Remove {{name}}?": [
+    "Alisin ang {{name}}?",
+    "Kuhaon ang {{name}}?"
+  ],
+  "Save event": [
+    "I-save ang okasyon",
+    "I-save ang okasyon"
+  ],
+  "September": [
+    "Setyembre",
+    "Septiyembre"
+  ],
+  "Show the stock-up list": [
+    "Ipakita ang listahan ng iimbakin",
+    "Ipakita ang lista sa i-stock"
+  ],
+  "What to stock": [
+    "Ano ang iimbakin",
+    "Unsa ang i-stock"
+  ],
+  "You will no longer get a stock-up list for this event.": [
+    "Hindi ka na makakatanggap ng listahan ng iimbakin para sa okasyong ito.",
+    "Dili na ka makadawat og lista sa i-stock para niini nga okasyon."
+  ],
+  "Your barangay fiesta and other local events. Before each one, AI Insights lists what to stock. Christmas, New Year, Undas and other national events are already included.": [
+    "Ang pista ng inyong barangay at iba pang lokal na okasyon. Bago ang bawat isa, ililista ng AI Insights kung ano ang iimbakin. Kasama na ang Pasko, Bagong Taon, Undas at iba pang pambansang okasyon.",
+    "Ang pista sa inyong barangay ug uban pang lokal nga okasyon. Sa wala pa ang matag usa, ilista sa AI Insights kung unsa ang i-stock. Apil na ang Pasko, Bag-ong Tuig, Undas ug uban pang nasudnong okasyon."
+  ],
+  "Updating": [
+    "Ina-update",
+    "Gi-update"
+  ]
 }

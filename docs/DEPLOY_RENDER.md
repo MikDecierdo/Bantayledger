@@ -112,3 +112,45 @@ check the Spam folder, and Brevo → **Transactional → Logs**.
 A Gmail address works as the sender, but some emails may land in Spam because
 Gmail can't vouch for Brevo. Sending from your own domain (verified in Brevo)
 fixes that.
+
+## 8. Speed: keep the server awake and the database close
+
+**Keep it awake.** Render's free plan puts the server to sleep after 15
+minutes without visitors; the next visitor then waits about 30 seconds. A free
+pinger stops that:
+
+1. Sign up at https://cron-job.org (free).
+2. **Create cronjob** → URL `https://bantayledger-api.onrender.com/api/health`,
+   schedule **every 10 minutes** → Create.
+
+This uses about 744 of Render's 750 free hours a month (the website doesn't
+use any).
+
+**Keep the database next to the server.** Every database step travels
+between the server and the database, so they should be in the same region.
+The server is in Oregon (US West); the database should be in US West too.
+`DB_PERSISTENT=true` (in `render.yaml`) keeps connections open between requests.
+
+To move the data to a new database, use the copy command from the
+`laravel-server` folder. It asks for each database's details; passwords are
+typed hidden. Sign-in tokens and caches are not copied (people sign in again).
+
+```
+php artisan db:copy
+```
+
+1. **Back up the live database to this laptop first.** FROM = the current
+   Aiven database (with its `ca.pem`); TO = `127.0.0.1`, port `3306`,
+   database `bantayledger_cloud_backup`, user `root`, no password. Create that
+   empty database in phpMyAdmin first. Answer **yes** to create the tables.
+2. In Aiven, create the new free MySQL service in a **US West** region and
+   download its CA certificate (save it as `ca-new.pem`).
+3. Run `php artisan db:copy` again: FROM = the laptop backup, TO = the new
+   Aiven database (with `ca-new.pem`). Answer **yes** to create the tables.
+   It ends with "Done: every table matches."
+4. In Render → **bantayledger-api → Environment**, change `DB_HOST`,
+   `DB_PORT`, `DB_PASSWORD` and `MYSQL_SSL_CA_PEM` (the text of `ca-new.pem`),
+   then **Save, rebuild, and deploy**. Don't record anything between step 1
+   and this deploy.
+5. Sign in and check your products, sales and staff. After a week of normal
+   use, delete the old Aiven service and the laptop backup.

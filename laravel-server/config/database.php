@@ -61,6 +61,9 @@ return [
             'engine' => null,
             'options' => extension_loaded('pdo_mysql') ? array_filter([
                 (PHP_VERSION_ID >= 80500 ? Mysql::ATTR_SSL_CA : PDO::MYSQL_ATTR_SSL_CA) => env('MYSQL_ATTR_SSL_CA'),
+                // Online (DB_PERSISTENT=true): each server worker keeps its encrypted
+                // database connection open instead of reconnecting on every request.
+                PDO::ATTR_PERSISTENT => (bool) env('DB_PERSISTENT', false),
             ]) : [],
         ],
 

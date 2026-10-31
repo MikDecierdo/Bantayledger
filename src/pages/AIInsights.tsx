@@ -11,6 +11,7 @@ import { Card } from '../components/layout/Section';
 import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
+import { useForecastRefresh } from '../hooks/useForecastRefresh';
 import { toUserMessage } from '../lib/errors';
 import { dataService } from '../services/dataService';
 import { relativeTime } from '../utils/format';
@@ -33,12 +34,10 @@ const FILTERS: { value: Filter; label: string }[] = [
 
 export function AIInsights() {
   const { activeBusiness } = useAuth();
-  const { data, loading, error, reload } = useAsyncData(async () => {
-    // Regenerates only if the last run is over a day old. A failure here
-    // shouldn't block showing the insights that already exist.
-    await dataService.refreshForecasts(true).catch(() => undefined);
-    return dataService.getInsights();
-  }, [activeBusiness?.id]);
+  // Saved insights show straight away; they are brought up to date in the
+  // background and re-read quietly if anything changed.
+  const { data, loading, error, reload, refresh } = useAsyncData(() => dataService.getInsights(), [activeBusiness?.id]);
+  const updating = useForecastRefresh(activeBusiness?.id, refresh);
   const { showToast } = useToast();
   const [filter, setFilter] = useState<Filter>('all');
   const [refreshing, setRefreshing] = useState(false);
@@ -73,10 +72,10 @@ export function AIInsights() {
         <Button
           variant="secondary"
           icon={refreshOutline}
-          loading={refreshing}
+          loading={refreshing || updating}
           onClick={() => void handleRefresh()}
         >
-          {refreshing ? t('Refreshing') : t('Refresh')}
+          {refreshing || updating ? t('Updating') : t('Refresh')}
         </Button>
       }
     />

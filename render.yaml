@@ -57,6 +57,9 @@ services:
         sync: false
       - key: RUN_MIGRATIONS
         value: "true"
+      # Keep database connections open between requests (much faster to a cloud database).
+      - key: DB_PERSISTENT
+        value: "true"
       # "Forgot password" emails, sent through Brevo's HTTPS API (Render's free
       # plan blocks SMTP). See docs/DEPLOY_RENDER.md → Email (Brevo).
       - key: MAIL_MAILER
