@@ -150,6 +150,10 @@ export function Landing() {
             <a href="#faq" onClick={jump('faq')}>{t('Questions')}</a>
           </nav>
           <div className="bl-land__nav-actions">
+            <a href="#download" onClick={jump('download')} className="bl-land__btn bl-land__btn--primary bl-land__btn--sm bl-land__nav-dl">
+              <IonIcon icon={downloadOutline} aria-hidden="true" />
+              {t('Download')}
+            </a>
             <LanguageSelect className="bl-land__lang" />
             <Link to="/login" className="bl-land__signin">{t('Sign in')}</Link>
             <Link to="/register" className="bl-land__btn bl-land__btn--primary bl-land__btn--sm">
@@ -176,22 +180,22 @@ export function Landing() {
                     {t('Get it on iPhone')}
                   </a>
                 ) : (
-                  <>
-                    <a className="bl-land__btn bl-land__btn--primary" href={DOWNLOADS.android.href} download>
-                      <IonIcon icon={logoAndroid} aria-hidden="true" />
-                      {t('Download for Android')}
-                    </a>
-                    <a className="bl-land__btn bl-land__btn--secondary" href={DOWNLOADS.windows.href} download>
-                      <IonIcon icon={logoWindows} aria-hidden="true" />
-                      {t('Download for Windows')}
-                    </a>
-                  </>
+                  <a className="bl-land__btn bl-land__btn--primary" href="#download" onClick={jump('download')}>
+                    <IonIcon icon={downloadOutline} aria-hidden="true" />
+                    {t('Download the app')}
+                  </a>
                 )}
+                <Link to="/login" className="bl-land__btn bl-land__btn--secondary">
+                  {t('Open web app')}
+                  <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
+                </Link>
               </div>
-              <Link to="/login" className="bl-land__textlink">
-                {t('Or use it in your browser')}
-                <IonIcon icon={arrowForwardOutline} aria-hidden="true" />
-              </Link>
+              <p className="bl-land__platforms">
+                <IonIcon icon={logoAndroid} aria-hidden="true" />
+                <IonIcon icon={logoWindows} aria-hidden="true" />
+                <IonIcon icon={logoApple} aria-hidden="true" />
+                {t('Android, Windows, iPhone and any browser')}
+              </p>
               <ul className="bl-land__proof">
                 <li><IonIcon icon={cloudOfflineOutline} aria-hidden="true" />{t('Works offline')}</li>
                 <li><IonIcon icon={walletOutline} aria-hidden="true" />{t('Cash and GCash')}</li>
@@ -373,10 +377,52 @@ export function Landing() {
       </main>
 
       <footer className="bl-land__footer">
-        <div className="bl-land__wrap bl-land__footer-inner">
-          <Logo size="sm" />
-          <p>{t('Business and forecast tracker for Philippine small businesses.')}</p>
-          <p className="bl-land__copy">© {new Date().getFullYear()} BantayLedger AI</p>
+        <div className="bl-land__wrap">
+          <div className="bl-land__footer-grid">
+            <div className="bl-land__footer-brand">
+              <Logo size="sm" />
+              <p>{t('Business and forecast tracker for Philippine small businesses.')}</p>
+            </div>
+
+            <nav className="bl-land__footer-col" aria-label={t('Product')}>
+              <h3>{t('Product')}</h3>
+              <ul>
+                <li><a href="#features" onClick={jump('features')}>{t('Features')}</a></li>
+                <li><a href="#how" onClick={jump('how')}>{t('How it works')}</a></li>
+                <li><a href="#download" onClick={jump('download')}>{t('Download')}</a></li>
+                <li><a href="#faq" onClick={jump('faq')}>{t('Questions')}</a></li>
+              </ul>
+            </nav>
+
+            <nav className="bl-land__footer-col" aria-label={t('Get the app')}>
+              <h3>{t('Get the app')}</h3>
+              <ul>
+                <li><a href="#download" onClick={jump('download')}>{t('Android phone')}</a></li>
+                <li><a href="#download" onClick={jump('download')}>{t('Windows computer')}</a></li>
+                <li><a href="#iphone" onClick={jump('iphone')}>{t('iPhone & iPad')}</a></li>
+                <li><Link to="/login">{t('Open web app')}</Link></li>
+              </ul>
+            </nav>
+
+            <div className="bl-land__footer-col">
+              <h3>{t('Developer')}</h3>
+              <dl className="bl-land__footer-dev">
+                <div>
+                  <dt>{t('Name')}</dt>
+                  <dd>Kim G. Decierdo</dd>
+                </div>
+                <div>
+                  <dt>{t('Contact no.')}</dt>
+                  <dd>{t('Not available yet')}</dd>
+                </div>
+              </dl>
+            </div>
+          </div>
+
+          <div className="bl-land__footer-bottom">
+            <p>© {new Date().getFullYear()} BantayLedger AI. {t('All rights reserved.')}</p>
+            <p>{t('Built for Philippine small businesses.')}</p>
+          </div>
         </div>
       </footer>
     </div>

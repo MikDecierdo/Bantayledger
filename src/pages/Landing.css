@@ -332,21 +332,80 @@
 .bl-land__closing h2 { margin: 0; font-size: clamp(1.6rem, 1.1rem + 1.8vw, 2.4rem); letter-spacing: -0.025em; }
 .bl-land__closing p { margin: var(--bl-s3) 0 0; color: rgba(255, 255, 255, 0.78); font-size: var(--bl-fs-md); }
 
-.bl-land__footer { padding: var(--bl-s8) 0; border-top: 1px solid var(--bl-border); }
-.bl-land__footer-inner { display: flex; flex-wrap: wrap; align-items: center; gap: var(--bl-s3) var(--bl-s6); }
-.bl-land__footer p { margin: 0; color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); }
-.bl-land__copy { margin-left: auto !important; }
+.bl-land__footer { padding: 56px 0 var(--bl-s6); border-top: 1px solid var(--bl-border); background: var(--bl-surface); }
+.bl-land__footer p { margin: 0; color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); line-height: 1.6; }
+.bl-land__footer-grid {
+  display: grid;
+  gap: var(--bl-s8) var(--bl-s6);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.bl-land__footer-brand { grid-column: 1 / -1; display: grid; gap: var(--bl-s3); align-content: start; max-width: 320px; }
+.bl-land__footer-col h3 {
+  margin: 0 0 var(--bl-s3);
+  color: var(--bl-text);
+  font-size: var(--bl-fs-xs, 0.75rem);
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.bl-land__footer-col ul { display: grid; gap: var(--bl-s2); margin: 0; padding: 0; list-style: none; }
+.bl-land__footer-col a { color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); text-decoration: none; }
+.bl-land__footer-col a:hover { color: var(--bl-green-dark); }
+.bl-land__footer-dev { display: grid; gap: var(--bl-s3); margin: 0; }
+.bl-land__footer-dev dt { color: var(--bl-text-tertiary, var(--bl-text-secondary)); font-size: var(--bl-fs-xs, 0.75rem); }
+.bl-land__footer-dev dd { margin: 2px 0 0; color: var(--bl-text); font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-medium, 500); }
+.bl-land__footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--bl-s2) var(--bl-s6);
+  margin-top: 40px;
+  padding-top: var(--bl-s5);
+  border-top: 1px solid var(--bl-border);
+}
+@media (min-width: 900px) {
+  .bl-land__footer-grid { grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); }
+  .bl-land__footer-brand { grid-column: auto; }
+}
+
+/* Sections land below the sticky top bar when jumped to. */
+.bl-land section[id],
+.bl-land__dl[id] { scroll-margin-top: 80px; }
+
+/* Under the hero buttons: the devices it runs on. */
+.bl-land__platforms {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s2);
+  margin: var(--bl-s4) 0 0;
+  color: var(--bl-text-secondary);
+  font-size: var(--bl-fs-sm);
+}
+.bl-land__platforms ion-icon { font-size: 16px; color: var(--bl-text); }
+.bl-land__platforms ion-icon:last-of-type { margin-right: var(--bl-s1); }
+
+/* Header Download button: phones and tablets (wide screens have the section links). */
+.bl-land__nav-dl { gap: 6px; }
+@media (min-width: 900px) { .bl-land__nav-dl { display: none !important; } }
+@media (max-width: 419px) {
+  .bl-land__nav-inner { gap: var(--bl-s3); }
+  .bl-land__nav-actions { gap: var(--bl-s3) !important; }
+  .bl-land__nav-dl { padding: 0 var(--bl-s3); }
+  .bl-land__nav-dl ion-icon { display: none; }
+  .bl-land__brand .bl-logo__name { font-size: 15px; }
+  .bl-land__signin { white-space: nowrap; }
+}
 
 /* ---- Phones ----------------------------------------------------------------- */
 
 @media (max-width: 599px) {
   .bl-land__wrap { padding: 0 var(--bl-s4); }
-  .bl-land__nav-actions .bl-land__btn--sm { display: none; }
+  .bl-land__nav-actions .bl-land__btn--sm:not(.bl-land__nav-dl) { display: none; }
+  .bl-land__nav-actions { gap: var(--bl-s3); }
   .bl-land__hero { padding: var(--bl-s10) 0 var(--bl-s8); }
   .bl-land__cta .bl-land__btn { flex: 1 1 100%; }
   .bl-land__section { padding: 64px 0; }
   .bl-land__phone { width: 34%; right: 0; }
-  .bl-land__copy { margin-left: 0 !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {
