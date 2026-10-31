@@ -1,0 +1,282 @@
+{
+  "Record a sale in seconds": [
+    "Magtala ng benta sa ilang segundo",
+    "Pagtala og baligya sulod sa pipila ka segundo"
+  ],
+  "Tap the products, take Cash, GCash or both, and stock updates by itself.": [
+    "Pindutin ang mga produkto, tanggapin ang Cash, GCash o pareho, at kusang naa-update ang stock.",
+    "Pinduta ang mga produkto, dawata ang Cash, GCash o pareho, ug kusa nga ma-update ang stock."
+  ],
+  "Never run out by surprise": [
+    "Hindi na mauubusan nang biglaan",
+    "Dili na mahutdan nga kalit"
+  ],
+  "See what is running low before the shelf is empty, with the right amount to reorder.": [
+    "Makita kung ano ang paubos bago maubos ang paninda, kasama ang tamang dami na dapat orderin.",
+    "Makita kung unsa ang paubos sa dili pa mahurot ang baligya, uban ang husto nga gidaghanon nga i-order."
+  ],
+  "Know your real profit": [
+    "Alamin ang tunay mong kita",
+    "Hibaloi ang tinuod nimong ganansya"
+  ],
+  "Sales, capital and expenses side by side, so you know what you actually earn.": [
+    "Benta, puhunan at gastos na magkatabi, para malaman mo ang tunay mong kinikita.",
+    "Baligya, puhunan ug gasto nga magkatapad, aron mahibaw-an nimo ang tinuod nimong kita."
+  ],
+  "Plan the week ahead": [
+    "Planuhin ang darating na linggo",
+    "Plano-a ang umaabot nga semana"
+  ],
+  "Forecasts from your own records tell you what will sell and what it will cost to restock.": [
+    "Sinasabi ng forecast mula sa sarili mong records kung ano ang mabebenta at magkano ang gagastusin sa pag-restock.",
+    "Ang forecast gikan sa imong kaugalingong records mosulti kung unsa ang mabaligya ug pila ang gasto sa pag-restock."
+  ],
+  "Works without internet": [
+    "Gumagana kahit walang internet",
+    "Molihok bisan walay internet"
+  ],
+  "Keep recording when the signal drops. Everything syncs once you are back online.": [
+    "Magpatuloy sa pagtala kahit mawalan ng signal. Magsi-sync ang lahat kapag may internet na ulit.",
+    "Padayon sa pagtala bisan mawala ang signal. Mag-sync ang tanan kon naa nay internet."
+  ],
+  "In your language": [
+    "Sa sarili mong wika",
+    "Sa imong kaugalingong pinulongan"
+  ],
+  "Use it in English, Tagalog or Cebuano, on your phone or your computer.": [
+    "Gamitin sa English, Tagalog o Cebuano, sa phone o computer mo.",
+    "Gamita sa English, Tagalog o Cebuano, sa imong phone o computer."
+  ],
+  "Download the app": [
+    "I-download ang app",
+    "I-download ang app"
+  ],
+  "Install it on your Android phone or Windows computer, or open it in your browser.": [
+    "I-install sa Android phone o Windows computer mo, o buksan sa browser.",
+    "I-install sa imong Android phone o Windows computer, o ablihi sa browser."
+  ],
+  "Add your products": [
+    "Idagdag ang mga produkto mo",
+    "Idugang ang imong mga produkto"
+  ],
+  "Enter what you sell, your buying and selling price, and how many you have.": [
+    "Ilagay ang mga tinda mo, ang presyo ng bili at benta, at kung ilan ang meron ka.",
+    "Ibutang ang imong gibaligya, ang presyo sa pagpalit ug pagbaligya, ug pila ang anaa nimo."
+  ],
+  "Record as you sell": [
+    "Itala habang nagbebenta",
+    "Itala samtang nagbaligya"
+  ],
+  "Every sale, purchase and expense goes in. The numbers and alerts take care of themselves.": [
+    "Naitatala ang bawat benta, bili at gastos. Kusa nang naaayos ang mga numero at alerto.",
+    "Matala ang matag baligya, palit ug gasto. Kusa nang maayo ang mga numero ug alerto."
+  ],
+  "Do I need internet all the time?": [
+    "Kailangan ko ba ng internet palagi?",
+    "Kinahanglan ba nako og internet kanunay?"
+  ],
+  "No. Sales, expenses, purchases and spoiled items can be recorded offline and are sent automatically when the connection returns. Signing in and changing settings need internet.": [
+    "Hindi. Maitatala ang benta, gastos, bili at sirang paninda kahit offline, at awtomatikong maipapadala kapag may koneksyon na. Kailangan ng internet sa pag-sign in at pagbago ng settings.",
+    "Dili. Matala ang baligya, gasto, palit ug guba nga baligya bisan offline, ug awtomatikong mapadala kon naa nay koneksyon. Kinahanglan og internet sa pag-sign in ug pag-usab sa settings."
+  ],
+  "Is my data the same on the phone and the computer?": [
+    "Pareho ba ang data ko sa phone at sa computer?",
+    "Pareho ba ang akong data sa phone ug sa computer?"
+  ],
+  "Yes. Every device signs in to the same account, so a sale recorded on the phone appears on the computer and the website.": [
+    "Oo. Iisang account ang ginagamit ng bawat device, kaya lalabas sa computer at sa website ang bentang itinala sa phone.",
+    "Oo. Usa ra ka account ang gamiton sa matag device, mao nga ang baligya nga gitala sa phone mogawas sa computer ug sa website."
+  ],
+  "Why does my phone or computer warn me when installing?": [
+    "Bakit nagbababala ang phone o computer ko kapag nag-i-install?",
+    "Nganong nagpasidaan ang akong phone o computer kon mag-install?"
+  ],
+  "The apps are installed directly from this website instead of an app store. Android asks you to allow installing from this source, and Windows may show \"Windows protected your PC\" — choose More info, then Run anyway.": [
+    "Direktang ini-install ang mga app mula sa website na ito sa halip na sa app store. Hihilingin ng Android na payagan ang pag-install mula sa source na ito, at maaaring ipakita ng Windows ang \"Windows protected your PC\" — piliin ang More info, saka Run anyway.",
+    "Direkta nga i-install ang mga app gikan niining website imbes sa app store. Hangyoon ka sa Android nga tugotan ang pag-install gikan niining source, ug mahimong ipakita sa Windows ang \"Windows protected your PC\" — pilia ang More info, dayon Run anyway."
+  ],
+  "Can my staff use it too?": [
+    "Pwede rin bang gamitin ng mga tauhan ko?",
+    "Mahimo ba usab kining gamiton sa akong mga trabahante?"
+  ],
+  "Yes. The owner adds staff in Settings → Team. Staff can record sales and stock; only the owner manages the business settings.": [
+    "Oo. Idinadagdag ng may-ari ang mga tauhan sa Settings → Team. Makakapagtala ang mga tauhan ng benta at stock; ang may-ari lang ang namamahala sa settings ng negosyo.",
+    "Oo. Idugang sa tag-iya ang mga trabahante sa Settings → Team. Makatala ang mga trabahante og baligya ug stock; ang tag-iya ra ang modumala sa settings sa negosyo."
+  ],
+  "BantayLedger AI home": [
+    "Home ng BantayLedger AI",
+    "Home sa BantayLedger AI"
+  ],
+  "Page sections": [
+    "Mga bahagi ng pahina",
+    "Mga bahin sa panid"
+  ],
+  "Features": [
+    "Mga Feature",
+    "Mga Feature"
+  ],
+  "How it works": [
+    "Paano ito gumagana",
+    "Giunsa kini paglihok"
+  ],
+  "Download": [
+    "I-download",
+    "I-download"
+  ],
+  "Questions": [
+    "Mga Tanong",
+    "Mga Pangutana"
+  ],
+  "For sari-sari stores and small shops": [
+    "Para sa mga sari-sari store at maliliit na tindahan",
+    "Para sa mga sari-sari store ug gagmay nga tindahan"
+  ],
+  "Know your sales, stock and profit — every single day.": [
+    "Alamin ang benta, stock at kita mo — araw-araw.",
+    "Hibaloi ang imong baligya, stock ug ganansya — adlaw-adlaw."
+  ],
+  "BantayLedger keeps your sales, inventory, expenses and suppliers in one place, then tells you what to restock and what is coming next.": [
+    "Nasa iisang lugar sa BantayLedger ang benta, imbentaryo, gastos at mga supplier mo, at sinasabi nito kung ano ang dapat i-restock at ano ang paparating.",
+    "Anaa sa usa ka dapit sa BantayLedger ang imong baligya, imbentaryo, gasto ug mga supplier, ug sultihan ka niini kung unsa ang i-restock ug unsa ang umaabot."
+  ],
+  "Download for Android": [
+    "I-download para sa Android",
+    "I-download para sa Android"
+  ],
+  "Download for Windows": [
+    "I-download para sa Windows",
+    "I-download para sa Windows"
+  ],
+  "Or use it in your browser": [
+    "O gamitin sa browser mo",
+    "O gamita sa imong browser"
+  ],
+  "Works offline": [
+    "Gumagana offline",
+    "Molihok offline"
+  ],
+  "Cash and GCash": [
+    "Cash at GCash",
+    "Cash ug GCash"
+  ],
+  "English, Tagalog, Cebuano": [
+    "English, Tagalog, Cebuano",
+    "English, Tagalog, Cebuano"
+  ],
+  "Everything the counter needs, nothing it doesn’t": [
+    "Lahat ng kailangan sa tindahan, walang sobra",
+    "Tanan nga kinahanglan sa tindahan, walay sobra"
+  ],
+  "Built with store owners: simple screens, clear numbers, and help when something needs your attention.": [
+    "Ginawa kasama ang mga may-ari ng tindahan: simpleng screen, malinaw na numero, at tulong kapag may kailangan kang tingnan.",
+    "Gihimo uban ang mga tag-iya sa tindahan: simple nga screen, klaro nga numero, ug tabang kon naay kinahanglan nimong tan-awon."
+  ],
+  "Up and running in an afternoon": [
+    "Handa na sa loob ng isang hapon",
+    "Andam na sulod sa usa ka hapon"
+  ],
+  "No accountant, no training. If you can use a phone, you can use BantayLedger.": [
+    "Walang accountant, walang training. Kung marunong kang gumamit ng phone, kaya mong gamitin ang BantayLedger.",
+    "Walay accountant, walay training. Kon kahibalo ka mogamit og phone, kaya nimong gamiton ang BantayLedger."
+  ],
+  "Daily totals, capital and profit at a glance": [
+    "Araw-araw na kabuuan, puhunan at kita sa isang tingin",
+    "Adlaw-adlaw nga kinatibuk-an, puhunan ug ganansya sa usa ka tan-aw"
+  ],
+  "Owner and staff accounts, each with their own sign-in": [
+    "Account para sa may-ari at mga tauhan, bawat isa may sariling sign-in",
+    "Account para sa tag-iya ug mga trabahante, matag usa adunay kaugalingong sign-in"
+  ],
+  "Same records on your phone, computer and browser": [
+    "Parehong records sa phone, computer at browser mo",
+    "Parehas nga records sa imong phone, computer ug browser"
+  ],
+  "Get BantayLedger on your devices": [
+    "Kunin ang BantayLedger sa mga device mo",
+    "Kuhaa ang BantayLedger sa imong mga device"
+  ],
+  "Free to download. Sign in with the same account everywhere.": [
+    "Libreng i-download. Mag-sign in gamit ang iisang account kahit saan.",
+    "Libre i-download. Pag-sign in gamit ang usa ra ka account bisan asa."
+  ],
+  "Android phone": [
+    "Android phone",
+    "Android phone"
+  ],
+  "Version {{version}} · {{size}} · Android 7.0 or newer": [
+    "Bersyon {{version}} · {{size}} · Android 7.0 o mas bago",
+    "Bersyon {{version}} · {{size}} · Android 7.0 o mas bag-o"
+  ],
+  "Tap Download and open the file when it finishes.": [
+    "Pindutin ang I-download at buksan ang file kapag tapos na.",
+    "Pinduta ang I-download ug ablihi ang file kon human na."
+  ],
+  "If asked, allow installing apps from this source.": [
+    "Kung tanungin, payagan ang pag-install ng app mula sa source na ito.",
+    "Kon pangutan-on, tugoti ang pag-install og app gikan niining source."
+  ],
+  "Open BantayLedger AI and sign in.": [
+    "Buksan ang BantayLedger AI at mag-sign in.",
+    "Ablihi ang BantayLedger AI ug pag-sign in."
+  ],
+  "Windows computer": [
+    "Windows computer",
+    "Windows computer"
+  ],
+  "Version {{version}} · {{size}} · Windows 10 or 11 (64-bit)": [
+    "Bersyon {{version}} · {{size}} · Windows 10 o 11 (64-bit)",
+    "Bersyon {{version}} · {{size}} · Windows 10 o 11 (64-bit)"
+  ],
+  "Download and double-click the setup file.": [
+    "I-download at i-double-click ang setup file.",
+    "I-download ug i-double-click ang setup file."
+  ],
+  "If Windows warns you, choose More info, then Run anyway.": [
+    "Kung magbabala ang Windows, piliin ang More info, saka Run anyway.",
+    "Kon magpasidaan ang Windows, pilia ang More info, dayon Run anyway."
+  ],
+  "BantayLedger AI opens and adds itself to the Start menu.": [
+    "Bubukas ang BantayLedger AI at idadagdag ang sarili sa Start menu.",
+    "Moabli ang BantayLedger AI ug idugang ang kaugalingon sa Start menu."
+  ],
+  "Any browser": [
+    "Kahit anong browser",
+    "Bisan unsang browser"
+  ],
+  "Nothing to install · Mac, iPhone, tablets": [
+    "Walang i-install · Mac, iPhone, tablet",
+    "Walay i-install · Mac, iPhone, tablet"
+  ],
+  "Use the full app right here in your browser on any device.": [
+    "Gamitin ang buong app dito mismo sa browser, sa kahit anong device.",
+    "Gamita ang tibuok app dinhi mismo sa browser, sa bisan unsang device."
+  ],
+  "Open web app": [
+    "Buksan ang web app",
+    "Ablihi ang web app"
+  ],
+  "Good to know": [
+    "Mabuting malaman",
+    "Maayong mahibaloan"
+  ],
+  "Start keeping track today": [
+    "Magsimulang magtala ngayon",
+    "Sugdi ang pagtala karon"
+  ],
+  "Create a free account in a minute and record your first sale.": [
+    "Gumawa ng libreng account sa isang minuto at itala ang una mong benta.",
+    "Paghimo og libre nga account sulod sa usa ka minuto ug itala ang imong unang baligya."
+  ],
+  "Create free account": [
+    "Gumawa ng libreng account",
+    "Paghimo og libre nga account"
+  ],
+  "See downloads": [
+    "Tingnan ang mga download",
+    "Tan-awa ang mga download"
+  ],
+  "Business and forecast tracker for Philippine small businesses.": [
+    "Tracker ng negosyo at forecast para sa maliliit na negosyo sa Pilipinas.",
+    "Tracker sa negosyo ug forecast para sa gagmay nga negosyo sa Pilipinas."
+  ]
+}

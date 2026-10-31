@@ -1,0 +1,47 @@
+{
+  "name": "bantayledger-desktop",
+  "productName": "BantayLedger AI",
+  "version": "1.0.0",
+  "description": "BantayLedger AI for Windows",
+  "author": "MikDecierdo",
+  "private": true,
+  "main": "main.cjs",
+  "scripts": {
+    "start": "node copy-app.cjs && electron .",
+    "dist": "node copy-app.cjs && electron-builder --win nsis --x64"
+  },
+  "build": {
+    "appId": "ph.bantayledger.desktop",
+    "productName": "BantayLedger AI",
+    "artifactName": "BantayLedger-Setup.${ext}",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "main.cjs",
+      "preload.cjs",
+      "icon.png",
+      "app/**/*"
+    ],
+    "compression": "maximum",
+    "win": {
+      "target": "nsis",
+      "icon": "icon.png"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "BantayLedger AI",
+      "runAfterFinish": true
+    },
+    "electronLanguages": [
+      "en-US"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^45.2.1",
+    "electron-builder": "^26.18.0"
+  }
+}

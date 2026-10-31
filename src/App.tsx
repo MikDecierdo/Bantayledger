@@ -37,6 +37,8 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Welcome from './pages/Welcome';
+import Landing from './pages/Landing';
+import { isInstalledApp } from './lib/platform';
 
 setupIonicReact({ mode: 'md' });
 
@@ -61,7 +63,15 @@ function RouteFallback() {
  */
 function Routes() {
   const { pathname } = useLocation();
-  const { loading, needsPrivacyNotice } = useAuth();
+  const { loading, needsPrivacyNotice, user } = useAuth();
+
+  // The website's public home page (download buttons, web app link). The
+  // installed Android and Windows apps skip it and open on sign-in.
+  // Wait for the sign-in check first, or `/` would already have been sent on
+  // to the dashboard (and from there to sign-in).
+  if (pathname === '/' && !user && !isInstalledApp()) {
+    return loading ? <RouteFallback /> : <Landing />;
+  }
 
   // Signed in but hasn't accepted the data notice yet (first login, or the
   // notice changed): that step comes before anything else, outside the shell.
