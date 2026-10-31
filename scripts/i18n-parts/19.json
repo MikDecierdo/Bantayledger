@@ -15,6 +15,10 @@
     "Developer",
     "Developer"
   ],
+  "For {{email}}. You will be signed in once it is saved.": [
+    "Para sa {{email}}. Masa-sign in ka kapag na-save na ito.",
+    "Para sa {{email}}. Ma-sign in ka kung ma-save na kini."
+  ],
   "Get the app": [
     "Kunin ang app",
     "Kuhaa ang app"

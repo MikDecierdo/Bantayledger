@@ -55,6 +55,8 @@ export interface AuthState {
   signUp: (input: SignUpInput) => Promise<{ needsEmailConfirmation: boolean }>;
   signOut: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
+  /** Saves a new password from the emailed reset link, then signs in. */
+  resetPassword: (token: string, email: string, newPassword: string) => Promise<void>;
   updatePassword: (newPassword: string) => Promise<void>;
   setActiveBusiness: (businessId: string) => void;
   /** Re-reads profile and memberships, e.g. after creating a business. */
@@ -181,16 +183,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setActiveBusinessId(null);
   }, []);
 
-  const requestPasswordReset = useCallback(async (_email: string) => {
-    // No email service is wired up yet on this backend (see the Laravel
-    // AuthController docblock) — surface this plainly rather than a silent
-    // no-op, same reasoning the local-SQLite version used.
-    throw new Error(
-      t(
-        t('Password reset by email is not available yet. Sign in with your current password, or ask another owner/admin of this business for help.'),
-      ),
-    );
+  const requestPasswordReset = useCallback(async (email: string) => {
+    await authClient.requestPasswordReset(email);
   }, []);
+
+  /** From the emailed link: saves the new password and signs in. */
+  const resetPassword = useCallback(
+    async (token: string, email: string, newPassword: string) => {
+      await authClient.resetPassword(token, email, newPassword);
+      await loadUserContext();
+    },
+    [loadUserContext],
+  );
 
   const updatePassword = useCallback(async (_newPassword: string) => {
     throw new Error(t('Changing your password is not available yet.'));
@@ -250,6 +254,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUp,
       signOut,
       requestPasswordReset,
+      resetPassword,
       updatePassword,
       setActiveBusiness,
       refresh,
@@ -266,6 +271,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUp,
       signOut,
       requestPasswordReset,
+      resetPassword,
       updatePassword,
       setActiveBusiness,
       refresh,

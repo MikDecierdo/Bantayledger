@@ -172,5 +172,17 @@
   "Choose how the customer paid.": "Pilia kung unsaon pagbayad sa customer.",
   "Use each payment method only once. Put the whole amount for that method in one line.": "Makausa ra gamita ang matag paagi sa pagbayad. Ibutang ang tibuok kantidad sa maong paagi sa usa ka linya.",
   "The cash and GCash amounts must add up to the sale total of :total.": "Ang hiniusang kantidad sa cash ug GCash kinahanglan managsama sa kinatibuk-ang baligya nga :total.",
-  "This record is still being saved. Please wait a moment.": "Gi-save pa kini nga record. Paghulat kadiyot."
+  "This record is still being saved. Please wait a moment.": "Gi-save pa kini nga record. Paghulat kadiyot.",
+  "Reset your BantayLedger password": "I-reset ang imong password sa BantayLedger",
+  "Hi :name,": "Hi :name,",
+  "there": "there",
+  "We received a request to reset the password for your BantayLedger AI account (:email).": "Nakadawat mi og hangyo nga i-reset ang password sa imong BantayLedger AI account (:email).",
+  "Choose a new password": "Pagpili og bag-ong password",
+  "This link expires in :minutes minutes and can only be used once.": "Mo-expire kini nga link human sa :minutes ka minuto ug kausa ra magamit.",
+  "If you did not ask to reset your password, you can ignore this email. Your password will stay the same.": "Kung dili ikaw ang nangayo nga i-reset ang password, ayaw lang tagda kini nga email. Magpabilin ang imong password.",
+  "— BantayLedger AI": "— BantayLedger AI",
+  "We could not send the email right now. Please try again in a few minutes.": "Dili namo mapadala ang email karon. Palihug sulayi pag-usab human sa pipila ka minuto.",
+  "This reset link is invalid or has expired. Request a new one from the sign-in page.": "Dili na balido o expired na kini nga reset link. Pangayo og bag-o sa sign-in page.",
+  "All rights reserved.": "Gitagana ang tanang katungod.",
+  "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Kung dili mogana ang button nga \":actionText\", kopyaha ug i-paste ang URL sa ubos\nsa imong web browser:"
 }

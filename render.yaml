@@ -57,6 +57,21 @@ services:
         sync: false
       - key: RUN_MIGRATIONS
         value: "true"
+      # "Forgot password" emails, sent through Brevo's HTTPS API (Render's free
+      # plan blocks SMTP). See docs/DEPLOY_RENDER.md → Email (Brevo).
+      - key: MAIL_MAILER
+        value: brevo
+      - key: MAIL_FROM_NAME
+        value: BantayLedger AI
+      # The sender verified in Brevo (Senders, Domains & Dedicated IPs).
+      - key: MAIL_FROM_ADDRESS
+        sync: false
+      # Brevo → SMTP & API → API keys.
+      - key: BREVO_API_KEY
+        sync: false
+      # Reset links in the emails open the website.
+      - key: FRONTEND_URL
+        value: https://bantayledger-web.onrender.com
 
   # The website: public home page with the downloads, plus the full web app.
   # A static site (free, never sleeps). Installers are linked from the public

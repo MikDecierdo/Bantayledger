@@ -1,7 +1,7 @@
 import { IonIcon } from '@ionic/react';
 import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
 import { useState, type FormEvent } from 'react';
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useHistory, useLocation } from 'react-router-dom';
 import { Logo } from '../components/brand/Logo';
 import Button from '../components/common/Button';
 import { TextField } from '../components/common/Field';
@@ -15,12 +15,17 @@ import PasswordStrength from '../components/auth/PasswordStrength';
 import { evaluatePassword } from '../utils/passwordStrength';
 
 /**
- * Sets a new password after following the emailed reset link.
+ * Sets a new password after following the emailed reset link
+ * (/reset-password?token=…&email=…, sent by the server's "forgot password").
  */
 export function ResetPassword() {
   const history = useHistory();
+  const { search } = useLocation();
   const { showToast } = useToast();
-  const { updatePassword, user, loading } = useAuth();
+  const { resetPassword } = useAuth();
+  const params = new URLSearchParams(search);
+  const token = params.get('token') ?? '';
+  const email = params.get('email') ?? '';
 
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
@@ -43,7 +48,7 @@ export function ResetPassword() {
 
     setSubmitting(true);
     try {
-      await updatePassword(password);
+      await resetPassword(token, email, password);
       showToast(t('Your password has been updated.'));
       history.replace('/dashboard');
     } catch (err) {
@@ -53,8 +58,8 @@ export function ResetPassword() {
     }
   };
 
-  // Arriving without a valid link means there is no session to update.
-  const linkInvalid = !loading && !user;
+  // The link must carry both parts; the server checks that they are valid and not expired.
+  const linkInvalid = !token || !email;
 
   return (
     <div className="bl-login">
@@ -79,7 +84,9 @@ export function ResetPassword() {
 
           <div className="bl-login__intro">
             <h1 className="bl-page-title">{t('Set a new password')}</h1>
-            <p className="bl-support">{t('You will be signed in once it is saved.')}</p>
+            <p className="bl-support">
+              {email ? t('For {{email}}. You will be signed in once it is saved.', { email }) : t('You will be signed in once it is saved.')}
+            </p>
           </div>
 
           <form className="bl-login__form" onSubmit={handleSubmit} noValidate>
