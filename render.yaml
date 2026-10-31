@@ -1,0 +1,59 @@
+# Render Blueprint for the BantayLedger API (Laravel in Docker, free plan).
+#
+# In Render: New → Blueprint → pick this repository. Render reads this file,
+# creates the service and asks for every value marked `sync: false` (the
+# secrets). See docs/DEPLOY_RENDER.md for the step-by-step guide.
+#
+# Free plan notes: the service sleeps after 15 minutes without visits and
+# takes up to a minute to wake; files written on the server (uploaded product
+# photos) are lost when it restarts or sleeps.
+
+services:
+  - type: web
+    name: bantayledger-api
+    runtime: docker
+    plan: free
+    rootDir: laravel-server
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    envVars:
+      - key: APP_NAME
+        value: BantayLedger AI
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_TIMEZONE
+        value: Asia/Manila
+      # Paste the APP_KEY from laravel-server/.env (base64:...).
+      - key: APP_KEY
+        sync: false
+      # The service's own address, e.g. https://bantayledger-api.onrender.com
+      - key: APP_URL
+        sync: false
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: SESSION_DRIVER
+        value: array
+      - key: CACHE_STORE
+        value: database
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: DB_CONNECTION
+        value: mysql
+      # From the Aiven MySQL service's "Connection information".
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # The full text of Aiven's CA certificate (ca.pem), -----BEGIN … END-----.
+      - key: MYSQL_SSL_CA_PEM
+        sync: false
+      - key: RUN_MIGRATIONS
+        value: "true"

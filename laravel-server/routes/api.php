@@ -19,6 +19,9 @@ use Illuminate\Support\Facades\Route;
  * of files regardless of which backend it ends up pointed at.
  */
 
+// Used by the app to wake the server (Render free sleeps) and to check it's reachable.
+Route::get('/health', fn () => response()->json(['ok' => true]));
+
 Route::post('/auth/signup', [AuthController::class, 'signup']);
 Route::post('/auth/login', [AuthController::class, 'login']);
 
@@ -63,25 +66,25 @@ Route::middleware('auth:sanctum')->group(function () {
         // Sales: insert_member, delete_manager
         Route::get('/sales', [SaleController::class, 'index'])->middleware('business.member');
         Route::get('/sales/overview', [SaleController::class, 'overview'])->middleware('business.member');
-        Route::post('/sales', [SaleController::class, 'store'])->middleware('business.member');
+        Route::post('/sales', [SaleController::class, 'store'])->middleware(['business.member', 'idempotent']);
         Route::delete('/sales/{id}', [SaleController::class, 'destroy'])->middleware('business.manager');
 
         // Purchases: insert_member, update_member (status flip), delete_manager
         Route::get('/purchases', [PurchaseController::class, 'index'])->middleware('business.member');
         Route::get('/purchases/overview', [PurchaseController::class, 'overview'])->middleware('business.member');
-        Route::post('/purchases', [PurchaseController::class, 'store'])->middleware('business.member');
+        Route::post('/purchases', [PurchaseController::class, 'store'])->middleware(['business.member', 'idempotent']);
         Route::patch('/purchases/{id}/status', [PurchaseController::class, 'setStatus'])->middleware('business.member');
         Route::delete('/purchases/{id}', [PurchaseController::class, 'destroy'])->middleware('business.manager');
 
         // Expenses / waste: insert_member, delete_manager
         Route::get('/expenses', [ExpenseController::class, 'index'])->middleware('business.member');
         Route::get('/expenses/overview', [ExpenseController::class, 'overview'])->middleware('business.member');
-        Route::post('/expenses', [ExpenseController::class, 'store'])->middleware('business.member');
+        Route::post('/expenses', [ExpenseController::class, 'store'])->middleware(['business.member', 'idempotent']);
         Route::delete('/expenses/{id}', [ExpenseController::class, 'destroy'])->middleware('business.manager');
 
         Route::get('/waste', [WasteController::class, 'index'])->middleware('business.member');
         Route::get('/waste/overview', [WasteController::class, 'overview'])->middleware('business.member');
-        Route::post('/waste', [WasteController::class, 'store'])->middleware('business.member');
+        Route::post('/waste', [WasteController::class, 'store'])->middleware(['business.member', 'idempotent']);
         Route::delete('/waste/{id}', [WasteController::class, 'destroy'])->middleware('business.manager');
 
         // Signals: read for members; mark-read is a member action; write is a future model-service concern.

@@ -51,21 +51,32 @@ export const accountNav: NavItem[] = [
 
 export const logoutItem = { label: t('Logout'), href: '/login', icon: logOutOutline };
 
-/** Five destinations only — the bottom bar stays tappable. */
+/**
+ * Phone bottom bar: Home · Sales · ( + ) · Inventory · More. MobileBottomNav
+ * puts the raised "+" (Quick add) between the first two and the last, and
+ * "More" opens `moreGroups`. Alerts and Profile are not here: the top bar's
+ * bell and picture open them.
+ */
 export const bottomNav: NavItem[] = [
   { label: t('Home'), href: '/dashboard', icon: homeOutline },
+  { label: t('Sales'), href: '/sales', icon: cartOutline },
   { label: t('Inventory'), href: '/inventory', icon: cubeOutline },
-  { label: t('Forecast'), href: '/forecast', icon: trendingUpOutline },
-  { label: t('Alerts'), href: '/alerts', icon: notificationsOutline, badgeKey: 'alerts' },
-  { label: t('Profile'), href: '/profile', icon: personOutline },
 ];
 
-/** Reachable on mobile through the "More" sheet rather than the bottom bar. */
-export const moreNav: NavItem[] = [
-  ...primaryNav.filter((i) => !['/dashboard', '/inventory'].includes(i.href)),
-  { label: t('AI Insights'), href: '/ai-insights', icon: bulbOutline },
-  { label: t('Reports'), href: '/reports', icon: barChartOutline },
-  { label: t('Settings'), href: '/settings', icon: settingsOutline },
+/** Quick add sheet (the bottom bar's "+"): each opens a page's Add window. */
+export const quickAddItems: { label: string; href: string; icon: string }[] = [
+  { label: t('Record Sale'), href: '/sales', icon: cartOutline },
+  { label: t('Add Expense'), href: '/expenses', icon: walletOutline },
+  { label: t('New Purchase'), href: '/purchases', icon: bagOutline },
+  { label: t('Add Spoiled/Damaged Item'), href: '/waste', icon: trashOutline },
+  { label: t('Add Product'), href: '/inventory', icon: cubeOutline },
+];
+
+/** Everything else on phones, grouped like the desktop sidebar. */
+export const moreGroups: { title: string; items: NavItem[] }[] = [
+  { title: t('Business'), items: primaryNav.filter((i) => !bottomNav.some((b) => b.href === i.href)) },
+  { title: t('Intelligence'), items: intelligenceNav },
+  { title: t('Account'), items: accountNav },
 ];
 
 const ALL = [...primaryNav, ...intelligenceNav, ...accountNav];

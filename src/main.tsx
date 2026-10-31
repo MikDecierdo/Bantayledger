@@ -24,6 +24,7 @@ import 'sweetalert2/dist/sweetalert2.min.css';
 import './theme/tokens.css';
 import './theme/base.css';
 import './theme/components.css';
+import './theme/mobile.css';
 // Themes SweetAlert2 with the tokens above, so it must follow both it and the
 // library's own stylesheet.
 import './theme/swal.css';

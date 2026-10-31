@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { t } from '../i18n';
+import { DATA_CHANGED_EVENT } from '../services/offline/status';
 
 export interface AsyncState<T> {
   data: T | null;
@@ -55,6 +56,13 @@ export function useAsyncData<T>(
   }, [...deps, nonce]);
 
   const reload = useCallback(() => setNonce((n) => n + 1), []);
+
+  // Records saved offline just reached the server (or the connection came
+  // back): fetch fresh numbers.
+  useEffect(() => {
+    window.addEventListener(DATA_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(DATA_CHANGED_EVENT, reload);
+  }, [reload]);
 
   return { data, loading, error, reload };
 }

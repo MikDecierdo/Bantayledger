@@ -1,3 +1,7 @@
+/* Phone bottom bar: Home · Sales · ( + ) · Inventory · More.
+   Quiet by design: plain line icons and labels, the active tab in the brand
+   colour, and one raised round "+" in the middle for recording things. */
+
 .bl-bottomnav {
   position: fixed;
   inset: auto 0 0 0;
@@ -6,7 +10,6 @@
   border-top: 1px solid var(--bl-border);
   /* Sits above the home indicator on iOS. */
   padding-bottom: var(--bl-safe-bottom);
-  box-shadow: 0 -1px 3px rgba(23, 34, 30, 0.04);
 }
 
 .bl-bottomnav ul {
@@ -20,13 +23,19 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
+  gap: 2px;
   /* 48px of touch target before the safe-area padding. */
   min-height: var(--bl-bottomnav-h);
-  padding: var(--bl-s2) 2px;
-  color: var(--bl-text-secondary);
+  padding: 6px 2px;
+  color: #8A958F;
   position: relative;
   transition: color var(--bl-dur-fast) var(--bl-ease);
+  /* "More" is a <button>, so it needs the reset the links get for free. */
+  width: 100%;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
 }
 
 .bl-bottomnav__item:focus-visible {
@@ -35,56 +44,61 @@
   border-radius: var(--bl-r-md);
 }
 
-.bl-bottomnav__icon-wrap {
-  position: relative;
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 26px;
-  border-radius: var(--bl-r-pill);
-  transition: background var(--bl-dur-fast) var(--bl-ease);
-}
-
-.bl-bottomnav__icon { font-size: 21px; }
+.bl-bottomnav__icon-wrap { position: relative; display: grid; place-items: center; height: 26px; }
+.bl-bottomnav__icon { font-size: 23px; }
 
 .bl-bottomnav__label {
-  font-size: 10.5px;
+  font-size: 11px;
   font-weight: var(--bl-fw-medium);
   line-height: 1.2;
-  letter-spacing: 0.005em;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Active state carries a filled pill and a bolder label, not color alone. */
-.bl-bottomnav__item--active { color: var(--bl-green); }
-.bl-bottomnav__item--active .bl-bottomnav__icon-wrap { background: var(--bl-green-light); }
-.bl-bottomnav__item--active .bl-bottomnav__label { font-weight: var(--bl-fw-semibold); }
+/* Active tab: brand colour and a bolder label (not colour alone). */
+.bl-bottomnav__item--active { color: var(--bl-text); }
+.bl-bottomnav__item--active .bl-bottomnav__icon { color: var(--bl-green); }
+.bl-bottomnav__item--active .bl-bottomnav__label { font-weight: var(--bl-fw-bold); }
 
-.bl-bottomnav__badge {
+/* Unread alerts live under More. */
+.bl-bottomnav__dot {
   position: absolute;
-  top: -3px;
-  right: 6px;
-  min-width: 16px;
-  height: 16px;
-  padding: 0 4px;
-  border-radius: var(--bl-r-pill);
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background: var(--bl-danger);
-  color: #fff;
-  font-size: 9.5px;
-  font-weight: var(--bl-fw-bold);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   border: 1.5px solid var(--bl-surface);
 }
 
-/* Very narrow phones (320px): keep labels legible by trimming padding. */
+/* ---- Raised "+" ------------------------------------------------------------ */
+
+.bl-bottomnav__center { display: grid; place-items: center; }
+
+.bl-bottomnav__add {
+  width: 54px;
+  height: 54px;
+  margin-top: -22px;
+  border-radius: 50%;
+  border: 4px solid var(--bl-surface);
+  background: var(--bl-green);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(23, 34, 30, 0.18);
+  transition: transform var(--bl-dur-fast) var(--bl-ease), background var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-bottomnav__add:active { transform: scale(0.94); background: var(--bl-green-dark); }
+.bl-bottomnav__add:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+/* Very narrow phones (320px): keep labels legible. */
 @media (max-width: 359px) {
-  .bl-bottomnav__icon-wrap { width: 40px; }
-  .bl-bottomnav__label { font-size: 9.5px; }
+  .bl-bottomnav__label { font-size: 10px; }
 }
 
 /* Tablet and up navigate from the sidebar rail instead. */

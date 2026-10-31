@@ -200,6 +200,8 @@ class SaleController extends Controller
             'payments.*.amount' => 'required|numeric|gt:0',
             'payments.*.reference' => ['nullable', 'string', 'regex:/^\d{4}$/'],
             'saleDate' => 'nullable|date',
+            // When the sale actually happened, for sales recorded offline and synced later.
+            'recordedAt' => 'nullable|date',
             'notes' => 'nullable|string',
             'reference' => 'nullable|string',
         ], [
@@ -246,7 +248,16 @@ class SaleController extends Controller
         $userId = $request->user()->user_id;
         $saleDate = $data['saleDate'] ?? now()->format('Y-m-d');
 
-        DB::transaction(function () use ($data, $saleId, $userId, $business, $saleDate, $paymentReference, $parts, $summaryMethod) {
+        // Keep an offline sale's real time, but only within the last week and never in the future.
+        $recordedAt = null;
+        if (! empty($data['recordedAt'])) {
+            $at = Carbon::parse($data['recordedAt'])->setTimezone(config('app.timezone'));
+            if ($at->lte(now()) && $at->gte(now()->subDays(7))) {
+                $recordedAt = $at->format('Y-m-d H:i:s');
+            }
+        }
+
+        DB::transaction(function () use ($data, $saleId, $userId, $business, $saleDate, $paymentReference, $parts, $summaryMethod, $recordedAt) {
             if ($paymentReference !== null) {
                 // Lock the business first so two staff saving at once run one
                 // after the other and the second sees the first's reference.
@@ -277,7 +288,7 @@ class SaleController extends Controller
                 'sale_date' => $saleDate,
                 'notes' => $data['notes'] ?? null,
                 'reference' => $data['reference'] ?? null,
-            ]);
+            ] + ($recordedAt ? ['created_at' => $recordedAt] : []));
 
             foreach ($data['items'] as $item) {
                 // Lock in the buying price now so later price changes never rewrite past profit.

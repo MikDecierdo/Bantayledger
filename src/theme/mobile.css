@@ -1,0 +1,305 @@
+/* ==========================================================================
+   Phone and tablet layout (below desktop fit mode).
+
+   Desktop fit mode (>= 1024px wide and >= 640px tall) lives in
+   components/layout/Workspace.css and friends. This file is the phone
+   counterpart: a native-app feel with
+   - the page's main action as a floating button above the bottom bar,
+   - summary cards and side cards (charts, budget) as swipeable strips,
+   - long lists as one grouped card with hairline dividers.
+   ========================================================================== */
+
+/* ---- Flush cards: heading row and in-card strips (all sizes) ------------ */
+
+/* A flush card's content runs edge to edge; its heading and the small strips
+   under it (result count, totals, chips) keep the usual inner padding. */
+.bl-shell .bl-card--flush > .bl-card__header {
+  padding: var(--bl-s3) var(--bl-s4);
+  margin: 0;
+  border-bottom: 1px solid var(--bl-border);
+}
+.bl-shell .bl-card--flush .bl-resultcount { margin: 0; padding: var(--bl-s2) var(--bl-s4); }
+
+/* A toolbar inside a card heading is part of that heading, never a pinned
+   bar of its own. */
+.bl-shell .bl-card__header .bl-toolbar {
+  position: static;
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  background: none;
+}
+
+/* ---- Below desktop fit mode ----------------------------------------------- */
+
+@media not all and (min-width: 1024px) and (min-height: 640px) {
+  /* Card headings wrap: the search and filters take a full row of their own. */
+  .bl-card--fill > .bl-card__header { flex-wrap: wrap; }
+  .bl-card--fill > .bl-card__header > .bl-toolbar { flex: 1 1 100%; }
+
+  .bl-shell .bl-card--flush .bl-tx__totals {
+    margin: 0;
+    padding: var(--bl-s2) var(--bl-s4);
+    border: 0;
+    border-bottom: 1px solid var(--bl-border);
+    border-radius: 0;
+  }
+  .bl-shell .bl-card--flush .bl-inv__chips {
+    margin: 0;
+    padding: var(--bl-s2) var(--bl-s4);
+    border-bottom: 1px solid var(--bl-border);
+  }
+
+  /* Dashboard lists stay a glance, not an endless page. */
+  .bl-dash .bl-dash__capped > .bl-card__body { max-height: 340px; overflow-y: auto; }
+}
+
+/* Tablets: the side cards sit in a full-width row above the list. */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .bl-bento > .bl-rail {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---- Lists: one grouped card (below the table breakpoint) ----------------- */
+
+@media (max-width: 899px) {
+  .bl-shell .bl-responsive-cards {
+    gap: 0;
+    background: var(--bl-surface);
+    border: 1px solid var(--bl-border);
+    border-radius: var(--bl-r-lg);
+    overflow: hidden;
+  }
+  .bl-shell .bl-responsive-cards > li + li { border-top: 1px solid var(--bl-border); }
+
+  /* Already inside a card: no second frame. */
+  .bl-shell .bl-card .bl-responsive-cards { border: 0; border-radius: 0; }
+
+  .bl-responsive-cards .bl-drow {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: var(--bl-s3) var(--bl-s4);
+  }
+  .bl-responsive-cards .bl-drow__top { margin-bottom: var(--bl-s2); }
+  .bl-responsive-cards .bl-drow__grid { padding-top: var(--bl-s2); gap: var(--bl-s2); }
+}
+
+/* ---- Phones: calm, plain, native ------------------------------------------
+   A white page of full-width sections divided by a thin grey band (not
+   floating cards); one big number at the top with plain figures under it;
+   lists with hairline dividers; plain line icons; green kept for the main
+   button, the active tab and money going up. */
+
+@media (max-width: 767px) {
+  .bl-shell,
+  .bl-shell .bl-shell__main { background: var(--bl-surface); }
+  .bl-shell .bl-shell__main {
+    /* Clears the bottom bar and its raised "+". */
+    padding-bottom: calc(var(--bl-bottomnav-h) + var(--bl-safe-bottom) + 32px);
+  }
+
+  /* Header: the top bar names the page, so only the page's buttons remain,
+     as compact pills on the right. */
+  .bl-shell .bl-pageheader { margin-bottom: var(--bl-s2); }
+  .bl-pageheader__desc { display: none; }
+  .bl-pageheader__actions:empty { display: none; }
+  .bl-shell .bl-pageheader .bl-pageheader__actions { justify-content: flex-end; gap: var(--bl-s2); }
+  /* Add buttons the bottom bar's "+" already covers are not repeated here;
+     a header left with nothing to show goes away. The dashboard's header
+     actions (Record Sale, Export) live in "+" and its shortcuts row. */
+  .bl-shell .bl-pageheader .bl-pageheader__actions > [data-quickadd] { display: none; }
+  .bl-shell .bl-pageheader:not(:has(.bl-pageheader__eyebrow)):not(:has(.bl-pageheader__actions > :not([data-quickadd])))  { display: none; }
+  .bl-shell .bl-dash .bl-pageheader { display: none; }
+  .bl-shell .bl-pageheader .bl-pageheader__actions > .bl-btn {
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 0 var(--bl-s3);
+    border-radius: var(--bl-r-pill);
+    font-size: var(--bl-fs-sm);
+  }
+
+  /* ---- Sections ---------------------------------------------------------- */
+
+  .bl-shell .bl-ws > .bl-card,
+  .bl-shell .bl-ws > .bl-bento > .bl-card,
+  .bl-shell .bl-ws > .bl-bento > .bl-rail > .bl-card,
+  .bl-shell .bl-set__layout > .bl-card {
+    margin-inline: calc(-1 * var(--bl-s4));
+    border: 0;
+    border-top: 8px solid var(--bl-bg);
+    border-radius: 0;
+    box-shadow: none;
+    padding: var(--bl-s4);
+  }
+  .bl-shell .bl-ws > .bl-bento > .bl-card.bl-card--flush,
+  .bl-shell .bl-set__layout > .bl-card { padding: 0; }
+  .bl-shell .bl-bento,
+  .bl-shell .bl-ws > .bl-bento > .bl-rail { display: block; gap: 0; }
+  .bl-shell .bl-ws > .bl-bento { margin-top: var(--bl-s2); }
+
+  /* Plain headings: title on the left, "View all" as text on the right. */
+  .bl-shell .bl-ws .bl-card__header { align-items: center; margin-bottom: var(--bl-s3); }
+  .bl-shell .bl-ws .bl-card-title { font-size: var(--bl-fs-lg); font-weight: var(--bl-fw-bold); }
+  .bl-shell .bl-ws .bl-card__header-text > .bl-caption { display: none; }
+  .bl-shell .bl-card--flush > .bl-card__header { padding: var(--bl-s4) var(--bl-s4) var(--bl-s2); border-bottom: 0; }
+
+  /* ---- Summary: one big number, plain figures under it ------------------- */
+
+  .bl-pin .bl-section__head { display: none; }
+  .bl-shell .bl-grid.bl-grid--kpi {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    padding: 0;
+  }
+  .bl-shell .bl-grid--kpi > * {
+    grid-column: auto;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: var(--bl-s3) 0;
+    min-width: 0;
+  }
+  .bl-shell .bl-grid--kpi > :first-child { grid-column: 1 / -1; padding: var(--bl-s2) 0 var(--bl-s4); }
+  .bl-shell .bl-grid--kpi > :not(:first-child) { border-top: 1px solid var(--bl-border); }
+  .bl-shell .bl-grid--kpi > :nth-child(2n):not(:first-child) { padding-right: var(--bl-s3); border-right: 1px solid var(--bl-border); }
+  .bl-shell .bl-grid--kpi > :nth-child(2n + 3) { padding-left: var(--bl-s3); }
+  .bl-shell .bl-grid--kpi > * .bl-metric { font-size: var(--bl-fs-xl); }
+  .bl-shell .bl-grid--kpi > :first-child .bl-metric { font-size: 2rem; }
+
+  /* Severity totals on Alerts: three plain figures in a row. */
+  .bl-shell .bl-alerts__summary { gap: 0; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bl-shell .bl-alerts__summary > .bl-card { border: 0; border-left: 3px solid; border-radius: 0; padding: var(--bl-s1) var(--bl-s3); box-shadow: none; }
+
+  /* ---- Lists: full width, hairline dividers ------------------------------ */
+
+  .bl-shell .bl-responsive-cards { border: 0; border-radius: 0; background: none; }
+  .bl-shell .bl-ws > .bl-responsive-cards,
+  .bl-shell .bl-ws > .bl-bento > .bl-responsive-cards { margin-inline: calc(-1 * var(--bl-s4)); }
+  .bl-shell .bl-responsive-cards > li + li {
+    border-top: 0;
+    background: linear-gradient(var(--bl-border), var(--bl-border)) var(--bl-s4) 0 / calc(100% - var(--bl-s4)) 1px no-repeat;
+  }
+  .bl-shell .bl-responsive-cards .bl-drow { padding: var(--bl-s3) var(--bl-s4); background: none; }
+  .bl-shell .bl-drow__cell dt { text-transform: none; letter-spacing: 0; font-size: var(--bl-fs-xs); font-weight: var(--bl-fw-regular); }
+  .bl-shell .bl-drow__grid { border-top: 0; }
+  /* Row buttons read as links in a list, not as a form. */
+  .bl-shell .bl-drow .bl-btn--secondary,
+  .bl-shell .bl-drow .bl-btn--ghost {
+    min-height: 32px;
+    padding: 0 var(--bl-s2);
+    border: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--bl-green-dark);
+    font-weight: var(--bl-fw-semibold);
+  }
+
+  /* ---- Search and filters ---------------------------------------------- */
+
+  .bl-shell .bl-ws .bl-toolbar .bl-input-group .bl-input,
+  .bl-shell .bl-ws .bl-toolbar .bl-input {
+    background: #F1F4F2;
+    border-color: transparent;
+    border-radius: var(--bl-r-pill);
+  }
+  .bl-shell .bl-ws .bl-toolbar .bl-select { border-radius: var(--bl-r-pill); }
+  .bl-shell .bl-card--flush .bl-tx__totals { background: none; }
+
+  /* ---- Dashboard ------------------------------------------------------------ */
+
+  .bl-dash__greeting { margin-bottom: var(--bl-s2); }
+  /* Big number first, then the shortcuts, then the sections. */
+  .bl-dash > .bl-pin { order: 1; }
+  .bl-dash > .bl-grid--quickactions { order: 2; }
+  .bl-dash > .bl-bento { order: 3; }
+  .bl-shell .bl-dash__chart-facts dt,
+  .bl-shell .bl-prof__list dt { text-transform: none; letter-spacing: 0; font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-medium); }
+  .bl-dash__greeting-title { font-size: var(--bl-fs-xl); }
+
+  /* Shortcuts: plain line icons in a soft grey circle, labels under them. */
+  .bl-shell .bl-grid.bl-grid--quickactions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--bl-s1);
+    margin: var(--bl-s2) 0 var(--bl-s3);
+  }
+  .bl-shell .bl-grid--quickactions > .bl-btn {
+    flex-direction: column;
+    gap: 6px;
+    min-height: 0;
+    padding: var(--bl-s1) 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    color: var(--bl-text);
+    font-size: var(--bl-fs-xs);
+    font-weight: var(--bl-fw-medium);
+    line-height: 1.2;
+    white-space: normal;
+    text-align: center;
+  }
+  .bl-shell .bl-grid--quickactions > .bl-btn .bl-btn__icon {
+    width: 22px;
+    height: 22px;
+    font-size: 22px;
+    padding: 12px;
+    border-radius: 50%;
+    background: #F1F4F2;
+    color: var(--bl-text);
+    box-sizing: content-box;
+  }
+}
+
+/* ---- Phones: stat cards become plain figures ------------------------------ */
+
+@media (max-width: 767px) {
+  .bl-shell .bl-stat { gap: 4px; }
+  .bl-shell .bl-stat .bl-stat__icon,
+  .bl-shell .bl-stat .bl-spark { display: none; }
+  .bl-shell .bl-stat__top { min-height: 0; }
+  .bl-shell .bl-stat .bl-stat__label { color: var(--bl-text-secondary); text-transform: none; letter-spacing: 0; font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-medium); }
+  .bl-shell .bl-stat .bl-stat__value { font-size: var(--bl-fs-xl); color: var(--bl-text); }
+
+  /* The headline figure: big, dark text on white — no green slab. */
+  .bl-shell .bl-stat--hero .bl-stat__label,
+  .bl-shell .bl-stat--hero .bl-caption,
+  .bl-shell .bl-stat--hero .bl-stat__chev { color: var(--bl-text-secondary); }
+  .bl-shell .bl-stat--hero .bl-stat__value,
+  .bl-shell .bl-stat--hero .bl-stat__value--hero { font-size: 2rem; color: var(--bl-text); }
+  .bl-shell .bl-stat--hero .bl-delta--up { color: var(--bl-success); }
+  .bl-shell .bl-stat--hero .bl-delta--down { color: var(--bl-danger); }
+  .bl-shell .bl-stat--hero .bl-delta--flat { color: var(--bl-text-secondary); }
+  .bl-shell .bl-stat--hero.bl-stat--link:hover { background: none; }
+
+  /* Cash / GCash: no tint or watermark, just a small logo by the label. */
+  .bl-shell .bl-stat--cash,
+  .bl-shell .bl-stat--gcash { background: none; border-top: 0; }
+  .bl-shell .bl-stat--cash::after,
+  .bl-shell .bl-stat--gcash::after { display: none; }
+  .bl-shell .bl-stat__logo { margin: 0; }
+  .bl-shell .bl-stat__logo svg,
+  .bl-shell .bl-stat__logo img { height: 22px; width: auto; }
+
+  /* Small text-only labels instead of uppercase micro labels. */
+  .bl-shell .bl-ws .bl-label { text-transform: none; letter-spacing: 0; font-size: var(--bl-fs-sm); }
+
+  /* ---- Sheets (More, Quick add) and windows ------------------------------ */
+
+  .bl-modal .bl-more__icon { width: 28px; height: 28px; background: none; color: var(--bl-text-secondary); font-size: 21px; }
+  .bl-modal .bl-more__item--active .bl-more__icon { background: none; color: var(--bl-green); }
+  .bl-modal .bl-more__item--danger .bl-more__icon { background: none; }
+  .bl-modal .bl-more__list { border-radius: var(--bl-r-md); }
+  .bl-modal .bl-more__title { text-transform: none; letter-spacing: 0; font-size: var(--bl-fs-sm); }
+
+  /* Plain white window header: no tint and no picture tile. */
+  .bl-modal .bl-modal__header { background: var(--bl-surface); }
+  .bl-modal .bl-modal__icon { display: none; }
+
+  /* Top bar: a bolder title, white, hairline below. */
+  .bl-mheader__title { font-size: var(--bl-fs-lg); }
+  .bl-mheader__icon-btn:hover { background: #F1F4F2; }
+}

@@ -1,0 +1,44 @@
+/* Offline / sync status line (OfflineBar.tsx) and the "Waiting to sync"
+   sheet (SyncSheet.tsx). */
+
+.bl-offbar {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s2);
+  width: 100%;
+  min-height: 36px;
+  padding: 6px var(--bl-s4);
+  border: 0;
+  border-bottom: 1px solid var(--bl-border);
+  font: inherit;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-medium);
+  text-align: left;
+  flex-shrink: 0;
+}
+.bl-offbar:not(:disabled) { cursor: pointer; }
+.bl-offbar:disabled { opacity: 1; }
+.bl-offbar ion-icon { font-size: 17px; flex-shrink: 0; }
+.bl-offbar__text { flex: 1; min-width: 0; }
+.bl-offbar__link { font-weight: var(--bl-fw-bold); text-decoration: underline; flex-shrink: 0; }
+
+.bl-offbar--info { background: var(--bl-info-bg); color: var(--bl-info); }
+.bl-offbar--warn { background: var(--bl-warning-bg); color: #7A4F0F; }
+.bl-offbar--danger { background: var(--bl-danger-bg); color: var(--bl-danger-dark); }
+
+/* ---- Waiting to sync -------------------------------------------------------- */
+
+.bl-sync__list {
+  display: grid;
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+  overflow: hidden;
+}
+.bl-sync__item { display: grid; gap: 4px; padding: var(--bl-s3) var(--bl-s4); }
+.bl-sync__item + .bl-sync__item { border-top: 1px solid var(--bl-border); }
+.bl-sync__row { display: flex; justify-content: space-between; align-items: baseline; gap: var(--bl-s3); }
+.bl-sync__summary { font-weight: var(--bl-fw-semibold); min-width: 0; }
+.bl-sync__item--failed { background: #FFF8F8; }
+.bl-sync__error { margin: 0; font-size: var(--bl-fs-sm); color: var(--bl-danger-dark); }
+.bl-sync__actions { display: flex; justify-content: flex-end; gap: var(--bl-s2); }

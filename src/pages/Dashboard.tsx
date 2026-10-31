@@ -117,7 +117,7 @@ export function Dashboard() {
       */}
       <div className="bl-dash__greeting bl-only-mobile">
         <h2 className="bl-dash__greeting-title">
-          {greeting()}, {profile.firstName} 👋
+          {greeting()}, {profile.firstName}
         </h2>
         <p className="bl-caption">{t('Here\'s your business overview for today.')}</p>
       </div>
@@ -146,6 +146,7 @@ export function Dashboard() {
             </Button>
             <Button
               variant="secondary"
+              className="bl-hide-mobile"
               icon={documentTextOutline}
               loading={exporting}
               onClick={() => void handleExport()}
@@ -191,6 +192,16 @@ export function Dashboard() {
           onClick={() => history.push('/inventory')}
         >
           {t('Update Stock')}
+        </Button>
+        {/* Phones: Export joins the shortcuts instead of a lone header button. */}
+        <Button
+          variant="secondary"
+          className="bl-only-mobile"
+          icon={documentTextOutline}
+          loading={exporting}
+          onClick={() => void handleExport()}
+        >
+          {exporting ? t('Exporting') : t('Export')}
         </Button>
       </div>
 
@@ -325,7 +336,7 @@ export function Dashboard() {
           fill
           padding="none"
           as="h2"
-          className="bl-span-3"
+          className="bl-span-3 bl-dash__capped"
           title={t('Needs attention')}
           description={t('Urgent alerts and products below their minimum')}
           action={
@@ -386,7 +397,7 @@ export function Dashboard() {
           fill
           padding="none"
           as="h2"
-          className="bl-span-4"
+          className="bl-span-4 bl-dash__capped"
           title={t('Recent transactions')}
           description={t('Latest recorded sales')}
           action={
@@ -423,7 +434,7 @@ export function Dashboard() {
         <Card
           fill
           as="h2"
-          className="bl-span-5"
+          className="bl-span-5 bl-dash__capped"
           title={t('Forecast highlights')}
           description={t('What your records suggest is coming next')}
           action={
@@ -479,7 +490,7 @@ export function Dashboard() {
         <Card
           fill
           as="h2"
-          className="bl-span-3"
+          className="bl-span-3 bl-dash__capped"
           title={t('AI insights')}
           description={
             topInsight

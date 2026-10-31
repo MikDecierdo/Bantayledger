@@ -247,7 +247,7 @@ export function Sales() {
     setSaving(true);
     try {
       // The inventory ledger refuses the write if any line would oversell.
-      await salesService.create(activeBusiness.id, user?.id ?? null, {
+      const result = await salesService.create(activeBusiness.id, user?.id ?? null, {
         items: cart.map((l) => ({
           productId: l.productId,
           quantity: l.quantity,
@@ -272,7 +272,13 @@ export function Sales() {
           : '';
       closeAddModal();
       reload();
-      await alertSuccess(t('Sale recorded'), t('Stock has been updated to match.{{changeNote}}', { changeNote }));
+      // Stock changed (on the server, or on this phone's saved copy when offline).
+      reloadProducts();
+      if (result.queued) {
+        await alertSuccess(t('Saved on this phone'), t('There is no internet right now. It will be sent automatically when you are back online.'));
+      } else {
+        await alertSuccess(t('Sale recorded'), t('Stock has been updated to match.{{changeNote}}', { changeNote }));
+      }
     } catch (err) {
       // Keep the cart intact — staff shouldn't have to re-build it — but
       // refresh stock numbers in case the failure was an oversell caused by
@@ -307,7 +313,7 @@ export function Sales() {
       title={t('Sales')}
       description={t('Every recorded sale, with today\'s totals and how the week is tracking.')}
       actions={
-        <Button variant="primary" icon={addOutline} onClick={() => setAddOpen(true)}>
+        <Button variant="primary" icon={addOutline} onClick={() => setAddOpen(true)} data-quickadd>
           {t('Add Sale')}
         </Button>
       }
@@ -734,23 +740,26 @@ export function Sales() {
         <div className="bl-pos__layout">
           <div className="bl-pos__main">
             <div className="bl-pos__picker">
-              <SearchInput
-                label={t('Search products')}
-                placeholder={t('Search products')}
-                value={tileQuery}
-                onValueChange={setTileQuery}
-              />
-              {tileCategories.length > 1 && (
-                <ChipFilter
-                  label={t('Filter by category')}
-                  value={tileCategory}
-                  onChange={setTileCategory}
-                  options={[
-                    { value: 'all', label: t('All') },
-                    ...tileCategories.map((c) => ({ value: c, label: c })),
-                  ]}
+              {/* Pinned at the top on phones, so the results stay in view under it. */}
+              <div className="bl-pos__searchbar">
+                <SearchInput
+                  label={t('Search products')}
+                  placeholder={t('Search products')}
+                  value={tileQuery}
+                  onValueChange={setTileQuery}
                 />
-              )}
+                {tileCategories.length > 1 && (
+                  <ChipFilter
+                    label={t('Filter by category')}
+                    value={tileCategory}
+                    onChange={setTileCategory}
+                    options={[
+                      { value: 'all', label: t('All') },
+                      ...tileCategories.map((c) => ({ value: c, label: c })),
+                    ]}
+                  />
+                )}
+              </div>
 
               {tiles.length === 0 ? (
                 <EmptyState
@@ -783,6 +792,10 @@ export function Sales() {
                             : atLimit
                               ? t('No more stock')
                               : `${number(product.currentStock)} ${product.unit}`}
+                        </span>
+                        {/* Phones show products as a list: "+" or how many are in the cart. */}
+                        <span className="bl-tile__add" aria-hidden="true">
+                          {inCart > 0 ? inCart : '+'}
                         </span>
                       </button>
                     );
