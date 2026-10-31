@@ -38,6 +38,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Welcome from './pages/Welcome';
 import Landing from './pages/Landing';
+import UpdatePrompt from './components/layout/UpdatePrompt';
 import { isInstalledApp } from './lib/platform';
 
 setupIonicReact({ mode: 'md' });
@@ -161,6 +162,8 @@ export function App() {
       <LanguageProvider>
       <AuthProvider>
         <ToastProvider>
+          {/* "New version available" — installed apps only. */}
+          <UpdatePrompt />
           <IonReactRouter>
             {/*
               A plain outlet: the app uses its own scroll container and CSS

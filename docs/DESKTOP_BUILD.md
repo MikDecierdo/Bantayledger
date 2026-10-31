@@ -32,18 +32,41 @@ as a GitHub Release in the public repository
 The website buttons link to `releases/latest/download/…`, so the newest
 release is always what people download.
 
-1. Raise the version in `desktop/package.json` (and `versionName` /
-   `versionCode` in `android/app/build.gradle` for Android).
-2. Build both files (Android: see `docs/ANDROID_BUILD.md`). Name them
-   `BantayLedger.apk` and `BantayLedger-Setup.exe`.
-3. Publish:
+1. Set the new version everywhere at once (website, Android, Windows):
 
 ```
-gh release create v1.0.1 BantayLedger.apk BantayLedger-Setup.exe --repo MikDecierdo/bantayledger-downloads --title "BantayLedger AI 1.0.1" --notes "What changed"
+npm run version:set -- 1.0.3
 ```
 
-4. Update the version and size shown on the website in
-   `src/data/downloads.ts`, then push.
+2. Build both apps (Android: see `docs/ANDROID_BUILD.md`). Name them
+   `BantayLedger.apk` and `BantayLedger-Setup.exe`. The Windows build also
+   makes `desktopelease\latest.yml` and
+   `BantayLedger-Setup.exe.blockmap` — **upload both too**, the Windows app
+   reads them to update itself.
+3. Publish (the tag must be `v` + the version):
+
+```
+gh release create v1.0.3 BantayLedger.apk BantayLedger-Setup.exe latest.yml BantayLedger-Setup.exe.blockmap --repo MikDecierdo/bantayledger-downloads --title "BantayLedger AI 1.0.3" --notes "What changed"
+```
+
+4. Update the sizes shown on the website in `src/data/downloads.ts`
+   (the version is already set), then push.
+
+## How the apps learn about a new version
+
+- **Windows** checks the latest release when it starts and every 6 hours,
+  downloads the new installer in the background, then shows
+  *Update ready → Restart to update*. If the user waits, it installs when the
+  app is closed.
+- **Android** checks the latest release (at most every 6 hours, and from
+  Settings → About → Check for updates) and shows *New version available*.
+  **Update now** downloads the new APK in the phone's browser; installing it
+  over the old app keeps everything.
+- **Website and iPhone home-screen app** are always the newest version after
+  Render deploys the push.
+
+Apps older than 1.0.2 have no update check, so they must be updated by hand
+once.
 
 ## The website
 

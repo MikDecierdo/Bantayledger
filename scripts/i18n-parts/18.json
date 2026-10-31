@@ -1,0 +1,106 @@
+{
+  "Can I use it on an iPhone or iPad?": [
+    "Puwede ko ba itong gamitin sa iPhone o iPad?",
+    "Magamit ba nako kini sa iPhone o iPad?"
+  ],
+  "Check for updates": [
+    "Tingnan kung may update",
+    "Tan-awa kung naay update"
+  ],
+  "Connect to the internet to check for updates.": [
+    "Kumonekta sa internet para tingnan kung may update.",
+    "Pagkonektar sa internet aron tan-awon kung naay update."
+  ],
+  "Download the new version and install it over this one. Your records stay as they are.": [
+    "I-download ang bagong bersyon at i-install ito sa ibabaw ng kasalukuyan. Mananatili ang iyong mga record.",
+    "I-download ang bag-ong bersyon ug i-install kini ibabaw niining karon. Magpabilin ang imong mga rekord."
+  ],
+  "Downloading version {{version}}… You will be asked to restart when it is ready.": [
+    "Dina-download ang bersyon {{version}}… Hihilingin sa iyong i-restart kapag handa na.",
+    "Gi-download ang bersyon {{version}}… Pangutan-on ka nga i-restart kung andam na."
+  ],
+  "Get it on iPhone": [
+    "Kunin sa iPhone",
+    "Kuhaa sa iPhone"
+  ],
+  "Home-screen app · Free · Nothing to download": [
+    "App sa home screen · Libre · Walang ida-download",
+    "App sa home screen · Libre · Walay i-download"
+  ],
+  "Install it on your Android phone or Windows computer, add it to your iPhone home screen, or open it in your browser.": [
+    "I-install sa iyong Android phone o Windows computer, idagdag sa home screen ng iyong iPhone, o buksan sa iyong browser.",
+    "I-install sa imong Android phone o Windows computer, idugang sa home screen sa imong iPhone, o ablihi sa imong browser."
+  ],
+  "iPhone & iPad": [
+    "iPhone at iPad",
+    "iPhone ug iPad"
+  ],
+  "Later": [
+    "Mamaya na",
+    "Unya na"
+  ],
+  "New version available": [
+    "May bagong bersyon",
+    "Naay bag-ong bersyon"
+  ],
+  "Nothing to install · Mac, Chromebook, tablets": [
+    "Walang ii-install · Mac, Chromebook, tablet",
+    "Walay i-install · Mac, Chromebook, tablet"
+  ],
+  "On your iPhone, open bantayledger-web.onrender.com in Safari.": [
+    "Sa iyong iPhone, buksan ang bantayledger-web.onrender.com sa Safari.",
+    "Sa imong iPhone, ablihi ang bantayledger-web.onrender.com sa Safari."
+  ],
+  "Open BantayLedger from your home screen and sign in.": [
+    "Buksan ang BantayLedger mula sa iyong home screen at mag-sign in.",
+    "Ablihi ang BantayLedger gikan sa imong home screen ug mag-sign in."
+  ],
+  "Open this website in Safari.": [
+    "Buksan ang website na ito sa Safari.",
+    "Ablihi kining website sa Safari."
+  ],
+  "Restart to update": [
+    "I-restart para mag-update",
+    "I-restart aron ma-update"
+  ],
+  "Tap the Share button, then Add to Home Screen.": [
+    "I-tap ang Share button, pagkatapos ay Add to Home Screen.",
+    "I-tap ang Share button, dayon Add to Home Screen."
+  ],
+  "The new version has downloaded. Restart BantayLedger to start using it. Your records stay as they are.": [
+    "Na-download na ang bagong bersyon. I-restart ang BantayLedger para magamit ito. Mananatili ang iyong mga record.",
+    "Na-download na ang bag-ong bersyon. I-restart ang BantayLedger aron magamit kini. Magpabilin ang imong mga rekord."
+  ],
+  "Update now": [
+    "I-update ngayon",
+    "I-update karon"
+  ],
+  "Update ready": [
+    "Handa na ang update",
+    "Andam na ang update"
+  ],
+  "Version and data information.": [
+    "Impormasyon tungkol sa bersyon at data.",
+    "Impormasyon bahin sa bersyon ug datos."
+  ],
+  "Version {{next}} · you have {{current}}": [
+    "Bersyon {{next}} · ang sa iyo ay {{current}}",
+    "Bersyon {{next}} · ang imo kay {{current}}"
+  ],
+  "When the download finishes, open it and tap Install. Your records stay as they are.": [
+    "Kapag tapos na ang download, buksan ito at i-tap ang Install. Mananatili ang iyong mga record.",
+    "Kung human na ang download, ablihi kini ug i-tap ang Install. Magpabilin ang imong mga rekord."
+  ],
+  "Works offline after the first visit and updates by itself.": [
+    "Gumagana kahit offline pagkatapos ng unang pagbisita at kusang nag-a-update.",
+    "Molihok bisan offline human sa unang pagbisita ug kusang mag-update."
+  ],
+  "Yes. Open this website in Safari, tap the Share button, then Add to Home Screen. BantayLedger gets its own icon, opens full screen like an app, and still opens without internet after your first visit. It updates by itself.": [
+    "Oo. Buksan ang website na ito sa Safari, i-tap ang Share button, pagkatapos ay Add to Home Screen. Magkakaroon ang BantayLedger ng sariling icon, bubukas nang full screen na parang app, at bubukas pa rin kahit walang internet pagkatapos ng unang pagbisita. Kusa itong nag-a-update.",
+    "Oo. Ablihi kining website sa Safari, i-tap ang Share button, dayon Add to Home Screen. Ang BantayLedger makabaton og kaugalingong icon, moabli nga full screen sama sa app, ug moabli gihapon bisan walay internet human sa imong unang pagbisita. Kusa kining mag-update."
+  ],
+  "You have the latest version ({{version}}).": [
+    "Nasa pinakabagong bersyon ka na ({{version}}).",
+    "Naa na ka sa pinakabag-ong bersyon ({{version}})."
+  ]
+}

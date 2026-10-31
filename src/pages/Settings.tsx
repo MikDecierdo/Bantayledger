@@ -8,7 +8,11 @@ import {
   phonePortraitOutline,
 } from 'ionicons/icons';
 import { useState, type ReactNode } from 'react';
+import Button from '../components/common/Button';
 import { SelectField, Switch } from '../components/common/Field';
+import { CHECK_UPDATE_EVENT } from '../components/layout/UpdatePrompt';
+import { isInstalledApp } from '../lib/platform';
+import { APP_VERSION } from '../lib/updates';
 import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/layout/Section';
 import { Bento, Workspace } from '../components/layout/Workspace';
@@ -255,9 +259,19 @@ export function Settings() {
         <SettingGroup
           icon={informationCircleOutline}
           title={t('About')}
-          description={t('Version and support information.')}
+          description={t('Version and data information.')}
         >
-          <SettingRow title={t('Version')} description={t('1.0.0 — frontend preview')} control={null} />
+          <SettingRow
+            title={t('Version')}
+            description={APP_VERSION}
+            control={
+              isInstalledApp() ? (
+                <Button variant="secondary" size="sm" onClick={() => window.dispatchEvent(new Event(CHECK_UPDATE_EVENT))}>
+                  {t('Check for updates')}
+                </Button>
+              ) : null
+            }
+          />
           <SettingRow
             title={t('Data source')}
             description={t('Saved to your BantayLedger account.')}

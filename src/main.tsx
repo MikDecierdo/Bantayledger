@@ -31,6 +31,7 @@ import './theme/swal.css';
 
 import './i18n';
 import App from './App';
+import { isInstalledApp } from './lib/platform';
 
 /*
  * Every route is a lazy-loaded chunk (see App.tsx). If a chunk reference goes
@@ -41,6 +42,17 @@ import App from './App';
 window.addEventListener('vite:preloadError', () => {
   window.location.reload();
 });
+
+/*
+ * Website only: the offline helper (public/sw.js) lets the website and the
+ * iPhone home-screen app open without internet after one visit. The Android
+ * and Windows apps already carry their files, so they skip it.
+ */
+if (import.meta.env.PROD && !isInstalledApp() && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register(`/sw.js?build=${__BUILD_ID__}`).catch(() => undefined);
+  });
+}
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

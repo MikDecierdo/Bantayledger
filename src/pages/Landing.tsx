@@ -9,7 +9,9 @@ import {
   globeOutline,
   languageOutline,
   logoAndroid,
+  logoApple,
   logoWindows,
+  shareOutline,
   shieldCheckmarkOutline,
   trendingUpOutline,
   walletOutline,
@@ -21,6 +23,15 @@ import LanguageSelect from '../components/common/LanguageSelect';
 import { DOWNLOADS } from '../data/downloads';
 import './Landing.css';
 import { t } from '../i18n';
+
+/**
+ * iPhone, iPod or iPad (iPadOS reports itself as a Mac, so a Mac with a touch
+ * screen counts too). Used to put the iPhone card and button first.
+ */
+function isIOS(): boolean {
+  if (typeof navigator === 'undefined') return false;
+  return /iPhone|iPad|iPod/.test(navigator.userAgent) || (/Macintosh/.test(navigator.userAgent) && navigator.maxTouchPoints > 1);
+}
 
 /** Smooth-scrolls to a section inside the page's own scroll area. */
 function jump(id: string) {
@@ -36,6 +47,7 @@ function jump(id: string) {
  * The installed apps skip it and open on sign-in (see lib/platform.ts).
  */
 export function Landing() {
+  const ios = isIOS();
   const features = [
     {
       icon: cartOutline,
@@ -70,7 +82,7 @@ export function Landing() {
   ];
 
   const steps = [
-    { title: t('Download the app'), text: t('Install it on your Android phone or Windows computer, or open it in your browser.') },
+    { title: t('Download the app'), text: t('Install it on your Android phone or Windows computer, add it to your iPhone home screen, or open it in your browser.') },
     { title: t('Add your products'), text: t('Enter what you sell, your buying and selling price, and how many you have.') },
     { title: t('Record as you sell'), text: t('Every sale, purchase and expense goes in. The numbers and alerts take care of themselves.') },
   ];
@@ -89,10 +101,39 @@ export function Landing() {
       a: t('The apps are installed directly from this website instead of an app store. Android asks you to allow installing from this source, and Windows may show "Windows protected your PC" — choose More info, then Run anyway.'),
     },
     {
+      q: t('Can I use it on an iPhone or iPad?'),
+      a: t('Yes. Open this website in Safari, tap the Share button, then Add to Home Screen. BantayLedger gets its own icon, opens full screen like an app, and still opens without internet after your first visit. It updates by itself.'),
+    },
+    {
       q: t('Can my staff use it too?'),
       a: t('Yes. The owner adds staff in Settings → Team. Staff can record sales and stock; only the owner manages the business settings.'),
     },
   ];
+
+  const iphoneCard = (
+    <article id="iphone" key="iphone" className={`bl-land__dl${ios ? ' bl-land__dl--featured' : ''}`}>
+      <div className="bl-land__dl-top">
+        <span className="bl-land__dl-icon bl-land__dl-icon--apple" aria-hidden="true">
+          <IonIcon icon={logoApple} />
+        </span>
+        <div>
+          <h3>{t('iPhone & iPad')}</h3>
+          <p className="bl-land__meta">{t('Home-screen app · Free · Nothing to download')}</p>
+        </div>
+      </div>
+      <ol className="bl-land__dl-steps">
+        <li>{t('Open this website in Safari.')}</li>
+        <li>
+          {t('Tap the Share button, then Add to Home Screen.')}{' '}
+          <IonIcon icon={shareOutline} className="bl-land__inline-icon" aria-hidden="true" />
+        </li>
+        <li>{t('Open BantayLedger from your home screen and sign in.')}</li>
+      </ol>
+      <p className="bl-land__dl-hint">
+        {ios ? t('Works offline after the first visit and updates by itself.') : t('On your iPhone, open bantayledger-web.onrender.com in Safari.')}
+      </p>
+    </article>
+  );
 
   return (
     <div className="bl-land">
@@ -129,14 +170,23 @@ export function Landing() {
                 {t('BantayLedger keeps your sales, inventory, expenses and suppliers in one place, then tells you what to restock and what is coming next.')}
               </p>
               <div className="bl-land__cta">
-                <a className="bl-land__btn bl-land__btn--primary" href={DOWNLOADS.android.href} download>
-                  <IonIcon icon={logoAndroid} aria-hidden="true" />
-                  {t('Download for Android')}
-                </a>
-                <a className="bl-land__btn bl-land__btn--secondary" href={DOWNLOADS.windows.href} download>
-                  <IonIcon icon={logoWindows} aria-hidden="true" />
-                  {t('Download for Windows')}
-                </a>
+                {ios ? (
+                  <a className="bl-land__btn bl-land__btn--primary" href="#iphone" onClick={jump('iphone')}>
+                    <IonIcon icon={logoApple} aria-hidden="true" />
+                    {t('Get it on iPhone')}
+                  </a>
+                ) : (
+                  <>
+                    <a className="bl-land__btn bl-land__btn--primary" href={DOWNLOADS.android.href} download>
+                      <IonIcon icon={logoAndroid} aria-hidden="true" />
+                      {t('Download for Android')}
+                    </a>
+                    <a className="bl-land__btn bl-land__btn--secondary" href={DOWNLOADS.windows.href} download>
+                      <IonIcon icon={logoWindows} aria-hidden="true" />
+                      {t('Download for Windows')}
+                    </a>
+                  </>
+                )}
               </div>
               <Link to="/login" className="bl-land__textlink">
                 {t('Or use it in your browser')}
@@ -222,6 +272,7 @@ export function Landing() {
             </div>
 
             <div className="bl-land__downloads">
+              {ios && iphoneCard}
               <article className="bl-land__dl">
                 <div className="bl-land__dl-top">
                   <span className="bl-land__dl-icon bl-land__dl-icon--android" aria-hidden="true">
@@ -268,6 +319,8 @@ export function Landing() {
                 </a>
               </article>
 
+              {!ios && iphoneCard}
+
               <article className="bl-land__dl bl-land__dl--web">
                 <div className="bl-land__dl-top">
                   <span className="bl-land__dl-icon" aria-hidden="true">
@@ -275,7 +328,7 @@ export function Landing() {
                   </span>
                   <div>
                     <h3>{t('Any browser')}</h3>
-                    <p className="bl-land__meta">{t('Nothing to install · Mac, iPhone, tablets')}</p>
+                    <p className="bl-land__meta">{t('Nothing to install · Mac, Chromebook, tablets')}</p>
                   </div>
                 </div>
                 <p className="bl-land__dl-note">{t('Use the full app right here in your browser on any device.')}</p>
