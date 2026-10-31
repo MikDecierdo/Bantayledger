@@ -2,29 +2,23 @@ import { IonIcon } from '@ionic/react';
 import {
   businessOutline,
   callOutline,
-  cameraOutline,
-  chevronForwardOutline,
   createOutline,
   locationOutline,
-  logOutOutline,
   mailOutline,
   shieldCheckmarkOutline,
 } from 'ionicons/icons';
 import { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
 import Button from '../components/common/Button';
 import { SelectField, TextAreaField, TextField } from '../components/common/Field';
 import { Modal } from '../components/common/Modal';
 import { ErrorState, LoadingState, SkeletonCard } from '../components/common/States';
 import { Badge } from '../components/common/StatusBadge';
-import { useToast } from '../components/common/ToastProvider';
 import PageHeader from '../components/layout/PageHeader';
-import { Card, Section } from '../components/layout/Section';
+import { Card } from '../components/layout/Section';
 import { Bento, Workspace } from '../components/layout/Workspace';
-import { moreNav } from '../components/layout/navItems';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
-import { alertError, alertSuccess, confirmLogout } from '../lib/swal';
+import { alertSuccess } from '../lib/swal';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { businessService, profileService } from '../services/api';
@@ -32,9 +26,7 @@ import './Profile.css';
 import { t } from '../i18n';
 
 export function Profile() {
-  const { showToast } = useToast();
-  const history = useHistory();
-  const { activeBusiness, user, signOut, refresh } = useAuth();
+  const { activeBusiness, user, refresh } = useAuth();
   const { data, loading, error, reload } = useAsyncData(
     () => dataService.getProfile(),
     [activeBusiness?.id],
@@ -111,17 +103,6 @@ export function Profile() {
     }
   };
 
-  const handleLogout = async () => {
-    if (!(await confirmLogout())) return;
-
-    try {
-      await signOut();
-      history.replace('/login');
-    } catch (err) {
-      await alertError(t('Could not sign you out'), toUserMessage(err));
-    }
-  };
-
   if (loading) {
     return (
       <LoadingState label={t('Loading your profile')}>
@@ -158,14 +139,6 @@ export function Profile() {
           <span className="bl-avatar bl-avatar--lg bl-avatar--solid" aria-hidden="true">
             {data.initials}
           </span>
-          <button
-            type="button"
-            className="bl-prof__avatar-btn"
-            onClick={() => showToast(t('Photo upload is not available in this preview.'), 'info')}
-            aria-label={t('Change profile photo')}
-          >
-            <IonIcon icon={cameraOutline} aria-hidden="true" />
-          </button>
         </div>
 
         <div className="bl-prof__identity">
@@ -182,7 +155,7 @@ export function Profile() {
 
       {/* ---- Details --------------------------------------------------------- */}
       <Bento rows="auto" className="bl-prof__grid">
-          <Card as="h2" className="bl-span-4" title={t('Profile information')}>
+          <Card as="h2" className="bl-span-6" title={t('Profile information')}>
             <dl className="bl-prof__list">
               <div>
                 <dt>
@@ -208,7 +181,7 @@ export function Profile() {
             </dl>
           </Card>
 
-          <Card as="h2" className="bl-span-4" title={t('Business information')}>
+          <Card as="h2" className="bl-span-6" title={t('Business information')}>
             <dl className="bl-prof__list">
               <div>
                 <dt>
@@ -233,51 +206,7 @@ export function Profile() {
               </div>
             </dl>
           </Card>
-
-          <Card as="h2" padding="none" className="bl-span-4 bl-prof__account" title={t('Account')}>
-          <ul className="bl-prof__nav">
-            <li>
-              <Link to="/settings" className="bl-prof__nav-item">
-                <IonIcon icon={shieldCheckmarkOutline} className="bl-prof__nav-icon" aria-hidden="true" />
-                <span>{t('Settings and security')}</span>
-                <IonIcon icon={chevronForwardOutline} className="bl-prof__nav-chev" aria-hidden="true" />
-              </Link>
-            </li>
-            <li>
-              <button
-                type="button"
-                className="bl-prof__nav-item bl-prof__nav-item--danger"
-                onClick={() => void handleLogout()}
-              >
-                <IonIcon icon={logOutOutline} className="bl-prof__nav-icon" aria-hidden="true" />
-                <span>{t('Logout')}</span>
-                <IonIcon icon={chevronForwardOutline} className="bl-prof__nav-chev" aria-hidden="true" />
-              </button>
-            </li>
-          </ul>
-          </Card>
       </Bento>
-
-      {/* ---- Mobile-only navigation to the rest of the app ------------------- */}
-      <Section
-        title={t('More')}
-        description={t('Pages not shown in the bottom bar')}
-        className="bl-only-mobile"
-      >
-        <Card padding="none">
-          <ul className="bl-prof__nav">
-            {moreNav.map((item) => (
-              <li key={item.href}>
-                <Link to={item.href} className="bl-prof__nav-item">
-                  <IonIcon icon={item.icon} className="bl-prof__nav-icon" aria-hidden="true" />
-                  <span>{item.label}</span>
-                  <IonIcon icon={chevronForwardOutline} className="bl-prof__nav-chev" aria-hidden="true" />
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      </Section>
 
       <Modal
         isOpen={editOpen}

@@ -11,6 +11,7 @@ import {
 } from 'react';
 import { authClient, type SignUpInput } from '../services/api/authClient';
 import { setActiveContext } from '../services/activeContext';
+import { getOfflineStatus } from '../services/offline/status';
 import type { BusinessRole, BusinessRow, ProfileRow } from '../types/database';
 import { changeLanguage, currentLanguage, hasSavedLanguage, t } from '../i18n';
 
@@ -165,6 +166,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const signOut = useCallback(async () => {
+    // Records saved offline are sent with this sign-in; signing out first would lose them.
+    const { pending, failed } = getOfflineStatus();
+    if (pending + failed > 0) {
+      throw new Error(
+        t('{{count}} records saved on this phone have not been sent yet. Connect to the internet and let them sync (or delete them under "Waiting to sync") before signing out.', { count: pending + failed }),
+      );
+    }
     await authClient.signOut();
     setUser(null);
     setProfile(null);

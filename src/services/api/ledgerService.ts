@@ -1,6 +1,8 @@
 import type { Expense, SeriesPoint, WasteRecord } from '../../types';
 import type { ExpenseCategory, WasteReason } from '../../types';
-import { api } from './client';
+import { t } from '../../i18n';
+import { peso } from '../../utils/format';
+import { api, postOrQueue, type SaveResult } from './client';
 
 export interface ExpenseInput {
   category: ExpenseCategory;
@@ -52,8 +54,13 @@ export const expenseService = {
     return api.get<Expense[]>(`/businesses/${businessId}/expenses`, { limit });
   },
 
-  async create(businessId: string, _userId: string | null, input: ExpenseInput): Promise<void> {
-    await api.post(`/businesses/${businessId}/expenses`, input);
+  /** Sends the expense, or saves it on the phone when offline (`queued`). */
+  async create(businessId: string, _userId: string | null, input: ExpenseInput): Promise<SaveResult<unknown>> {
+    return postOrQueue(`/businesses/${businessId}/expenses`, { ...input }, {
+      kind: 'expense',
+      businessId,
+      summary: `${t('Expense')} · ${input.description || input.category} · ${peso(input.amount, input.amount % 1 !== 0)}`,
+    });
   },
 
   async remove(businessId: string, id: string): Promise<void> {
@@ -70,8 +77,14 @@ export const wasteService = {
     return api.get<WasteRecord[]>(`/businesses/${businessId}/waste`, { limit });
   },
 
-  async create(businessId: string, _userId: string | null, input: WasteInput): Promise<void> {
-    await api.post(`/businesses/${businessId}/waste`, input);
+  /** Sends the record, or saves it on the phone when offline (`queued`). */
+  async create(businessId: string, _userId: string | null, input: WasteInput): Promise<SaveResult<unknown>> {
+    return postOrQueue(`/businesses/${businessId}/waste`, { ...input }, {
+      kind: 'waste',
+      businessId,
+      summary: `${t('Spoiled & Damaged')} · ${input.quantity}`,
+      stockOut: [{ productId: input.productId, quantity: input.quantity }],
+    });
   },
 
   async remove(businessId: string, id: string): Promise<void> {

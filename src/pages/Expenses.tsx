@@ -86,7 +86,7 @@ export function Expenses() {
 
     setSaving(true);
     try {
-      await expenseService.create(activeBusiness.id, user?.id ?? null, {
+      const result = await expenseService.create(activeBusiness.id, user?.id ?? null, {
         category: form.category as (typeof expenseCategories)[number],
         description: form.description,
         amount: Number(form.amount),
@@ -95,7 +95,11 @@ export function Expenses() {
       setAddOpen(false);
       setForm({ ...form, description: '', amount: '' });
       reload();
-      await alertSuccess(t('Expense recorded'));
+      if (result.queued) {
+        await alertSuccess(t('Saved on this phone'), t('There is no internet right now. It will be sent automatically when you are back online.'));
+      } else {
+        await alertSuccess(t('Expense recorded'));
+      }
     } catch (err) {
       setFormError(toUserMessage(err));
     } finally {
@@ -123,7 +127,7 @@ export function Expenses() {
       title={t('Expenses')}
       description={t('Everything you spend outside of stock — rent, utilities, wages and more.')}
       actions={
-        <Button variant="primary" icon={addOutline} onClick={() => setAddOpen(true)}>
+        <Button variant="primary" icon={addOutline} onClick={() => setAddOpen(true)} data-quickadd>
           {t('Add Expense')}
         </Button>
       }

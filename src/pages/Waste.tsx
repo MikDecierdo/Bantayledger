@@ -1,5 +1,6 @@
 import { addOutline, searchOutline, trashOutline } from 'ionicons/icons';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 import BarChart from '../components/charts/BarChart';
 import BarList from '../components/charts/BarList';
 import Button from '../components/common/Button';
@@ -53,6 +54,17 @@ export function Waste() {
   const [reason, setReason] = useState('all');
   const [addOpen, setAddOpen] = useState(false);
 
+  // The phone Quick add sheet navigates here with `openAdd` to open the form.
+  const history = useHistory();
+  const location = useLocation<{ openAdd?: boolean } | undefined>();
+  const openAddForm = () => setAddOpen(true);
+  useEffect(() => {
+    if (!location.state?.openAdd) return;
+    openAddForm();
+    history.replace({ pathname: location.pathname, state: undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
+
   const [form, setForm] = useState({
     productId: '',
     quantity: '',
@@ -88,7 +100,7 @@ export function Waste() {
     try {
       // Removes stock through the inventory ledger, so writing off more than
       // is on hand is refused by the database.
-      await wasteService.create(activeBusiness.id, user?.id ?? null, {
+      const result = await wasteService.create(activeBusiness.id, user?.id ?? null, {
         productId: form.productId,
         quantity: Number(form.quantity),
         reason: form.reason as (typeof wasteReasons)[number],
@@ -98,7 +110,11 @@ export function Waste() {
       setAddOpen(false);
       setForm({ ...form, productId: '', quantity: '', notes: '' });
       reload();
-      await alertSuccess(t('Item recorded'), t('The spoiled or damaged stock has been taken out of your inventory.'));
+      if (result.queued) {
+        await alertSuccess(t('Saved on this phone'), t('There is no internet right now. It will be sent automatically when you are back online.'));
+      } else {
+        await alertSuccess(t('Item recorded'), t('The spoiled or damaged stock has been taken out of your inventory.'));
+      }
     } catch (err) {
       setFormError(toUserMessage(err));
     } finally {
@@ -125,7 +141,7 @@ export function Waste() {
       title={t('Spoiled & Damaged')}
       description={t('Items that expired, spoiled or got damaged, and what they cost you.')}
       actions={
-        <Button variant="primary" icon={addOutline} onClick={() => setAddOpen(true)}>
+        <Button variant="primary" icon={addOutline} onClick={openAddForm} data-quickadd>
           {t('Add Spoiled/Damaged Item')}
         </Button>
       }

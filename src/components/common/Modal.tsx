@@ -6,6 +6,7 @@ import {
   closeOutline,
   cubeOutline,
   documentTextOutline,
+  gridOutline,
   keyOutline,
   peopleOutline,
   personOutline,
@@ -37,6 +38,7 @@ const MODAL_ICONS = {
   password: keyOutline,
   warning: warningOutline,
   form: documentTextOutline,
+  menu: gridOutline,
 } as const;
 
 export type ModalIconName = keyof typeof MODAL_ICONS;

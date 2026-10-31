@@ -106,7 +106,7 @@ const blankSubUnit = (): SubUnitForm => ({
 
 export function Inventory() {
   const history = useHistory();
-  const location = useLocation<{ editProductId?: string } | undefined>();
+  const location = useLocation<{ editProductId?: string; openAdd?: boolean } | undefined>();
   const { showToast } = useToast();
   const { activeBusiness, isManager } = useAuth();
   const { data, loading, error, reload } = useAsyncData(
@@ -263,6 +263,24 @@ export function Inventory() {
   };
 
   const photoPreview = imageFile ? imagePreviewUrl : removeExistingImage ? null : existingImageUrl;
+
+  /** A blank Add Product form (header button and the phone Quick add). */
+  const openAddModal = () => {
+    setEditingProductId(null);
+    setEditingVariantGroupId(null);
+    setForm(BLANK_FORM);
+    resetImageState();
+    resetSubUnits();
+    setAddOpen(true);
+  };
+
+  // The phone Quick add sheet navigates here with `openAdd`.
+  useEffect(() => {
+    if (!location.state?.openAdd) return;
+    openAddModal();
+    history.replace({ pathname: location.pathname, state: undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.state]);
 
   // Lets ProductDetails' Edit button open this same form pre-filled, by
   // navigating here with the product id in router state rather than
@@ -585,18 +603,7 @@ export function Inventory() {
       title={t('Inventory')}
       description={t('Track stock levels, minimums and supplier pricing across your products.')}
       actions={
-        <Button
-          variant="primary"
-          icon={addOutline}
-          onClick={() => {
-            setEditingProductId(null);
-            setEditingVariantGroupId(null);
-            setForm(BLANK_FORM);
-            resetImageState();
-            resetSubUnits();
-            setAddOpen(true);
-          }}
-        >
+        <Button variant="primary" icon={addOutline} onClick={openAddModal} data-quickadd>
           {t('Add Product')}
         </Button>
       }

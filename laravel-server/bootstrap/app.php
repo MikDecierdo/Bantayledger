@@ -4,6 +4,7 @@ use App\Exceptions\ApiException;
 use App\Http\Middleware\EnsureBusinessManager;
 use App\Http\Middleware\EnsureBusinessMember;
 use App\Http\Middleware\ForceJsonResponse;
+use App\Http\Middleware\Idempotent;
 use App\Http\Middleware\SetLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'business.member' => EnsureBusinessMember::class,
             'business.manager' => EnsureBusinessManager::class,
+            'idempotent' => Idempotent::class,
         ]);
 
         // Every /api/* request is treated as JSON-expecting regardless of

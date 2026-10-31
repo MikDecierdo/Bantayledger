@@ -171,7 +171,7 @@ export function Purchases() {
     try {
       // A 'received' purchase adds to stock immediately; a 'pending' one does
       // so later, when its status changes.
-      await purchaseService.create(activeBusiness.id, user?.id ?? null, {
+      const result = await purchaseService.create(activeBusiness.id, user?.id ?? null, {
         supplierId: form.supplierId || null,
         items: [
           {
@@ -186,10 +186,14 @@ export function Purchases() {
       setAddOpen(false);
       setForm({ ...form, productId: '', quantity: '', unitCost: '' });
       reload();
-      await alertSuccess(t('Purchase recorded'),
-        form.status === 'received'
-          ? t('Stock has been increased to match.') : t('It will add to stock once you mark it received.'),
-      );
+      if (result.queued) {
+        await alertSuccess(t('Saved on this phone'), t('There is no internet right now. It will be sent automatically when you are back online.'));
+      } else {
+        await alertSuccess(t('Purchase recorded'),
+          form.status === 'received'
+            ? t('Stock has been increased to match.') : t('It will add to stock once you mark it received.'),
+        );
+      }
     } catch (err) {
       setFormError(toUserMessage(err));
     } finally {
@@ -220,7 +224,7 @@ export function Purchases() {
       title={t('Purchases')}
       description={t('Stock you have bought in, with unit costs and what each order totalled.')}
       actions={
-        <Button variant="primary" icon={addOutline} onClick={() => setAddOpen(true)}>
+        <Button variant="primary" icon={addOutline} onClick={() => setAddOpen(true)} data-quickadd>
           {t('Add Purchase')}
         </Button>
       }

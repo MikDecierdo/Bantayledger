@@ -171,5 +171,6 @@
   "This is more than your available profit of :amount. Record more sales first, or enter a smaller amount.": "Higit ito sa magagamit mong tubo na :amount. Mag-record muna ng mas maraming benta, o maglagay ng mas maliit na halaga.",
   "Choose how the customer paid.": "Piliin kung paano nagbayad ang customer.",
   "Use each payment method only once. Put the whole amount for that method in one line.": "Isang beses lang gamitin ang bawat paraan ng pagbabayad. Ilagay ang buong halaga ng paraang iyon sa isang linya.",
-  "The cash and GCash amounts must add up to the sale total of :total.": "Dapat pantay sa kabuuang benta na :total ang pinagsamang halaga ng cash at GCash."
+  "The cash and GCash amounts must add up to the sale total of :total.": "Dapat pantay sa kabuuang benta na :total ang pinagsamang halaga ng cash at GCash.",
+  "This record is still being saved. Please wait a moment.": "Sine-save pa ang record na ito. Maghintay sandali."
 }

@@ -171,5 +171,6 @@
   "This is more than your available profit of :amount. Record more sales first, or enter a smaller amount.": "Mas dako kini kaysa imong magamit nga ganansya nga :amount. Pag-record una og dugang mga baligya, o pagbutang og mas gamay nga kantidad.",
   "Choose how the customer paid.": "Pilia kung unsaon pagbayad sa customer.",
   "Use each payment method only once. Put the whole amount for that method in one line.": "Makausa ra gamita ang matag paagi sa pagbayad. Ibutang ang tibuok kantidad sa maong paagi sa usa ka linya.",
-  "The cash and GCash amounts must add up to the sale total of :total.": "Ang hiniusang kantidad sa cash ug GCash kinahanglan managsama sa kinatibuk-ang baligya nga :total."
+  "The cash and GCash amounts must add up to the sale total of :total.": "Ang hiniusang kantidad sa cash ug GCash kinahanglan managsama sa kinatibuk-ang baligya nga :total.",
+  "This record is still being saved. Please wait a moment.": "Gi-save pa kini nga record. Paghulat kadiyot."
 }

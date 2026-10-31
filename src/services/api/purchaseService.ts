@@ -1,6 +1,8 @@
 import type { Purchase, SeriesPoint } from '../../types';
 import type { PurchaseStatus } from '../../types/database';
-import { api } from './client';
+import { t } from '../../i18n';
+import { peso } from '../../utils/format';
+import { api, postOrQueue, type SaveResult } from './client';
 
 export interface PurchaseOverview {
   summary: {
@@ -34,8 +36,14 @@ export const purchaseService = {
     return api.get<Purchase[]>(`/businesses/${businessId}/purchases`, { limit });
   },
 
-  async create(businessId: string, _userId: string | null, input: PurchaseInput): Promise<void> {
-    await api.post(`/businesses/${businessId}/purchases`, input);
+  /** Sends the purchase, or saves it on the phone when offline (`queued`). */
+  async create(businessId: string, _userId: string | null, input: PurchaseInput): Promise<SaveResult<unknown>> {
+    const total = input.items.reduce((sum, i) => sum + i.quantity * i.unitCost, 0);
+    return postOrQueue(`/businesses/${businessId}/purchases`, { ...input }, {
+      kind: 'purchase',
+      businessId,
+      summary: `${t('Purchase')} · ${peso(total, total % 1 !== 0)}`,
+    });
   },
 
   async setStatus(businessId: string, purchaseId: string, status: PurchaseStatus): Promise<void> {

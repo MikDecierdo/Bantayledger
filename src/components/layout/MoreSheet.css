@@ -1,0 +1,77 @@
+/* Phone "More" sheet (MoreSheet.tsx): grouped rows in white cards. */
+
+.bl-more { display: grid; gap: var(--bl-s4); }
+
+.bl-more__title {
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bl-text-secondary);
+  margin: 0 0 var(--bl-s2) var(--bl-s1);
+}
+
+.bl-more__list {
+  background: var(--bl-surface);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  overflow: hidden;
+}
+.bl-more__list li + li { border-top: 1px solid var(--bl-border); }
+
+.bl-more__item {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s3);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--bl-s2) var(--bl-s4);
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-medium);
+  color: var(--bl-text);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-more__item:hover,
+.bl-more__item:active { background: var(--bl-green-soft); }
+.bl-more__item:focus-visible { outline: none; box-shadow: inset var(--bl-focus-ring); }
+
+.bl-more__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--bl-r-md);
+  background: var(--bl-green-light);
+  color: var(--bl-green);
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.bl-more__label { flex: 1; min-width: 0; }
+.bl-more__chev { font-size: 16px; color: var(--bl-text-secondary); flex-shrink: 0; }
+
+.bl-more__item--active { color: var(--bl-green-dark); font-weight: var(--bl-fw-semibold); }
+.bl-more__item--active .bl-more__icon { background: var(--bl-green); color: #fff; }
+
+.bl-more__badge {
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--bl-r-pill);
+  background: var(--bl-danger);
+  color: #fff;
+  font-size: var(--bl-fs-caption);
+  font-weight: var(--bl-fw-bold);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bl-more__item--danger { color: var(--bl-danger); }
+.bl-more__item--danger .bl-more__icon { background: var(--bl-danger-bg); color: var(--bl-danger); }
+.bl-more__item--danger:hover,
+.bl-more__item--danger:active { background: var(--bl-danger-bg); }

@@ -1,6 +1,8 @@
 import type { Sale, SeriesPoint } from '../../types';
 import type { PaymentMethod } from '../../types/database';
-import { api } from './client';
+import { t } from '../../i18n';
+import { peso } from '../../utils/format';
+import { api, postOrQueue, type SaveResult } from './client';
 
 export interface SalesOverview {
   summary: {
@@ -59,11 +61,18 @@ export const salesService = {
     return api.get<Sale[]>(`/businesses/${businessId}/sales`, { limit });
   },
 
-  async create(businessId: string, _userId: string | null, input: SaleInput): Promise<Sale> {
+  /** Sends the sale, or saves it on the phone when offline (`queued`). */
+  async create(businessId: string, _userId: string | null, input: SaleInput): Promise<SaveResult<Sale>> {
     // userId is inferred server-side from the bearer token, not passed
     // explicitly — kept as a parameter for call-site compatibility with the
     // Supabase/local versions.
-    return api.post<Sale>(`/businesses/${businessId}/sales`, input);
+    const total = input.items.reduce((sum, i) => sum + i.quantity * i.unitPrice, 0);
+    return postOrQueue<Sale>(`/businesses/${businessId}/sales`, { ...input }, {
+      kind: 'sale',
+      businessId,
+      summary: `${t('Sale')} · ${peso(total, total % 1 !== 0)}`,
+      stockOut: input.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+    });
   },
 
   async remove(businessId: string, saleId: string): Promise<void> {

@@ -1,0 +1,22 @@
+{
+  "{{count}} records saved on this phone have not been sent yet. Connect to the internet and let them sync (or delete them under \"Waiting to sync\") before signing out.": ["May {{count}} record na naka-save sa phone na ito na hindi pa naipapadala. Kumonekta sa internet at hayaang mag-sync (o burahin sa \"Naghihintay i-sync\") bago mag-sign out.", "Adunay {{count}} ka record nga naka-save niining phone nga wala pa mapadala. Pag-connect sa internet ug pasagdi nga mag-sync (o papasa sa \"Naghulat i-sync\") sa dili pa mag-sign out."],
+  "{{count}} saved records need your attention": ["{{count}} naka-save na record ang kailangan mong tingnan", "{{count}} ka naka-save nga record ang kinahanglan nimong tan-awon"],
+  "1 saved record needs your attention": ["1 naka-save na record ang kailangan mong tingnan", "1 ka naka-save nga record ang kinahanglan nimong tan-awon"],
+  "Connecting to the server… this can take up to a minute.": ["Kumokonekta sa server… maaaring abutin ng hanggang isang minuto.", "Nagkonektar sa server… mahimong moabot og usa ka minuto."],
+  "Delete this record?": ["Burahin ang record na ito?", "Papason ang kini nga record?"],
+  "Everything is synced.": ["Naka-sync na ang lahat.", "Naka-sync na ang tanan."],
+  "Expense": ["Gastos", "Gasto"],
+  "It was never saved to your business records. Deleting it removes it from this phone for good.": ["Hindi pa ito naitala sa records ng negosyo mo. Kapag binura, tuluyan na itong mawawala sa phone na ito.", "Wala pa kini matala sa records sa imong negosyo. Kon papason, mawala na gyud kini niining phone."],
+  "No internet. Showing what is saved on this phone · {{count}} waiting to send": ["Walang internet. Ipinapakita ang naka-save sa phone na ito · {{count}} naghihintay ipadala", "Walay internet. Gipakita ang naka-save niining phone · {{count}} naghulat ipadala"],
+  "No internet. Showing what is saved on this phone.": ["Walang internet. Ipinapakita ang naka-save sa phone na ito.", "Walay internet. Gipakita ang naka-save niining phone."],
+  "Purchase": ["Pagbili", "Pagpalit"],
+  "Records saved on this phone while there was no internet.": ["Mga record na na-save sa phone na ito habang walang internet.", "Mga record nga na-save niining phone samtang walay internet."],
+  "Retry": ["Subukan muli", "Sulayi pag-usab"],
+  "Saved on this phone": ["Naka-save sa phone na ito", "Naka-save niining phone"],
+  "Send now": ["Ipadala ngayon", "Ipadala karon"],
+  "Sending {{count}} saved records…": ["Ipinapadala ang {{count}} naka-save na record…", "Gipadala ang {{count}} ka naka-save nga record…"],
+  "There is no internet right now. It will be sent automatically when you are back online.": ["Walang internet ngayon. Awtomatiko itong ipapadala kapag may internet na ulit.", "Walay internet karon. Awtomatiko kining ipadala kon naa nay internet."],
+  "Waiting to send": ["Naghihintay ipadala", "Naghulat ipadala"],
+  "Waiting to sync": ["Naghihintay i-sync", "Naghulat i-sync"],
+  "You're offline and this hasn't been saved on this phone yet. Connect to the internet and try again.": ["Offline ka at hindi pa ito naka-save sa phone na ito. Kumonekta sa internet at subukan muli.", "Offline ka ug wala pa kini naka-save niining phone. Pag-connect sa internet ug sulayi pag-usab."]
+}

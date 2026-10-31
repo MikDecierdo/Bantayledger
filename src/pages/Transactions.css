@@ -150,6 +150,8 @@
 /* ---- POS-style Add Sale modal --------------------------------------------- */
 
 .bl-pos__picker { display: grid; gap: var(--bl-s3); margin-bottom: var(--bl-s4); }
+.bl-pos__searchbar { display: grid; gap: var(--bl-s3); min-width: 0; }
+.bl-tile__add { display: none; }
 
 /* `auto-fill`/`minmax` columns, not a column-count breakpoint, because this
    grid lives inside a centered modal (max ~880px wide) rather than the full
@@ -216,6 +218,86 @@
 .bl-pos__side .bl-cart__row > :nth-child(3) { grid-column: 1; grid-row: 2; width: auto; }
 .bl-pos__side .bl-cart__row > :nth-child(4) { grid-column: 2; grid-row: 2; justify-self: center; }
 .bl-pos__side .bl-cart__row > :nth-child(5) { grid-column: 3; grid-row: 2; width: auto; }
+
+/* ---- Phones: a product list you can see while typing ----------------------
+   Big tiles leave room for only a sliver of one row once the keyboard is up.
+   On phones the products become a compact list (picture, name, price and
+   stock, a "+" or the quantity in the cart on the right) in the window's own
+   scroll, with the search pinned on top. While the search box has focus the
+   description, cart and Total/Checkout bar step aside so the list fills the
+   space; tapping a product closes the keyboard and brings them back. */
+@media (max-width: 599px) {
+  .bl-modal .bl-pos__searchbar {
+    position: sticky;
+    top: calc(-1 * var(--bl-s4));
+    z-index: 3;
+    margin: calc(-1 * var(--bl-s4)) calc(-1 * var(--bl-s4)) 0;
+    padding: var(--bl-s3) var(--bl-s4) var(--bl-s2);
+    gap: var(--bl-s2);
+    background: var(--bl-surface);
+    border-bottom: 1px solid var(--bl-border);
+  }
+  .bl-modal .bl-pos__picker { gap: 0; }
+  ion-modal.bl-modal--xl .bl-modal__body { background: var(--bl-surface); }
+
+  .bl-modal .bl-grid--tiles {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+  }
+  .bl-modal .bl-grid--tiles .bl-tile {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto auto;
+    grid-template-areas: 'img name price add' 'img stock price add';
+    align-items: center;
+    column-gap: var(--bl-s3);
+    row-gap: 2px;
+    margin: 0;
+    padding: var(--bl-s3) 0;
+    min-height: 60px;
+    border: 0;
+    border-bottom: 1px solid var(--bl-border);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    text-align: left;
+    transform: none;
+  }
+  .bl-modal .bl-grid--tiles .bl-tile:hover:not(:disabled),
+  .bl-modal .bl-grid--tiles .bl-tile:active:not(:disabled) { transform: none; box-shadow: none; background: var(--bl-green-soft); }
+  .bl-modal .bl-grid--tiles .bl-tile > .bl-phototile { grid-area: img; width: 40px; height: 40px; }
+  .bl-modal .bl-grid--tiles .bl-tile__name { grid-area: name; font-size: var(--bl-fs-md); font-weight: var(--bl-fw-semibold); }
+  .bl-modal .bl-grid--tiles .bl-tile__stock { grid-area: stock; font-size: var(--bl-fs-xs); }
+  .bl-modal .bl-grid--tiles .bl-tile__price { grid-area: price; font-size: var(--bl-fs-md); font-weight: var(--bl-fw-bold); color: var(--bl-text); }
+  .bl-modal .bl-grid--tiles .bl-tile__add {
+    grid-area: add;
+    display: grid;
+    place-items: center;
+    min-width: 32px;
+    height: 32px;
+    padding: 0 6px;
+    border-radius: var(--bl-r-pill);
+    border: 1px solid var(--bl-border-strong);
+    color: var(--bl-green-dark);
+    font-size: var(--bl-fs-lg);
+    font-weight: var(--bl-fw-bold);
+    line-height: 1;
+  }
+  .bl-modal .bl-grid--tiles .bl-tile--picked .bl-tile__add {
+    background: var(--bl-green);
+    border-color: var(--bl-green);
+    color: #fff;
+    font-size: var(--bl-fs-sm);
+  }
+  .bl-modal .bl-grid--tiles .bl-tile:disabled .bl-tile__add { visibility: hidden; }
+
+  /* Typing: only the search and its results. */
+  ion-modal.bl-modal--xl:has(.bl-pos__searchbar input:focus) .bl-modal__footer,
+  ion-modal.bl-modal--xl:has(.bl-pos__searchbar input:focus) .bl-modal__header .bl-caption,
+  ion-modal.bl-modal--xl:has(.bl-pos__searchbar input:focus) .bl-pos__side { display: none; }
+}
 
 @media (min-width: 1024px) {
   .bl-pos__layout {

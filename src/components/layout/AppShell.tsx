@@ -4,9 +4,12 @@ import { useAuth } from '../../context/AuthContext';
 import { useAsyncData } from '../../hooks/useAsyncData';
 import { useBreakpoint } from '../../hooks/useBreakpoint';
 import { dataService } from '../../services/dataService';
+import { apiFetch } from '../../services/api/client';
+import { startOfflineSync } from '../../services/offline/sync';
 import DesktopSidebar from './DesktopSidebar';
 import MobileBottomNav from './MobileBottomNav';
 import MobileHeader from './MobileHeader';
+import OfflineBar from './OfflineBar';
 import './AppShell.css';
 import { t } from '../../i18n';
 
@@ -40,6 +43,13 @@ export function AppShell({ children }: AppShellProps) {
   const collapsed = isTablet || (isDesktop && userCollapsed);
   const showSidebar = isTablet || isDesktop;
 
+  // Wake the server early (the free host sleeps when idle) and start sending
+  // anything recorded while offline.
+  useEffect(() => {
+    void apiFetch('/health').catch(() => undefined);
+    startOfflineSync();
+  }, []);
+
   // Land at the top of each new page rather than mid-scroll.
   useEffect(() => {
     document.getElementById('bl-main')?.scrollTo({ top: 0 });
@@ -72,6 +82,7 @@ export function AppShell({ children }: AppShellProps) {
       <div className="bl-shell__body">
         {/* Phones only — the rail plus the page's own H1 cover tablet and up. */}
         {!showSidebar && <MobileHeader alertCount={unreadAlerts} />}
+        <OfflineBar />
 
         <main className="bl-shell__main bl-scroll" id="bl-main" tabIndex={-1}>
           <div className="bl-container">{children}</div>
