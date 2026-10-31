@@ -17,11 +17,12 @@ import { relativeTime } from '../utils/format';
 import './AIInsights.css';
 import { t } from '../i18n';
 
-type Filter = 'all' | 'trending' | 'high' | 'Inventory' | 'Pricing' | 'Purchasing' | 'Sales' | 'Waste';
+type Filter = 'all' | 'trending' | 'event' | 'high' | 'Inventory' | 'Pricing' | 'Purchasing' | 'Sales' | 'Waste';
 
 const FILTERS: { value: Filter; label: string }[] = [
   { value: 'all', label: t('All insights') },
   { value: 'trending', label: t('Trending') },
+  { value: 'event', label: t('Events') },
   { value: 'high', label: t('High impact') },
   { value: 'Inventory', label: t('Inventory') },
   { value: 'Pricing', label: t('Pricing') },
@@ -59,6 +60,7 @@ export function AIInsights() {
     const list = data ?? [];
     if (filter === 'all') return list;
     if (filter === 'trending') return list.filter((i) => i.topic === 'trending');
+    if (filter === 'event') return list.filter((i) => i.topic === 'event');
     if (filter === 'high') return list.filter((i) => i.impact === 'high');
     return list.filter((i) => i.category === filter);
   }, [data, filter]);
@@ -107,6 +109,7 @@ export function AIInsights() {
   const counts = {
     all: data.length,
     trending: data.filter((i) => i.topic === 'trending').length,
+    event: data.filter((i) => i.topic === 'event').length,
     high: data.filter((i) => i.impact === 'high').length,
     Inventory: data.filter((i) => i.category === 'Inventory').length,
     Pricing: data.filter((i) => i.category === 'Pricing').length,

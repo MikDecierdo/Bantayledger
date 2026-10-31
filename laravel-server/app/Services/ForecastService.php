@@ -90,6 +90,10 @@ class ForecastService
             'productsAt' => (string) DB::table('products')->where('business_id', $business)->max('updated_at'),
             'suppliers' => $count('suppliers'),
             'suppliersAt' => (string) DB::table('suppliers')->where('business_id', $business)->max('updated_at'),
+            // Event countdowns ("in 18 days") change daily, and with the store's own events.
+            'day' => now()->toDateString(),
+            'events' => $count('business_events'),
+            'eventsAt' => (string) DB::table('business_events')->where('business_id', $business)->max('created_at'),
         ];
 
         return sha1(json_encode($parts));
@@ -497,7 +501,7 @@ class ForecastService
     }
 
     /** A recommendation row: English text in the plain columns, templates in `i18n`. */
-    private function rec(string $productId, string $type, string $severity, Msg $title, Msg $message, Msg $reason, Msg $action, float|int $confidence, array $extra = []): array
+    private function rec(?string $productId, string $type, string $severity, Msg $title, Msg $message, Msg $reason, Msg $action, float|int $confidence, array $extra = []): array
     {
         return [
             'product_id' => $productId,
@@ -676,6 +680,9 @@ class ForecastService
         foreach ($this->trendingInsights($products) as $rec) {
             $recs[] = $rec;
         }
+        foreach ($this->eventInsights($products) as $rec) {
+            $recs[] = $rec;
+        }
 
         // Newest-first is how insights are listed, so give the most
         // important ones the latest timestamps.
@@ -816,6 +823,209 @@ class ForecastService
         }
 
         return $recs;
+    }
+
+    // ---- Upcoming events: what to stock ------------------------------------
+
+    private const EVENT_INSIGHTS = 2;
+    private const EVENT_ITEMS = 8;
+    /** Fewer units than this in last year's window is too little to call a pattern. */
+    private const EVENT_MIN_UNITS = 5;
+
+    /**
+     * One stock-up list per upcoming event (Christmas, Undas, the barangay
+     * fiesta…; see EventCalendar). Uses what the store sold in the same window
+     * last year when it has those records; otherwise a labelled general guide
+     * from products that suit the event and are selling now.
+     */
+    private function eventInsights(Collection $products): array
+    {
+        $local = DB::table('business_events')->where('business_id', $this->business)->get();
+        $events = array_slice(EventCalendar::upcoming($this->today, $local), 0, self::EVENT_INSIGHTS);
+        if (! $events) {
+            return [];
+        }
+
+        $byId = $products->keyBy('product_id');
+        $categories = DB::table('categories')->where('business_id', $this->business)->pluck('name', 'category_id');
+
+        $recs = [];
+        foreach ($events as $event) {
+            $lastTo = $event['lastYearDate'];
+            $lastFrom = $lastTo->copy()->subDays($event['windowDays']);
+
+            $lastUnits = $this->unitsByProduct($lastFrom, $lastTo)->filter(fn ($units, $id) => isset($byId[$id]) && $units > 0);
+            $fromRecords = $lastUnits->sum() >= self::EVENT_MIN_UNITS;
+
+            $items = $fromRecords ? $this->eventItemsFromRecords($lastUnits, $byId, $lastFrom, $lastTo) : [];
+            if (! $items) {
+                // No records for this event yet, or nothing actually rose last time.
+                $fromRecords = false;
+                $items = $this->eventItemsFromGuide($event, $products, $categories);
+            }
+            if (! $items) {
+                continue;
+            }
+
+            $recs[] = $this->eventRecommendation($event, $items, $fromRecords, (float) $lastUnits->sum());
+        }
+
+        return $recs;
+    }
+
+    /** Units sold per product between two dates (inclusive), by the sale's own date. */
+    private function unitsByProduct(Carbon $from, Carbon $to): Collection
+    {
+        return DB::table('sale_items as si')
+            ->join('sales as s', 's.sale_id', '=', 'si.sale_id')
+            ->where('s.business_id', $this->business)
+            ->where('s.sale_date', '>=', $from->format('Y-m-d'))
+            ->where('s.sale_date', '<=', $to->format('Y-m-d'))
+            ->groupBy('si.product_id')
+            ->selectRaw('si.product_id, SUM(si.quantity) as units')
+            ->pluck('units', 'product_id')
+            ->map(fn ($u) => (float) $u);
+    }
+
+    /** How much more than normal a product must sell in the event window to count as an event product. */
+    private const EVENT_RISE = 1.2;
+
+    /**
+     * Products that sold more than usual in the event's window last year
+     * (compared with the 4 weeks before it), biggest extra first. Everyday
+     * items that sold the same as always are left out. Amounts are scaled by
+     * how busy the store is now compared with then (0.5x–2x).
+     */
+    private function eventItemsFromRecords(Collection $lastUnits, Collection $byId, Carbon $lastFrom, Carbon $lastTo): array
+    {
+        $baselineFrom = $lastFrom->copy()->subDays(self::HISTORY_DAYS);
+        $baselineTo = $lastFrom->copy()->subDay();
+        $baseline = $this->unitsByProduct($baselineFrom, $baselineTo);
+
+        $nowDaily = $this->unitsByProduct($this->today->copy()->subDays(self::HISTORY_DAYS - 1), $this->today)->sum() / self::HISTORY_DAYS;
+        $thenDaily = $baseline->sum() / self::HISTORY_DAYS;
+        $pace = ($thenDaily > 0 && $nowDaily > 0) ? max(0.5, min(2.0, $nowDaily / $thenDaily)) : 1.0;
+
+        $windowDays = $lastFrom->diffInDays($lastTo) + 1;
+        $risers = [];
+        foreach ($lastUnits as $id => $units) {
+            $normalDaily = ($baseline[$id] ?? 0) / self::HISTORY_DAYS;
+            if ($normalDaily > 0 && $units / $windowDays < $normalDaily * self::EVENT_RISE) {
+                continue; // sold the same as any other two weeks
+            }
+            $risers[$id] = $units - $normalDaily * $windowDays;
+        }
+        arsort($risers);
+
+        $items = [];
+        foreach (array_slice($risers, 0, self::EVENT_ITEMS, true) as $id => $extra) {
+            $p = $byId[$id];
+            $units = $lastUnits[$id];
+            $stock = max(0.0, (float) $p->current_stock);
+            $items[] = [
+                'product' => $p,
+                'expected' => $units * $pace,
+                'order' => max(0, (int) ceil($units * $pace - $stock)),
+                'stock' => $stock,
+                'lastYear' => $units,
+                'avg' => null,
+            ];
+        }
+
+        return $items;
+    }
+
+    /** First year: products that suit the event and sell now, at a typical rise for the event. */
+    private function eventItemsFromGuide(array $event, Collection $products, Collection $categories): array
+    {
+        $items = [];
+        foreach ($products as $p) {
+            $avg = $this->demand[$p->product_id]['avg'] ?? 0;
+            if ($avg <= 0) {
+                continue;
+            }
+            $haystack = mb_strtolower($p->name . ' ' . ($categories[$p->category_id] ?? ''));
+            if (! preg_match('/' . $event['match'] . '/u', $haystack)) {
+                continue;
+            }
+            $expected = $avg * $event['windowDays'] * $event['uplift'];
+            $stock = max(0.0, (float) $p->current_stock);
+            $items[] = [
+                'product' => $p,
+                'expected' => $expected,
+                'order' => max(0, (int) ceil($expected - $stock)),
+                'stock' => $stock,
+                'lastYear' => null,
+                'avg' => $avg,
+            ];
+        }
+        usort($items, fn ($a, $b) => $b['expected'] <=> $a['expected']);
+
+        return array_slice($items, 0, self::EVENT_ITEMS);
+    }
+
+    private function eventRecommendation(array $event, array $items, bool $fromRecords, float $lastYearTotal): array
+    {
+        // Built-in names are translated; the store's own event names are shown as typed.
+        $label = $event['local'] ? $event['label'] : Msg::of($event['label']);
+        $days = $event['daysUntil'];
+        $toOrder = count(array_filter($items, fn ($i) => $i['order'] > 0));
+
+        if ($days === 0) {
+            $title = Msg::of(':event is today', ['event' => $label]);
+        } elseif ($toOrder > 0) {
+            $title = $toOrder === 1
+                ? Msg::of(':event is in :days days: stock up on 1 product', ['event' => $label, 'days' => $days])
+                : Msg::of(':event is in :days days: stock up on :count products', ['event' => $label, 'days' => $days, 'count' => $toOrder]);
+        } else {
+            $title = Msg::of(':event is in :days days: your stock looks ready', ['event' => $label, 'days' => $days]);
+        }
+
+        $message = $fromRecords
+            ? Msg::of('Last year, these sold the most in the :window days before :event.', ['window' => $event['windowDays'], 'event' => $label])
+            : Msg::of('These usually sell more before :event, and they already sell in your store.', ['event' => $label]);
+
+        $reason = $fromRecords
+            ? Msg::of('You sold :units units of these in that period last year. Ordering early avoids running out when customers stock up. :source', [
+                'units' => $this->qty($lastYearTotal),
+                'source' => Msg::of('(From your own sales history.)'),
+            ])
+            : Msg::of(':note Amounts use your current daily sales and a typical rise for this event, so treat them as a starting point. :source', [
+                'note' => Msg::of($event['note']),
+                'source' => Msg::of('(General guide, not yet from your records.)'),
+            ]);
+
+        $orderBy = $event['date']->copy()->subDays(7);
+        $action = match (true) {
+            $toOrder === 0 => Msg::of('Keep these on display and check your stock again a few days before.'),
+            $orderBy->gt($this->today) => Msg::of('Order before :date, while supplier stock and prices are normal. Tap Order on a product to record the purchase.', ['date' => ['date' => $orderBy->format('Y-m-d')]]),
+            default => Msg::of('Order as soon as you can, because :event is close. Tap Order on a product to record the purchase.', ['event' => $label]),
+        };
+
+        $supporting = array_map(function ($i) use ($fromRecords) {
+            $p = $i['product'];
+            $unit = $p->unit;
+            $detail = $fromRecords
+                ? Msg::of('Last year :last :unit · in stock :stock', ['last' => $this->qty($i['lastYear']), 'unit' => $unit, 'stock' => $this->qty($i['stock'])])
+                : ($i['avg'] >= 1
+                    ? Msg::of('Sells about :avg :unit a day · in stock :stock', ['avg' => $this->qty(round($i['avg'], 1)), 'unit' => $unit, 'stock' => $this->qty($i['stock'])])
+                    : Msg::of('Sells about :avg :unit a week · in stock :stock', ['avg' => $this->qty(max(1, round($i['avg'] * 7))), 'unit' => $unit, 'stock' => $this->qty($i['stock'])]));
+
+            return [
+                'label' => $p->name,
+                'value' => ($i['order'] > 0
+                    ? Msg::of('Order :qty :unit', ['qty' => $this->qty($i['order']), 'unit' => $unit])
+                    : Msg::of('Enough stock'))->toArray(),
+                'detail' => $detail->toArray(),
+                'productId' => $p->product_id,
+                'orderQty' => $i['order'],
+                'unit' => $unit,
+            ];
+        }, $items);
+
+        return $this->rec(null, 'Purchasing', $days <= 7 && $toOrder > 0 ? 'high' : 'medium', $title, $message, $reason, $action,
+            $fromRecords ? 85 : 60,
+            ['topic' => 'event', 'supporting' => json_encode($supporting, JSON_UNESCAPED_UNICODE)]);
     }
 
     /** Months (other than the current one's recent weeks) in which this product sold well before. */

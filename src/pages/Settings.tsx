@@ -1,6 +1,7 @@
 import { IonIcon } from '@ionic/react';
 import {
   businessOutline,
+  calendarOutline,
   chevronForwardOutline,
   informationCircleOutline,
   notificationsOutline,
@@ -20,6 +21,7 @@ import { useFitMode } from '../hooks/useBreakpoint';
 import './Settings.css';
 import { t } from '../i18n';
 import LanguageSelect from '../components/common/LanguageSelect';
+import LocalEventsSettings from '../components/settings/LocalEventsSettings';
 import TeamSettings from '../components/settings/TeamSettings';
 
 /** One settings row: label, supporting text and a control on the right. */
@@ -83,10 +85,11 @@ export function Settings() {
   const fit = useFitMode();
   // Your name, email, phone and business details are edited in one place
   // only: Profile → Edit Profile.
-  type GroupId = 'business' | 'notifications' | 'display' | 'team' | 'about';
+  type GroupId = 'business' | 'events' | 'notifications' | 'display' | 'team' | 'about';
   const [group, setGroup] = useState<GroupId>('business');
   const groups: { id: GroupId; icon: string; title: string }[] = [
     { id: 'business', icon: businessOutline, title: t('Business settings') },
+    { id: 'events', icon: calendarOutline, title: t('Local events') },
     { id: 'notifications', icon: notificationsOutline, title: t('Notification settings') },
     { id: 'display', icon: phonePortraitOutline, title: t('Display settings') },
     { id: 'team', icon: peopleOutline, title: t('Team') },
@@ -253,6 +256,7 @@ export function Settings() {
         </SettingGroup>
 
         )}
+        {show('events') && <LocalEventsSettings />}
         {show('team') && <TeamSettings />}
 
         {show('about') && (

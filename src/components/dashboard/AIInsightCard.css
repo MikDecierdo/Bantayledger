@@ -156,3 +156,37 @@
   text-transform: uppercase;
   color: var(--bl-green-dark);
 }
+
+/* Event stock-up list: product, amount to order, Order button. */
+.bl-insight__stock {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+  background: var(--bl-surface);
+}
+.bl-insight__stock-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--bl-s2) var(--bl-s3);
+  padding: var(--bl-s3);
+}
+.bl-insight__stock-row + .bl-insight__stock-row { border-top: 1px solid var(--bl-border); }
+.bl-insight__stock-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.bl-insight__stock-name { font-weight: var(--bl-fw-semibold); color: var(--bl-text); overflow-wrap: anywhere; }
+.bl-insight__stock-qty {
+  font-weight: var(--bl-fw-semibold);
+  font-variant-numeric: tabular-nums;
+  color: var(--bl-text);
+  white-space: nowrap;
+}
+.bl-insight__stock-qty--ok { color: var(--bl-green-dark, #174f42); font-weight: var(--bl-fw-medium, 500); }
+.bl-insight__stock-spacer { width: 0; }
+
+@media (max-width: 599px) {
+  .bl-insight__stock-row { grid-template-columns: minmax(0, 1fr) auto; }
+  .bl-insight__stock-qty { grid-column: 1; grid-row: 2; }
+  .bl-insight__stock-row > .bl-btn { grid-column: 2; grid-row: 1 / span 2; }
+}

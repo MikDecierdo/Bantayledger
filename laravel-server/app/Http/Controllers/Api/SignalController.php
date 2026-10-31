@@ -114,10 +114,15 @@ class SignalController extends Controller
     {
         $items = $json ? (json_decode($json, true) ?: []) : [];
 
-        return array_map(fn ($item) => [
+        return array_map(fn ($item) => array_filter([
             'label' => Msg::resolve($item['label'] ?? '', $locale),
             'value' => Msg::resolve($item['value'] ?? '', $locale),
-        ], $items);
+            // Event stock-up lists: a second line and what the Order button fills in.
+            'detail' => isset($item['detail']) ? Msg::resolve($item['detail'], $locale) : null,
+            'productId' => $item['productId'] ?? null,
+            'orderQty' => $item['orderQty'] ?? null,
+            'unit' => $item['unit'] ?? null,
+        ], fn ($v) => $v !== null), $items);
     }
 
     /** Optional AI write-up for a trending insight; see InsightExplainer for what is sent and the limits. */

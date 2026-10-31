@@ -244,7 +244,15 @@ export interface AiInsight {
   /** Special insight families, e.g. "trending" for top sellers. */
   topic?: string | null;
   productId?: string;
-  supportingData: { label: string; value: string }[];
+  supportingData: {
+    label: string;
+    value: string;
+    /** Event stock-up lists: a second line, and what the Order button fills in. */
+    detail?: string;
+    productId?: string;
+    orderQty?: number;
+    unit?: string;
+  }[];
   confidence: number;
   generatedAt: string;
   /** True when the server can write an AI explanation for this insight. */

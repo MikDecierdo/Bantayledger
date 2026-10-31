@@ -1,7 +1,7 @@
 import { IonIcon } from '@ionic/react';
-import { arrowForwardOutline, sparklesOutline } from 'ionicons/icons';
+import { arrowForwardOutline, bagAddOutline, sparklesOutline } from 'ionicons/icons';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { toUserMessage } from '../../lib/errors';
 import { insightCategoryLabel } from '../../utils/format';
 import { dataService } from '../../services/dataService';
@@ -31,6 +31,13 @@ export function AIInsightCard({ insight, compact = false }: AIInsightCardProps) 
   const [explanation, setExplanation] = useState<string | null>(null);
   const [explaining, setExplaining] = useState(false);
   const [explainError, setExplainError] = useState<string | null>(null);
+  const history = useHistory();
+  const isEventList = insight.topic === 'event' && insight.supportingData.some((item) => item.productId);
+
+  /** Opens Record Purchase with this product and the suggested amount filled in. */
+  const order = (productId: string, quantity: number) => {
+    history.push('/purchases', { openAdd: true, presetProductId: productId, presetQuantity: quantity });
+  };
 
   const explain = async () => {
     setExplaining(true);
@@ -70,14 +77,35 @@ export function AIInsightCard({ insight, compact = false }: AIInsightCardProps) 
             <dd>{insight.recommendedAction}</dd>
           </dl>
 
-          <div className="bl-insight__data">
-            {insight.supportingData.map((item) => (
-              <div className="bl-insight__datum" key={item.label}>
-                <span className="bl-insight__datum-label">{item.label}</span>
-                <span className="bl-insight__datum-value">{item.value}</span>
-              </div>
-            ))}
-          </div>
+          {isEventList ? (
+            <ul className="bl-insight__stock" aria-label={t('What to stock')}>
+              {insight.supportingData.map((item) => (
+                <li className="bl-insight__stock-row" key={item.productId ?? item.label}>
+                  <div className="bl-insight__stock-text">
+                    <span className="bl-insight__stock-name">{item.label}</span>
+                    {item.detail && <span className="bl-caption">{item.detail}</span>}
+                  </div>
+                  <span className={`bl-insight__stock-qty ${item.orderQty ? '' : 'bl-insight__stock-qty--ok'}`}>{item.value}</span>
+                  {item.productId && item.orderQty ? (
+                    <Button variant="secondary" size="sm" icon={bagAddOutline} onClick={() => order(item.productId as string, item.orderQty as number)}>
+                      {t('Order')}
+                    </Button>
+                  ) : (
+                    <span className="bl-insight__stock-spacer" aria-hidden="true" />
+                  )}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="bl-insight__data">
+              {insight.supportingData.map((item) => (
+                <div className="bl-insight__datum" key={item.label}>
+                  <span className="bl-insight__datum-label">{item.label}</span>
+                  <span className="bl-insight__datum-value">{item.value}</span>
+                </div>
+              ))}
+            </div>
+          )}
 
           {insight.aiEnabled && (
             <div className="bl-insight__ai">
@@ -115,7 +143,7 @@ export function AIInsightCard({ insight, compact = false }: AIInsightCardProps) 
 
       <footer className="bl-insight__foot">
         <span className="bl-caption">
-          Based on your recorded data · {insight.confidence}% sure
+          {t('Based on your recorded data · {{pct}}% sure', { pct: insight.confidence })}
         </span>
         {insight.productId && (
           <Link to={`/inventory/${insight.productId}`} className="bl-insight__action">

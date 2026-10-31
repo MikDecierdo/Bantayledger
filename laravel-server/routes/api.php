@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BusinessController;
 use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\ExpenseController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PurchaseController;
@@ -42,6 +43,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/members', [BusinessController::class, 'addMember'])->middleware('business.manager');
         Route::patch('/members/{userId}/password', [BusinessController::class, 'resetMemberPassword'])->middleware('business.manager');
         Route::delete('/members/{userId}', [BusinessController::class, 'removeMember'])->middleware('business.manager');
+
+        // The store's own yearly events (barangay fiesta…), used for stock-up lists.
+        Route::get('/events', [EventController::class, 'index'])->middleware('business.member');
+        Route::post('/events', [EventController::class, 'store'])->middleware('business.manager');
+        Route::delete('/events/{id}', [EventController::class, 'destroy'])->middleware('business.manager');
 
         // Catalogue: categories_write_manager / suppliers_write_manager / products_write_manager
         Route::get('/categories', [CategoryController::class, 'index'])->middleware('business.member');
