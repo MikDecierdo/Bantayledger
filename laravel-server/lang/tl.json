@@ -184,5 +184,21 @@
   "We could not send the email right now. Please try again in a few minutes.": "Hindi namin maipadala ang email ngayon. Pakisubukang muli pagkalipas ng ilang minuto.",
   "This reset link is invalid or has expired. Request a new one from the sign-in page.": "Hindi na wasto o expired na ang reset link na ito. Humiling ng bago sa sign-in page.",
   "All rights reserved.": "Nakalaan ang lahat ng karapatan.",
-  "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Kung hindi gumagana ang button na \":actionText\", kopyahin at i-paste ang URL sa ibaba\nsa iyong web browser:"
+  "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\ninto your web browser:": "Kung hindi gumagana ang button na \":actionText\", kopyahin at i-paste ang URL sa ibaba\nsa iyong web browser:",
+  "Reset your password": "I-reset ang iyong password",
+  "Use this link within :minutes minutes to choose a new password.": "Gamitin ang link na ito sa loob ng :minutes minuto para pumili ng bagong password.",
+  "Business & forecast tracker": "Tagasubaybay ng negosyo at forecast",
+  "Password reset": "Pag-reset ng password",
+  "We received a request to reset the password for your BantayLedger AI account,": "Nakatanggap kami ng kahilingang i-reset ang password ng iyong BantayLedger AI account,",
+  "Tap the button below to choose a new one.": "I-tap ang button sa ibaba para pumili ng bago.",
+  "Open the link below to choose a new one.": "Buksan ang link sa ibaba para pumili ng bago.",
+  "Expires": "Mag-e-expire",
+  "In :minutes minutes": "Sa loob ng :minutes minuto",
+  "Works": "Magagamit",
+  "One time only": "Isang beses lang",
+  "Didn't ask for this?": "Hindi ikaw ang humiling nito?",
+  "You can ignore this email. Your password won't change, and someone may have typed your email by mistake.": "Puwede mong balewalain ang email na ito. Hindi magbabago ang iyong password, at baka may nagkamaling nag-type ng iyong email.",
+  "Button not working? Copy this link into your browser:": "Hindi gumagana ang button? Kopyahin ang link na ito sa iyong browser:",
+  "For Philippine sari-sari stores and small shops": "Para sa mga sari-sari store at maliliit na tindahan sa Pilipinas",
+  "You received this because a password reset was requested for :email.": "Natanggap mo ito dahil may humiling na i-reset ang password para sa :email."
 }

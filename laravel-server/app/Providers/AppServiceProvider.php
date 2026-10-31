@@ -29,18 +29,23 @@ class AppServiceProvider extends ServiceProvider
         // "Forgot password" emails link to the website's reset page, not the API.
         ResetPassword::createUrlUsing(fn ($user, string $token) => self::resetUrl($user->getEmailForPasswordReset(), $token));
 
-        // Sent in the user's language (User::preferredLocale), so __() below translates.
+        // Branded email (resources/views/emails/password-reset*.blade.php), in the
+        // language the request came in with (SetLocale), so __() translates it.
         ResetPassword::toMailUsing(function ($user, string $token) {
-            $minutes = (int) config('auth.passwords.users.expire', 60);
+            $site = rtrim((string) config('app.frontend_url'), '/');
+            $name = trim((string) $user->name);
 
             return (new MailMessage)
                 ->subject(__('Reset your BantayLedger password'))
-                ->greeting(__('Hi :name,', ['name' => $user->name ?: __('there')]))
-                ->line(__('We received a request to reset the password for your BantayLedger AI account (:email).', ['email' => $user->email]))
-                ->action(__('Choose a new password'), self::resetUrl($user->getEmailForPasswordReset(), $token))
-                ->line(__('This link expires in :minutes minutes and can only be used once.', ['minutes' => $minutes]))
-                ->line(__('If you did not ask to reset your password, you can ignore this email. Your password will stay the same.'))
-                ->salutation(__('— BantayLedger AI'));
+                ->view(['html' => 'emails.password-reset', 'text' => 'emails.password-reset-text'], [
+                    'firstName' => $name !== '' ? strtok($name, ' ') : __('there'),
+                    'email' => $user->email,
+                    'url' => self::resetUrl($user->getEmailForPasswordReset(), $token),
+                    'minutes' => (int) config('auth.passwords.users.expire', 60),
+                    'siteUrl' => $site,
+                    'logoUrl' => $site.'/email-logo.png',
+                    'year' => now()->year,
+                ]);
         });
     }
 
