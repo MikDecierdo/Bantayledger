@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Services\GoogleTokenVerifier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -84,70 +83,6 @@ class AuthController extends Controller
 
         if (! $user || ! Hash::check($data['password'], $user->password)) {
             throw ApiException::unauthorized('That email and password combination is not correct.');
-        }
-
-        $token = $user->createToken('api')->plainTextToken;
-
-        return response()->json(['userId' => $user->user_id, 'accessToken' => $token]);
-    }
-
-    /**
-     * "Continue with Google" (website button or the Android app). An existing
-     * account with the same email is signed in and linked to the Google
-     * account; a new email needs a business name first (the app asks for it
-     * and sends the same token again), then the account and business are
-     * created just like a normal sign-up.
-     */
-    public function google(Request $request)
-    {
-        $data = $request->validate([
-            'idToken' => 'required|string',
-            'businessName' => 'nullable|string|max:255',
-        ]);
-
-        $google = GoogleTokenVerifier::verify($data['idToken']);
-
-        $user = User::where('google_id', $google['sub'])->first()
-            ?? User::where('email', $google['email'])->first();
-
-        if ($user) {
-            if (! $user->google_id) {
-                $user->forceFill(['google_id' => $google['sub'], 'email_verified_at' => $user->email_verified_at ?? now()])->save();
-            }
-        } else {
-            $businessName = trim((string) ($data['businessName'] ?? ''));
-            if ($businessName === '') {
-                return response()->json([
-                    'message' => __('Almost done. What is the name of your store?'),
-                    'needsBusinessName' => true,
-                ], 422);
-            }
-
-            $user = DB::transaction(function () use ($google, $businessName) {
-                $user = new User([
-                    'user_id' => (string) Str::uuid(),
-                    'email' => $google['email'],
-                    'name' => $google['name'],
-                    // Google accounts sign in with Google; this password is never shown or used.
-                    'password' => Hash::make(Str::random(64)),
-                ]);
-                $user->forceFill(['google_id' => $google['sub'], 'email_verified_at' => now()])->save();
-
-                $businessId = (string) Str::uuid();
-                DB::table('businesses')->insert([
-                    'business_id' => $businessId,
-                    'name' => $businessName,
-                    'owner_user_id' => $user->user_id,
-                ]);
-                DB::table('business_users')->insert([
-                    'business_user_id' => (string) Str::uuid(),
-                    'business_id' => $businessId,
-                    'user_id' => $user->user_id,
-                    'role' => 'OWNER',
-                ]);
-
-                return $user;
-            });
         }
 
         $token = $user->createToken('api')->plainTextToken;
