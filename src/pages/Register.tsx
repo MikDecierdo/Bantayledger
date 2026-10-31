@@ -13,7 +13,6 @@ import './Login.css';
 import { t } from '../i18n';
 import LanguageSelect from '../components/common/LanguageSelect';
 import PasswordStrength from '../components/auth/PasswordStrength';
-import GoogleButton from '../components/auth/GoogleButton';
 import { evaluatePassword } from '../utils/passwordStrength';
 import { formatPhLocal, isValidPhMobile, normalizePhLocal, toPhE164 } from '../utils/phone';
 
@@ -140,8 +139,6 @@ export function Register() {
             <h1 className="bl-page-title">{t('Create your account')}</h1>
             <p className="bl-support">{t('Start tracking your inventory, sales and costs.')}</p>
           </div>
-
-          <GoogleButton />
 
           <form className="bl-login__form" onSubmit={handleSubmit} noValidate>
             {errors.form && (

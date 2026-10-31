@@ -38,13 +38,10 @@ export function setToken(token: string | null): void {
 
 export class ApiError extends Error {
   status: number;
-  /** The server's JSON reply, for callers that need more than the message. */
-  data?: unknown;
 
-  constructor(status: number, message: string, data?: unknown) {
+  constructor(status: number, message: string) {
     super(message);
     this.status = status;
-    this.data = data;
   }
 }
 
@@ -169,7 +166,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     const message =
       (data && typeof data === 'object' && 'message' in data && String(data.message)) ||
       t('Request failed with status {{status}}.', { status: res.status });
-    throw new ApiError(res.status, message, data);
+    throw new ApiError(res.status, message);
   }
 
   if (isGet) {
