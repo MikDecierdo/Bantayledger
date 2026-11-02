@@ -1,0 +1,70 @@
+/* Demo subscription (Settings → Subscription). */
+.bl-sub__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--bl-s2);
+  margin: 0;
+  padding: var(--bl-s3) var(--bl-s4);
+  background: var(--bl-green-soft);
+  color: var(--bl-green-dark);
+  font-size: var(--bl-fs-sm);
+  line-height: 1.45;
+}
+.bl-sub__note ion-icon { flex-shrink: 0; margin-top: 2px; font-size: 16px; }
+
+.bl-sub__history-row { flex-direction: column; align-items: stretch; gap: var(--bl-s2); }
+.bl-sub__history { display: grid; gap: var(--bl-s2); margin: 0; padding: 0; list-style: none; font-size: var(--bl-fs-sm); }
+.bl-sub__history li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px var(--bl-s3); }
+
+.bl-sub__terms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--bl-s2); }
+.bl-sub__term {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--bl-s3);
+  border: 1px solid var(--bl-border-strong);
+  border-radius: var(--bl-r-md);
+  background: var(--bl-surface);
+  color: var(--bl-text-secondary);
+  font: inherit;
+  font-size: var(--bl-fs-sm);
+  text-align: center;
+  cursor: pointer;
+}
+.bl-sub__term strong { color: var(--bl-text); font-size: var(--bl-fs-md); }
+.bl-sub__term--on { border-color: var(--bl-green); background: var(--bl-green-soft); color: var(--bl-green-dark); }
+
+.bl-sub__pay {
+  display: flex;
+  align-items: center;
+  gap: var(--bl-s4);
+  padding: var(--bl-s3);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-md);
+}
+.bl-sub__pay-text { display: grid; gap: var(--bl-s1); min-width: 0; }
+.bl-sub__pay-text p { margin: 0; font-weight: var(--bl-fw-semibold); }
+.bl-sub__pay-text p.bl-caption { font-weight: normal; }
+
+.bl-sub__qr {
+  position: relative;
+  flex-shrink: 0;
+  width: 112px;
+  height: 112px;
+  color: var(--bl-border-strong);
+  overflow: hidden;
+  border-radius: var(--bl-r-sm, 6px);
+}
+.bl-sub__qr svg { display: block; }
+.bl-sub__qr-tag {
+  position: absolute;
+  inset: auto 0 50% 0;
+  transform: translateY(50%);
+  padding: 4px;
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font-size: 11px;
+  font-weight: var(--bl-fw-semibold);
+  line-height: 1.25;
+  text-align: center;
+}

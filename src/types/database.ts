@@ -62,6 +62,8 @@ export type BusinessRow = {
   currency: string;
   /** One overall monthly cap on supply purchases. Null means no budget is set. Warn-only, never blocks a purchase. */
   monthly_purchase_budget: string | number | null;
+  /** The demo Free/Plus label; no feature depends on it. */
+  plan?: 'free' | 'plus';
   owner_user_id: UUID;
   created_at: Timestamp;
   updated_at: Timestamp;

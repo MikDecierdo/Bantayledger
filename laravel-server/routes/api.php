@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\SaleController;
 use App\Http\Controllers\Api\SignalController;
+use App\Http\Controllers\Api\SubscriptionController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\WasteController;
 use Illuminate\Support\Facades\Route;
@@ -48,6 +49,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/events', [EventController::class, 'index'])->middleware('business.member');
         Route::post('/events', [EventController::class, 'store'])->middleware('business.manager');
         Route::delete('/events/{id}', [EventController::class, 'destroy'])->middleware('business.manager');
+
+        // Demo subscription for the project defense (a label only; no real payment).
+        Route::get('/subscription', [SubscriptionController::class, 'show'])->middleware('business.member');
+        Route::post('/subscription', [SubscriptionController::class, 'store'])->middleware('business.manager');
+        Route::delete('/subscription', [SubscriptionController::class, 'destroy'])->middleware('business.manager');
 
         // Catalogue: categories_write_manager / suppliers_write_manager / products_write_manager
         Route::get('/categories', [CategoryController::class, 'index'])->middleware('business.member');

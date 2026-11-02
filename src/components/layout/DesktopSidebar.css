@@ -236,3 +236,18 @@
   .bl-sidebar__user { padding: var(--bl-s2); margin-top: var(--bl-s1); }
   .bl-sidebar-toggle { top: 22px; }
 }
+
+/* The Free/Plus label beside the store name. */
+.bl-plan-chip {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: var(--bl-border);
+  color: var(--bl-text-secondary);
+  font-size: 10px;
+  font-weight: var(--bl-fw-semibold);
+  line-height: 16px;
+  vertical-align: 1px;
+}
+.bl-plan-chip--plus { background: var(--bl-green); color: #fff; }
