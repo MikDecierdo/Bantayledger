@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\SubscriptionPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -156,6 +157,12 @@ class AuthController extends Controller
             ->orderBy('businesses.name')
             ->select('businesses.*', 'businesses.business_id as id', 'business_users.role as membershipRole')
             ->get();
+
+        // The demo Free/Plus label shown beside the store name.
+        $plus = SubscriptionPlan::plusAmong($businesses->pluck('id'));
+        foreach ($businesses as $business) {
+            $business->plan = isset($plus[$business->id]) ? 'plus' : 'free';
+        }
 
         return response()->json([
             'profile' => $user,

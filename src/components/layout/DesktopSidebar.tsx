@@ -161,6 +161,11 @@ export function DesktopSidebar({
                 <span className="bl-sidebar__user-name bl-truncate">{displayName}</span>
                 <span className="bl-sidebar__user-biz bl-truncate">
                   {activeBusiness?.name ?? t('No business yet')}
+                  {activeBusiness && (
+                    <span className={`bl-plan-chip ${activeBusiness.plan === 'plus' ? 'bl-plan-chip--plus' : ''}`}>
+                      {activeBusiness.plan === 'plus' ? t('Plus') : t('Free')}
+                    </span>
+                  )}
                 </span>
               </span>
             </div>

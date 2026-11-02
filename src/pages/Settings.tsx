@@ -7,6 +7,7 @@ import {
   notificationsOutline,
   peopleOutline,
   phonePortraitOutline,
+  ribbonOutline,
 } from 'ionicons/icons';
 import { useState, type ReactNode } from 'react';
 import Button from '../components/common/Button';
@@ -22,6 +23,7 @@ import './Settings.css';
 import { t } from '../i18n';
 import LanguageSelect from '../components/common/LanguageSelect';
 import LocalEventsSettings from '../components/settings/LocalEventsSettings';
+import SubscriptionSettings from '../components/settings/SubscriptionSettings';
 import TeamSettings from '../components/settings/TeamSettings';
 
 /** One settings row: label, supporting text and a control on the right. */
@@ -85,10 +87,11 @@ export function Settings() {
   const fit = useFitMode();
   // Your name, email, phone and business details are edited in one place
   // only: Profile → Edit Profile.
-  type GroupId = 'business' | 'events' | 'notifications' | 'display' | 'team' | 'about';
+  type GroupId = 'business' | 'subscription' | 'events' | 'notifications' | 'display' | 'team' | 'about';
   const [group, setGroup] = useState<GroupId>('business');
   const groups: { id: GroupId; icon: string; title: string }[] = [
     { id: 'business', icon: businessOutline, title: t('Business settings') },
+    { id: 'subscription', icon: ribbonOutline, title: t('Subscription') },
     { id: 'events', icon: calendarOutline, title: t('Local events') },
     { id: 'notifications', icon: notificationsOutline, title: t('Notification settings') },
     { id: 'display', icon: phonePortraitOutline, title: t('Display settings') },
@@ -256,6 +259,7 @@ export function Settings() {
         </SettingGroup>
 
         )}
+        {show('subscription') && <SubscriptionSettings />}
         {show('events') && <LocalEventsSettings />}
         {show('team') && <TeamSettings />}
 

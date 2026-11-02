@@ -236,5 +236,7 @@
   "Enter a name for the event.": "Isulat ang ngalan sa okasyon.",
   "That date does not exist. Check the month and day.": "Walay ingon niana nga petsa. Tan-awa ang bulan ug adlaw.",
   "You can save up to :max events.": "Hangtod :max ka okasyon ra ang ma-save.",
-  "That event is already saved.": "Naka-save na kana nga okasyon."
+  "That event is already saved.": "Naka-save na kana nga okasyon.",
+  "Enter the full 13-digit GCash reference number.": "Isulat ang tibuok 13 ka digit nga GCash reference number.",
+  "That reference number was already used.": "Nagamit na kana nga reference number."
 }

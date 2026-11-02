@@ -41,7 +41,7 @@ export function MoreSheet({ isOpen, onClose, alertCount }: MoreSheetProps) {
       isOpen={isOpen}
       onClose={onClose}
       title={t('More')}
-      description={activeBusiness?.name}
+      description={activeBusiness ? `${activeBusiness.name} · ${activeBusiness.plan === 'plus' ? t('Plus') : t('Free')}` : undefined}
       icon="menu"
       size="sm"
     >
