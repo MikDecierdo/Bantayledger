@@ -12,12 +12,12 @@ const RELEASES = 'https://github.com/MikDecierdo/bantayledger-downloads/releases
 export const DOWNLOADS = {
   android: {
     href: `${RELEASES}/BantayLedger.apk`,
-    version: '1.0.2',
-    size: '8.5 MB',
+    version: '1.0.3',
+    size: '8.6 MB',
   },
   windows: {
     href: `${RELEASES}/BantayLedger-Setup.exe`,
-    version: '1.0.2',
+    version: '1.0.3',
     size: '111 MB',
   },
 } as const;

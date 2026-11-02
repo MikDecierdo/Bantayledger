@@ -650,5 +650,13 @@
   "Their login is deleted unless they belong to another store. Their past records stay with the store, without their name.": [
     "Mabubura ang login nila maliban kung kabilang sila sa ibang tindahan. Mananatili sa tindahan ang mga dati nilang tala, nang wala ang pangalan nila.",
     "Mapapas ang ilang login gawas kon sakop sila sa laing tindahan. Magpabilin sa tindahan ang ilang daang rekord, walay ilang ngalan."
+  ],
+  "In the Android app, this opens the website: sign in there, then download from Settings → Your data.": [
+    "Sa Android app, bubukas nito ang website: mag-sign in doon, saka i-download mula sa Settings → Ang data mo.",
+    "Sa Android app, abrihan niini ang website: pag-sign in didto, unya i-download gikan sa Settings → Imong data."
+  ],
+  "Open website": [
+    "Buksan ang website",
+    "Abrihi ang website"
   ]
 }

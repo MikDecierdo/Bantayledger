@@ -1,3 +1,5 @@
+import { Browser } from '@capacitor/browser';
+import { Capacitor } from '@capacitor/core';
 import { IonIcon } from '@ionic/react';
 import { shieldCheckmarkOutline } from 'ionicons/icons';
 import { useState, type FormEvent } from 'react';
@@ -11,6 +13,8 @@ import { TextField } from '../common/Field';
 import Modal from '../common/Modal';
 import { useToast } from '../common/ToastProvider';
 import { Card } from '../layout/Section';
+
+const WEBSITE_URL = 'https://bantayledger-web.onrender.com/login';
 
 /** Saves a text file the same way report exports are saved. */
 function saveTextFile(fileName: string, content: string) {
@@ -37,6 +41,9 @@ export function PrivacySettings() {
 
   // Stores this person owns go with the account; other stores keep their records.
   const ownsStore = businesses.some((b) => b.owner_user_id === user?.id);
+  // The Android app's web view can't save a file made in the page, so the
+  // download happens on the website instead.
+  const onAndroidApp = Capacitor.isNativePlatform();
 
   const download = async () => {
     setDownloading(true);
@@ -96,12 +103,19 @@ export function PrivacySettings() {
               {ownsStore
                 ? t('A file with your account details and all the records of the stores you own.')
                 : t('A file with your account details. The owner keeps the store\'s records.')}
+              {onAndroidApp && ` ${t('In the Android app, this opens the website: sign in there, then download from Settings → Your data.')}`}
             </span>
           </div>
           <div className="bl-set__row-control">
-            <Button variant="secondary" size="sm" loading={downloading} onClick={() => void download()}>
-              {t('Download')}
-            </Button>
+            {onAndroidApp ? (
+              <Button variant="secondary" size="sm" onClick={() => void Browser.open({ url: WEBSITE_URL })}>
+                {t('Open website')}
+              </Button>
+            ) : (
+              <Button variant="secondary" size="sm" loading={downloading} onClick={() => void download()}>
+                {t('Download')}
+              </Button>
+            )}
           </div>
         </div>
 
