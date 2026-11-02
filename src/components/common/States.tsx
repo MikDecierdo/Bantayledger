@@ -1,6 +1,7 @@
 import { IonIcon } from '@ionic/react';
 import { cloudOfflineOutline, refreshOutline } from 'ionicons/icons';
-import type { ReactNode } from 'react';
+import { useLayoutEffect, type ReactNode } from 'react';
+import { noteSkeletonEnded } from '../../lib/reveal';
 import Button from './Button';
 import './States.css';
 import { t } from '../../i18n';
@@ -152,6 +153,9 @@ export function SkeletonRows({ rows = 5 }: { rows?: number }) {
  * Announces loading to assistive technology while skeletons render visually.
  */
 export function LoadingState({ label, children }: { label: string; children: ReactNode }) {
+  // Lets the page that replaces this skeleton slide up.
+  useLayoutEffect(() => noteSkeletonEnded, []);
+
   return (
     <div aria-busy="true" aria-live="polite">
       <span className="bl-sr-only">{label}</span>
