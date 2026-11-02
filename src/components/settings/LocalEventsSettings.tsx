@@ -113,7 +113,7 @@ export function LocalEventsSettings() {
             <IonIcon icon={calendarOutline} />
           </span>
           <div>
-            <h2 className="bl-card-title">{t('Local events')}</h2>
+            <h2 className="bl-card-title">{t('Your local events')}</h2>
             <p className="bl-caption">
               {t('Your barangay fiesta and other local events. Before each one, AI Insights lists what to stock. Christmas, New Year, Undas and other national events are already included.')}
             </p>

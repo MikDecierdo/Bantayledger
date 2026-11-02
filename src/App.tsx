@@ -26,6 +26,8 @@ const Forecast = lazy(() => import('./pages/Forecast'));
 const AIInsights = lazy(() => import('./pages/AIInsights'));
 const Alerts = lazy(() => import('./pages/Alerts'));
 const Reports = lazy(() => import('./pages/Reports'));
+const Subscription = lazy(() => import('./pages/Subscription'));
+const LocalEvents = lazy(() => import('./pages/LocalEvents'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -147,6 +149,12 @@ function Routes() {
           </ProtectedRoute>
           <ProtectedRoute exact path="/settings">
             <Settings />
+          </ProtectedRoute>
+          <ProtectedRoute exact path="/subscription">
+            <Subscription />
+          </ProtectedRoute>
+          <ProtectedRoute exact path="/local-events">
+            <LocalEvents />
           </ProtectedRoute>
 
           <Route component={NotFound} />

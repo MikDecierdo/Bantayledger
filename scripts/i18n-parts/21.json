@@ -1,43 +1,174 @@
 {
-  "{{count}} of 13 digits": ["{{count}} sa 13 digit", "{{count}} sa 13 ka digit"],
-  "30-day forecasts": ["30-araw na forecast", "30 ka adlaw nga forecast"],
-  "Activate": ["I-activate", "I-activate"],
-  "Active until {{date}}": ["Aktibo hanggang {{date}}", "Aktibo hangtod {{date}}"],
-  "Amount: {{amount}}": ["Halaga: {{amount}}", "Kantidad: {{amount}}"],
-  "Choose a plan length": ["Pumili ng haba ng plan", "Pagpili og gitas-on sa plan"],
-  "Could not activate Plus. Please try again.": ["Hindi ma-activate ang Plus. Pakisubukang muli.", "Dili ma-activate ang Plus. Palihug sulayi pag-usab."],
-  "Could not change the plan. Please try again.": ["Hindi mabago ang plan. Pakisubukang muli.", "Dili mausab ang plan. Palihug sulayi pag-usab."],
-  "Could not load your plan. Please try again.": ["Hindi ma-load ang iyong plan. Pakisubukang muli.", "Dili ma-load ang imong plan. Palihug sulayi pag-usab."],
-  "Current plan": ["Kasalukuyang plan", "Kasamtangang plan"],
-  "Demo for project defense: no real payment is taken, and every feature stays available on every plan.": ["Demo para sa project defense: walang totoong bayad na kinukuha, at magagamit pa rin ang lahat ng feature sa bawat plan.", "Demo para sa project defense: walay tinuod nga bayad nga kuhaon, ug magamit gihapon ang tanang feature sa matag plan."],
-  "Demo for project defense: no real payment is taken.": ["Demo para sa project defense: walang totoong bayad na kinukuha.", "Demo para sa project defense: walay tinuod nga bayad nga kuhaon."],
-  "Ended early": ["Maagang tinapos", "Sayo nga natapos"],
-  "Enter the full 13-digit GCash reference number.": ["Ilagay ang buong 13-digit na GCash reference number.", "Isulat ang tibuok 13 ka digit nga GCash reference number."],
-  "Event stock-up lists": ["Listahan ng iimbakin para sa okasyon", "Lista sa i-stock para sa okasyon"],
-  "Extend": ["Palawigin", "Dugangan"],
-  "Extend Plus": ["Palawigin ang Plus", "Dugangan ang Plus"],
-  "Free": ["Free", "Free"],
-  "GCash reference number": ["GCash reference number", "GCash reference number"],
-  "Go back to Free": ["Bumalik sa Free", "Balik sa Free"],
-  "Go back to the Free plan?": ["Bumalik sa Free plan?", "Mobalik sa Free plan?"],
-  "Monthly": ["Buwanan", "Binulan"],
-  "No active subscription": ["Walang aktibong subscription", "Walay aktibong subscription"],
-  "Payment history": ["Kasaysayan ng bayad", "Kasaysayan sa bayad"],
-  "Planned for Plus": ["Plano para sa Plus", "Plano para sa Plus"],
-  "Plus": ["Plus", "Plus"],
-  "Plus is active until {{date}}.": ["Aktibo ang Plus hanggang {{date}}.", "Aktibo ang Plus hangtod {{date}}."],
-  "Plus prices": ["Mga presyo ng Plus", "Mga presyo sa Plus"],
-  "Ref {{reference}}": ["Ref {{reference}}", "Ref {{reference}}"],
-  "Report exports": ["Pag-export ng report", "Pag-export sa report"],
-  "Sample only, do not scan": ["Halimbawa lang, huwag i-scan", "Pananglitan ra, ayaw i-scan"],
-  "Staff accounts": ["Mga account ng staff", "Mga account sa staff"],
-  "Subscription": ["Subscription", "Subscription"],
-  "The Plus label is removed from this store. Your records and features do not change.": ["Aalisin ang Plus na label sa tindahang ito. Hindi magbabago ang iyong mga record at feature.", "Kuhaon ang Plus nga label niini nga tindahan. Dili mausab ang imong mga rekord ug feature."],
-  "This store is back on the Free plan.": ["Nasa Free plan na ulit ang tindahang ito.", "Naa na usab sa Free plan kini nga tindahan."],
-  "Type the reference number of the sample payment below.": ["I-type sa ibaba ang reference number ng halimbawang bayad.", "I-type sa ubos ang reference number sa pananglitan nga bayad."],
-  "Unlimited products": ["Walang limitasyong produkto", "Walay limit nga produkto"],
-  "Upgrade to Plus": ["Mag-upgrade sa Plus", "Pag-upgrade sa Plus"],
-  "Weekly": ["Lingguhan", "Sinemana"],
-  "Yearly": ["Taunan", "Tinuig"],
-  "Your store plan and GCash payments.": ["Ang plan ng iyong tindahan at mga bayad sa GCash.", "Ang plan sa imong tindahan ug mga bayad sa GCash."]
+  "{{count}} of 13 digits": [
+    "{{count}} sa 13 digit",
+    "{{count}} sa 13 ka digit"
+  ],
+  "30-day forecasts": [
+    "30-araw na forecast",
+    "30 ka adlaw nga forecast"
+  ],
+  "Activate": [
+    "I-activate",
+    "I-activate"
+  ],
+  "Active until {{date}}": [
+    "Aktibo hanggang {{date}}",
+    "Aktibo hangtod {{date}}"
+  ],
+  "Amount: {{amount}}": [
+    "Halaga: {{amount}}",
+    "Kantidad: {{amount}}"
+  ],
+  "Choose a plan length": [
+    "Pumili ng haba ng plan",
+    "Pagpili og gitas-on sa plan"
+  ],
+  "Could not activate Plus. Please try again.": [
+    "Hindi ma-activate ang Plus. Pakisubukang muli.",
+    "Dili ma-activate ang Plus. Palihug sulayi pag-usab."
+  ],
+  "Could not change the plan. Please try again.": [
+    "Hindi mabago ang plan. Pakisubukang muli.",
+    "Dili mausab ang plan. Palihug sulayi pag-usab."
+  ],
+  "Could not load your plan. Please try again.": [
+    "Hindi ma-load ang iyong plan. Pakisubukang muli.",
+    "Dili ma-load ang imong plan. Palihug sulayi pag-usab."
+  ],
+  "Current plan": [
+    "Kasalukuyang plan",
+    "Kasamtangang plan"
+  ],
+  "Demo for project defense: no real payment is taken, and every feature stays available on every plan.": [
+    "Demo para sa project defense: walang totoong bayad na kinukuha, at magagamit pa rin ang lahat ng feature sa bawat plan.",
+    "Demo para sa project defense: walay tinuod nga bayad nga kuhaon, ug magamit gihapon ang tanang feature sa matag plan."
+  ],
+  "Demo for project defense: no real payment is taken.": [
+    "Demo para sa project defense: walang totoong bayad na kinukuha.",
+    "Demo para sa project defense: walay tinuod nga bayad nga kuhaon."
+  ],
+  "Ended early": [
+    "Maagang tinapos",
+    "Sayo nga natapos"
+  ],
+  "Enter the full 13-digit GCash reference number.": [
+    "Ilagay ang buong 13-digit na GCash reference number.",
+    "Isulat ang tibuok 13 ka digit nga GCash reference number."
+  ],
+  "Event stock-up lists": [
+    "Listahan ng iimbakin para sa okasyon",
+    "Lista sa i-stock para sa okasyon"
+  ],
+  "Extend": [
+    "Palawigin",
+    "Dugangan"
+  ],
+  "Extend Plus": [
+    "Palawigin ang Plus",
+    "Dugangan ang Plus"
+  ],
+  "Free": [
+    "Free",
+    "Free"
+  ],
+  "GCash reference number": [
+    "GCash reference number",
+    "GCash reference number"
+  ],
+  "Go back to Free": [
+    "Bumalik sa Free",
+    "Balik sa Free"
+  ],
+  "Go back to the Free plan?": [
+    "Bumalik sa Free plan?",
+    "Mobalik sa Free plan?"
+  ],
+  "Monthly": [
+    "Buwanan",
+    "Binulan"
+  ],
+  "No active subscription": [
+    "Walang aktibong subscription",
+    "Walay aktibong subscription"
+  ],
+  "Payment history": [
+    "Kasaysayan ng bayad",
+    "Kasaysayan sa bayad"
+  ],
+  "Planned for Plus": [
+    "Plano para sa Plus",
+    "Plano para sa Plus"
+  ],
+  "Plus": [
+    "Plus",
+    "Plus"
+  ],
+  "Plus is active until {{date}}.": [
+    "Aktibo ang Plus hanggang {{date}}.",
+    "Aktibo ang Plus hangtod {{date}}."
+  ],
+  "Plus prices": [
+    "Mga presyo ng Plus",
+    "Mga presyo sa Plus"
+  ],
+  "Ref {{reference}}": [
+    "Ref {{reference}}",
+    "Ref {{reference}}"
+  ],
+  "Report exports": [
+    "Pag-export ng report",
+    "Pag-export sa report"
+  ],
+  "Sample only, do not scan": [
+    "Halimbawa lang, huwag i-scan",
+    "Pananglitan ra, ayaw i-scan"
+  ],
+  "Staff accounts": [
+    "Mga account ng staff",
+    "Mga account sa staff"
+  ],
+  "Subscription": [
+    "Subscription",
+    "Subscription"
+  ],
+  "The Plus label is removed from this store. Your records and features do not change.": [
+    "Aalisin ang Plus na label sa tindahang ito. Hindi magbabago ang iyong mga record at feature.",
+    "Kuhaon ang Plus nga label niini nga tindahan. Dili mausab ang imong mga rekord ug feature."
+  ],
+  "This store is back on the Free plan.": [
+    "Nasa Free plan na ulit ang tindahang ito.",
+    "Naa na usab sa Free plan kini nga tindahan."
+  ],
+  "Type the reference number of the sample payment below.": [
+    "I-type sa ibaba ang reference number ng halimbawang bayad.",
+    "I-type sa ubos ang reference number sa pananglitan nga bayad."
+  ],
+  "Unlimited products": [
+    "Walang limitasyong produkto",
+    "Walay limit nga produkto"
+  ],
+  "Upgrade to Plus": [
+    "Mag-upgrade sa Plus",
+    "Pag-upgrade sa Plus"
+  ],
+  "Weekly": [
+    "Lingguhan",
+    "Sinemana"
+  ],
+  "Yearly": [
+    "Taunan",
+    "Tinuig"
+  ],
+  "Your store plan and GCash payments.": [
+    "Ang plan ng iyong tindahan at mga bayad sa GCash.",
+    "Ang plan sa imong tindahan ug mga bayad sa GCash."
+  ],
+  "Your plan": [
+    "Iyong plan",
+    "Imong plan"
+  ],
+  "Your local events": [
+    "Iyong mga lokal na okasyon",
+    "Imong mga lokal nga okasyon"
+  ]
 }

@@ -75,3 +75,27 @@
 .bl-more__item--danger .bl-more__icon { background: var(--bl-danger-bg); color: var(--bl-danger); }
 .bl-more__item--danger:hover,
 .bl-more__item--danger:active { background: var(--bl-danger-bg); }
+
+/* Shortcut buttons on the right of the Profile row. */
+.bl-more__with-shortcuts { position: relative; }
+.bl-more__with-shortcuts .bl-more__item { padding-right: 112px; }
+.bl-more__shortcuts {
+  position: absolute;
+  top: 50%;
+  right: var(--bl-s3);
+  display: flex;
+  gap: var(--bl-s1);
+  transform: translateY(-50%);
+}
+.bl-more__shortcut {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--bl-r-md);
+  background: var(--bl-green-soft);
+  color: var(--bl-green-dark);
+  font-size: 20px;
+}
+.bl-more__shortcut:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+.bl-more__shortcut--active { background: var(--bl-green); color: #fff; }

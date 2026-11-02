@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import MoreSheet from './MoreSheet';
 import QuickAddSheet from './QuickAddSheet';
-import { bottomNav, moreGroups, type NavItem } from './navItems';
+import { bottomNav, moreGroups, profileShortcuts, type NavItem } from './navItems';
 import './MobileBottomNav.css';
 import { t } from '../../i18n';
 
@@ -25,9 +25,9 @@ export function MobileBottomNav({ alertCount }: MobileBottomNavProps) {
   const moreOpen = sheet?.kind === 'more' && sheet.on === pathname;
   const addOpen = sheet?.kind === 'add' && sheet.on === pathname;
 
-  const inMore = moreGroups.some((g) =>
-    g.items.some((i) => pathname === i.href || pathname.startsWith(`${i.href}/`)),
-  );
+  const inMore =
+    profileShortcuts.some((i) => pathname === i.href) ||
+    moreGroups.some((g) => g.items.some((i) => pathname === i.href || pathname.startsWith(`${i.href}/`)));
 
   const link = (item: NavItem) => {
     const active = pathname === item.href || pathname.startsWith(`${item.href}/`);

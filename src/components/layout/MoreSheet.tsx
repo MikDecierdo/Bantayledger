@@ -5,7 +5,7 @@ import { Modal } from '../common/Modal';
 import { useAuth } from '../../context/AuthContext';
 import { toUserMessage } from '../../lib/errors';
 import { alertError, confirmLogout } from '../../lib/swal';
-import { moreGroups } from './navItems';
+import { moreGroups, profileShortcuts } from './navItems';
 import './MoreSheet.css';
 import { t } from '../../i18n';
 
@@ -54,7 +54,7 @@ export function MoreSheet({ isOpen, onClose, alertCount }: MoreSheetProps) {
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 const badge = item.badgeKey === 'alerts' ? alertCount : 0;
                 return (
-                  <li key={item.href}>
+                  <li key={item.href} className={item.href === '/profile' ? 'bl-more__with-shortcuts' : undefined}>
                     <Link
                       to={item.href}
                       className={`bl-more__item ${active ? 'bl-more__item--active' : ''}`}
@@ -71,8 +71,27 @@ export function MoreSheet({ isOpen, onClose, alertCount }: MoreSheetProps) {
                           <span className="bl-sr-only">{' '}{t('unread alerts')}</span>
                         </span>
                       )}
-                      <IonIcon icon={chevronForwardOutline} className="bl-more__chev" aria-hidden="true" />
+                      {item.href !== '/profile' && (
+                        <IonIcon icon={chevronForwardOutline} className="bl-more__chev" aria-hidden="true" />
+                      )}
                     </Link>
+                    {item.href === '/profile' && (
+                      <span className="bl-more__shortcuts">
+                        {profileShortcuts.map((shortcut) => (
+                          <Link
+                            key={shortcut.href}
+                            to={shortcut.href}
+                            className={`bl-more__shortcut ${pathname === shortcut.href ? 'bl-more__shortcut--active' : ''}`}
+                            aria-label={shortcut.label}
+                            aria-current={pathname === shortcut.href ? 'page' : undefined}
+                            title={shortcut.label}
+                            onClick={onClose}
+                          >
+                            <IonIcon icon={shortcut.icon} aria-hidden="true" />
+                          </Link>
+                        ))}
+                      </span>
+                    )}
                   </li>
                 );
               })}

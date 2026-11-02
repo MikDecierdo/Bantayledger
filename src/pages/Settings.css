@@ -8,6 +8,7 @@
 /* Two columns once there is room; groups stay whole. */
 @media (min-width: 1024px) {
   .bl-set__layout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .bl-set__layout--single { grid-template-columns: minmax(0, 1fr); }
 }
 
 .bl-set__group { overflow: hidden; }
