@@ -21,6 +21,7 @@ class User extends Authenticatable
         'phone',
         'avatar_url',
         'password',
+        'terms_accepted_at',
     ];
 
     /** The API (and the app) call the key `id`; the column is `user_id`. */

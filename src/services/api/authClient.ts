@@ -13,6 +13,8 @@ export interface SignUpInput {
   fullName: string;
   phone?: string;
   businessName: string;
+  /** Confirmed 18 or older and agreed to the Terms and Privacy Policy. */
+  acceptTerms: boolean;
 }
 
 interface LaravelUserRow {
@@ -60,6 +62,7 @@ export const authClient = {
       fullName: input.fullName.trim(),
       phone: input.phone?.trim() || undefined,
       businessName: input.businessName.trim(),
+      acceptTerms: input.acceptTerms,
     });
     setToken(res.accessToken);
     return { userId: res.userId };
@@ -88,6 +91,12 @@ export const authClient = {
     });
     setToken(res.accessToken);
     return { userId: res.userId };
+  },
+
+  /** Permanently deletes the account; the server checks the password first. */
+  async deleteAccount(password: string): Promise<void> {
+    await api.post('/account/delete', { password });
+    setToken(null);
   },
 
   async signOut(): Promise<void> {

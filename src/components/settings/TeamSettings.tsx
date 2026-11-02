@@ -323,7 +323,7 @@ export function TeamSettings() {
       <ConfirmDialog
         isOpen={removeFor !== null}
         title={t('Remove this staff member?')}
-        message={t('They will no longer be able to sign in to this business. Their past records stay.')}
+        message={t('Their login is deleted unless they belong to another store. Their past records stay with the store, without their name.')}
         confirmLabel={t('Remove')}
         tone="danger"
         onConfirm={() => void handleRemove()}

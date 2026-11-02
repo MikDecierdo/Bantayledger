@@ -1,3 +1,5 @@
+import { storeClear } from '../services/offline/offlineStore';
+import { refreshOutboxCounts } from '../services/offline/outbox';
 import {
   createContext,
   useCallback,
@@ -54,6 +56,8 @@ export interface AuthState {
   signIn: (email: string, password: string) => Promise<void>;
   signUp: (input: SignUpInput) => Promise<{ needsEmailConfirmation: boolean }>;
   signOut: () => Promise<void>;
+  /** Permanently deletes the account after checking the password, then signs out. */
+  deleteAccount: (password: string) => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   /** Saves a new password from the emailed reset link, then signs in. */
   resetPassword: (token: string, email: string, newPassword: string) => Promise<void>;
@@ -183,6 +187,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setActiveBusinessId(null);
   }, []);
 
+  const deleteAccount = useCallback(async (password: string) => {
+    await authClient.deleteAccount(password);
+    // Nothing of this person's stays on the device.
+    await storeClear('outbox');
+    await refreshOutboxCounts();
+    window.localStorage.removeItem(ACTIVE_BUSINESS_KEY);
+    setUser(null);
+    setProfile(null);
+    setBusinesses([]);
+    setRoleByBusiness({});
+    setActiveBusinessId(null);
+  }, []);
+
   const requestPasswordReset = useCallback(async (email: string) => {
     await authClient.requestPasswordReset(email);
   }, []);
@@ -253,6 +270,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signUp,
       signOut,
+      deleteAccount,
       requestPasswordReset,
       resetPassword,
       updatePassword,
@@ -270,6 +288,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signIn,
       signUp,
       signOut,
+      deleteAccount,
       requestPasswordReset,
       resetPassword,
       updatePassword,

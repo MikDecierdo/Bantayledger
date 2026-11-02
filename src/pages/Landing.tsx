@@ -56,7 +56,7 @@ export function Landing() {
     },
     {
       icon: cubeOutline,
-      title: t('Never run out by surprise'),
+      title: t('See low stock early'),
       text: t('See what is running low before the shelf is empty, with the right amount to reorder.'),
     },
     {
@@ -223,7 +223,7 @@ export function Landing() {
             <div className="bl-land__head">
               <p className="bl-land__eyebrow">{t('Features')}</p>
               <h2 className="bl-land__h2">{t('Everything the counter needs, nothing it doesn’t')}</h2>
-              <p className="bl-land__sub">{t('Built with store owners: simple screens, clear numbers, and help when something needs your attention.')}</p>
+              <p className="bl-land__sub">{t('Made for store owners: simple screens, clear numbers, and help when something needs your attention.')}</p>
             </div>
             <div className="bl-land__features">
               {features.map((f) => (
@@ -244,8 +244,8 @@ export function Landing() {
           <div className="bl-land__wrap bl-land__how">
             <div className="bl-land__head bl-land__head--left">
               <p className="bl-land__eyebrow">{t('How it works')}</p>
-              <h2 className="bl-land__h2">{t('Up and running in an afternoon')}</h2>
-              <p className="bl-land__sub">{t('No accountant, no training. If you can use a phone, you can use BantayLedger.')}</p>
+              <h2 className="bl-land__h2">{t('Simple to set up')}</h2>
+              <p className="bl-land__sub">{t('Made to be simple, with everyday words and clear numbers.')}</p>
               <ul className="bl-land__checks">
                 <li><IonIcon icon={barChartOutline} aria-hidden="true" />{t('Daily totals, capital and profit at a glance')}</li>
                 <li><IonIcon icon={shieldCheckmarkOutline} aria-hidden="true" />{t('Owner and staff accounts, each with their own sign-in')}</li>
@@ -401,6 +401,16 @@ export function Landing() {
                 <li><a href="#download" onClick={jump('download')}>{t('Windows computer')}</a></li>
                 <li><a href="#iphone" onClick={jump('iphone')}>{t('iPhone & iPad')}</a></li>
                 <li><Link to="/login">{t('Open web app')}</Link></li>
+              </ul>
+            </nav>
+
+            <nav className="bl-land__footer-col" aria-label={t('Policies')}>
+              <h3>{t('Policies')}</h3>
+              <ul>
+                <li><Link to="/privacy">{t('Privacy Policy')}</Link></li>
+                <li><Link to="/terms">{t('Terms of Service')}</Link></li>
+                <li><Link to="/refunds">{t('Refund Policy')}</Link></li>
+                <li><Link to="/cookies">{t('Cookie Policy')}</Link></li>
               </ul>
             </nav>
 

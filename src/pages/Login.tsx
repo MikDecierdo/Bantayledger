@@ -201,7 +201,11 @@ export function Login() {
 
         <p className="bl-login__foot bl-caption">
           {isDemoMode
-            ? t('Sample-data mode — sign-in is simulated and nothing leaves this device.') : t('Your data is stored securely and is only visible to your business.')}
+            ? t('Sample-data mode — sign-in is simulated and nothing leaves this device.') : t('Your data is protected by your sign-in and shared only with people in your business.')}
+        </p>
+        <p className="bl-login__legal bl-caption">
+          <Link to="/privacy">{t('Privacy Policy')}</Link>
+          <Link to="/terms">{t('Terms of Service')}</Link>
         </p>
       </main>
     </div>

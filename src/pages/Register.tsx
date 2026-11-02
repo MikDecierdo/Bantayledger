@@ -12,6 +12,8 @@ import { toUserMessage } from '../lib/errors';
 import './Login.css';
 import { t } from '../i18n';
 import LanguageSelect from '../components/common/LanguageSelect';
+import Modal from '../components/common/Modal';
+import LegalContent, { legalTitle, type LegalDoc } from '../components/legal/LegalContent';
 import PasswordStrength from '../components/auth/PasswordStrength';
 import { evaluatePassword } from '../utils/passwordStrength';
 import { formatPhLocal, isValidPhMobile, normalizePhLocal, toPhE164 } from '../utils/phone';
@@ -33,6 +35,7 @@ interface Errors {
   phone?: string;
   password?: string;
   confirm?: string;
+  terms?: string;
   form?: string;
 }
 
@@ -49,6 +52,8 @@ export function Register() {
   const [phone, setPhone] = useState(''); // the 10 digits after +63
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [policy, setPolicy] = useState<LegalDoc | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
@@ -69,6 +74,7 @@ export function Register() {
     }
     if (phone && !isValidPhMobile(phone)) next.phone = t('Enter a valid Philippine mobile number, e.g. 917 123 4567.');
     if (confirm !== password) next.confirm = t('Both passwords must match.');
+    if (!acceptTerms) next.terms = t('Please confirm you are 18 or older and agree to the Terms and Privacy Policy.');
 
     setErrors(next);
     if (Object.keys(next).length > 0) return;
@@ -94,6 +100,7 @@ export function Register() {
         fullName,
         phone: toPhE164(phone),
         businessName,
+        acceptTerms,
       });
 
       if (needsEmailConfirmation) {
@@ -253,6 +260,31 @@ export function Register() {
 
             <p className="bl-caption">{t('You can change this later in Settings.')}</p>
 
+            <div>
+              <label className="bl-check bl-login__terms">
+                <input
+                  type="checkbox"
+                  checked={acceptTerms}
+                  aria-invalid={errors.terms ? true : undefined}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                />
+                <span>{t('I am 18 or older and I agree to the Terms of Service and Privacy Policy.')}</span>
+              </label>
+              <p className="bl-login__policies bl-caption">
+                <button type="button" className="bl-login__textlink" onClick={() => setPolicy('terms')}>
+                  {t('Read the Terms of Service')}
+                </button>
+                <button type="button" className="bl-login__textlink" onClick={() => setPolicy('privacy')}>
+                  {t('Read the Privacy Policy')}
+                </button>
+              </p>
+              {errors.terms && (
+                <p className="bl-form-error" role="alert">
+                  {errors.terms}
+                </p>
+              )}
+            </div>
+
             <Button type="submit" variant="primary" size="lg" block loading={submitting}>
               {submitting ? t('Creating account') : t('Create account')}
             </Button>
@@ -266,6 +298,11 @@ export function Register() {
           </form>
         </div>
       </main>
+
+      {/* Shown in place, so what has been typed in the form isn't lost. */}
+      <Modal isOpen={policy !== null} onClose={() => setPolicy(null)} title={policy ? legalTitle(policy) : ''} size="lg" icon="form">
+        {policy && <LegalContent doc={policy} />}
+      </Modal>
     </div>
   );
 }

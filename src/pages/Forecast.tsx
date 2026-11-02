@@ -72,7 +72,7 @@ export function Forecast() {
   const header = (
     <PageHeader
       title={t('Forecast')}
-      description={t('What your records suggest about demand, supplier prices and purchasing cost.')}
+      description={t('What your records suggest about demand, supplier prices and purchasing cost. These are estimates, not guarantees.')}
       actions={
         <>
           <Segmented

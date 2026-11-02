@@ -18,7 +18,7 @@
 
   /* ---- Text ------------------------------------------------------------- */
   --bl-text: #17221E;
-  --bl-text-secondary: #718078;
+  --bl-text-secondary: #5E6D65;
   --bl-text-inverse: #FFFFFF;
 
   /* ---- Lines ------------------------------------------------------------ */
@@ -26,14 +26,14 @@
   --bl-border-strong: #D3DED8;
 
   /* ---- Semantic --------------------------------------------------------- */
-  --bl-success: #27825E;
+  --bl-success: #1F7050;
   --bl-success-bg: #E7F4ED;
-  --bl-warning: #B97818;
+  --bl-warning: #8A5A10;
   --bl-warning-bg: #FBF1E0;
-  --bl-danger: #C54B4B;
+  --bl-danger: #B23E3E;
   --bl-danger-dark: #9C3B3B;
   --bl-danger-bg: #FBEAEA;
-  --bl-info: #437B8F;
+  --bl-info: #366A7C;
   --bl-info-bg: #E6F0F4;
 
   /* ---- Typography ------------------------------------------------------- */

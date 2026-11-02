@@ -59,6 +59,18 @@
 /* ---- Supplier list ------------------------------------------------------- */
 
 .bl-sup__contact { display: grid; gap: 2px; min-width: 0; }
+.bl-sup__namebtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--bl-fw-semibold);
+  text-align: left;
+  cursor: pointer;
+}
+.bl-sup__namebtn:hover { text-decoration: underline; }
+.bl-sup__namebtn:focus-visible { outline: none; border-radius: 4px; box-shadow: var(--bl-focus-ring); }
 
 .bl-sup__products {
   display: flex;

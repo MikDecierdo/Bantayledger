@@ -6,14 +6,9 @@ import { LANGUAGES, currentLanguage, t } from '../i18n';
 import { useLanguage } from '../i18n/LanguageContext';
 import { toUserMessage } from '../lib/errors';
 import { authClient } from '../services/api/authClient';
+import Modal from '../components/common/Modal';
+import LegalContent, { legalTitle, type LegalDoc } from '../components/legal/LegalContent';
 import './Welcome.css';
-
-/**
- * Who people can contact about their data. Left empty on purpose: set it to
- * the business owner's or developer's email before launch. While empty, the
- * notice tells people to ask the owner or administrator of their business.
- */
-const PRIVACY_CONTACT = '';
 
 /**
  * Remembers that the notice was agreed to, so choosing a language (which
@@ -51,6 +46,7 @@ export function Welcome() {
   const [agreed, setAgreed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [policy, setPolicy] = useState<LegalDoc | null>(null);
   const selected = currentLanguage();
 
   const handleContinue = () => {
@@ -146,8 +142,8 @@ export function Welcome() {
           <details open>
             <summary>{t('Where it is stored and who can see it')}</summary>
             <ul>
-              <li>{t("Your records are kept in this system's database.")}</li>
-              <li>{t('Only people you add to your business (owner, admin or staff) can see your business data, and what they can change depends on their role.')}</li>
+              <li>{t('The database is run by Aiven and the app server by Render, both in the United States, so your information is stored outside the Philippines.')}</li>
+              <li>{t('Only people you add to your business (owner or staff) can see your business data, and what they can change depends on their role.')}</li>
               <li>{t('Your data is not sold and is not used for advertising.')}</li>
             </ul>
           </details>
@@ -158,26 +154,33 @@ export function Welcome() {
               <li>{t('Forecasts, alerts and tips are calculated on the server from your own records.')}</li>
               <li>{t('If an administrator turns on "Explain with AI", only a product name, its category and its weekly unit counts are sent to the AI service. Your name, customers and prices are never sent.')}</li>
               <li>{t('Address search and maps use OpenStreetMap services, which receive the text you type or the map position you pick.')}</li>
+              <li>{t('Brevo sends password reset emails, so it receives your email address when you ask for one.')}</li>
+              <li>{t('GitHub provides the app downloads and the update check.')}</li>
             </ul>
           </details>
 
           <details open>
             <summary>{t('Your rights and how to reach us')}</summary>
             <ul>
-              <li>{t('You can ask to see, correct, export or delete your data, and you can withdraw your consent at any time.')}</li>
-              <li>
-                {PRIVACY_CONTACT
-                  ? t('To make a request, contact: {{contact}}', { contact: PRIVACY_CONTACT })
-                  : t('To make a request, ask the owner of your business.')}
-              </li>
+              <li>{t('You can see and correct your details in Profile, and download or delete your data in Settings → Your data. Deleting your account withdraws your consent.')}</li>
+              <li>{t('The owner controls a store\'s records. Deleting a staff account removes the login, but the records it entered stay with the store, without the name.')}</li>
             </ul>
           </details>
         </div>
 
         <label className="bl-check bl-welcome__agree">
           <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
-          <span>{t('I have read and understand this notice and I agree to it.')}</span>
+          <span>{t('I am 18 or older, I have read this notice, and I agree to it and to the Terms of Service.')}</span>
         </label>
+
+        <p className="bl-login__policies bl-caption">
+          <button type="button" className="bl-login__textlink" onClick={() => setPolicy('terms')}>
+            {t('Read the Terms of Service')}
+          </button>
+          <button type="button" className="bl-login__textlink" onClick={() => setPolicy('privacy')}>
+            {t('Read the Privacy Policy')}
+          </button>
+        </p>
 
         <div className="bl-welcome__actions">
           <Button variant="primary" size="lg" block disabled={!agreed} onClick={handleContinue}>
@@ -190,6 +193,10 @@ export function Welcome() {
 
         <p className="bl-caption">{t('This is a plain-language summary of how your data is handled.')}</p>
       </section>
+
+      <Modal isOpen={policy !== null} onClose={() => setPolicy(null)} title={policy ? legalTitle(policy) : ''} size="lg" icon="form">
+        {policy && <LegalContent doc={policy} />}
+      </Modal>
     </main>
   );
 }

@@ -19,7 +19,7 @@ export const CHART = {
   areaTop: 'rgba(31, 111, 91, 0.16)',
   areaBottom: 'rgba(31, 111, 91, 0.01)',
   grid: '#E4EBE7',
-  axis: '#718078',
+  axis: '#5E6D65',
   surface: '#FFFFFF',
   danger: '#C54B4B',
   info: '#437B8F',
