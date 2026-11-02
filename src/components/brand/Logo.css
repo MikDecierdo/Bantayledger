@@ -6,8 +6,7 @@
 }
 
 .bl-logo__mark {
-  border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
   flex-shrink: 0;
   display: block;
 }
@@ -47,6 +46,13 @@
 .bl-logo--lg .bl-logo__name { font-size: var(--bl-fs-xl); }
 .bl-logo--lg .bl-logo__tagline { font-size: var(--bl-fs-xs); }
 
+/* On dark or photo backgrounds, a white tile keeps the logo's black parts visible. */
+.bl-logo--inverse .bl-logo__mark {
+  box-sizing: border-box;
+  padding: 4px;
+  border-radius: 10px;
+  background: #fff;
+}
 .bl-logo--inverse .bl-logo__name { color: #fff; }
 .bl-logo--inverse .bl-logo__ai { color: var(--bl-green-accent); }
 .bl-logo--inverse .bl-logo__tagline { color: rgba(255, 255, 255, 0.72); }

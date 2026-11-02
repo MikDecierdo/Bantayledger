@@ -9,6 +9,24 @@
 
 .bl-ws { display: flex; flex-direction: column; min-width: 0; }
 
+/* Slide-Up Reveal, after a loading skeleton (see Workspace.tsx). The page header
+   was already on screen during the skeleton, so it stays still. */
+@keyframes bl-slide-up {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: none; }
+}
+/* Cards sliding in from below shouldn't flash a scrollbar on a page that fits. */
+.bl-reveal > .bl-bento { overflow: clip; overflow-clip-margin: 8px; }
+.bl-reveal > :not(.bl-pageheader):not(.bl-bento),
+.bl-reveal > .bl-bento > * {
+  animation: bl-slide-up 460ms cubic-bezier(0.22, 1, 0.36, 1) backwards;
+}
+.bl-reveal > .bl-bento > :nth-child(2) { animation-delay: 70ms; }
+.bl-reveal > .bl-bento > :nth-child(3) { animation-delay: 140ms; }
+.bl-reveal > .bl-bento > :nth-child(4) { animation-delay: 210ms; }
+.bl-reveal > .bl-bento > :nth-child(5) { animation-delay: 280ms; }
+.bl-reveal > .bl-bento > :nth-child(n + 6) { animation-delay: 350ms; }
+
 /* The page header and summary keep the spacing they have everywhere else;
    inside the workspace the gap does that job. */
 .bl-ws > .bl-pageheader { margin-bottom: var(--bl-s4); }

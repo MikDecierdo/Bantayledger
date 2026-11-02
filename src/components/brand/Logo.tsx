@@ -7,11 +7,9 @@ interface LogoMarkProps {
 }
 
 /**
- * BantayLedger mark — a storekeeper checking stock and forecasts against a
- * shelf of goods, cropped to a circle. The source art is already a
- * self-contained badge (its own background and border), so this just sizes
- * and crops it — no color/appearance variants needed the way the old
- * hand-drawn SVG mark had.
+ * BantayLedger mark: a shield holding the letter B, a watchful animal, rising
+ * bars and an upward arrow. It has a transparent background, so on dark or
+ * photo surfaces the `inverse` Logo puts it on a white tile.
  */
 export function LogoMark({ size = 32, className }: LogoMarkProps) {
   return (

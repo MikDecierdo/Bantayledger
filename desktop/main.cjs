@@ -48,7 +48,7 @@ function createWindow() {
     minHeight: 680,
     title: 'BantayLedger AI',
     icon: path.join(__dirname, 'icon.png'),
-    backgroundColor: '#F6F8F7',
+    backgroundColor: '#FFFFFF',
     autoHideMenuBar: true,
     show: false,
     webPreferences: {
@@ -80,13 +80,13 @@ function createWindow() {
     win.webContents.once('did-finish-load', () => {
       setTimeout(async () => {
         const info = await win.webContents.executeJavaScript(
-          'JSON.stringify({ path: location.pathname, title: document.title, desktop: typeof window.bantayledgerDesktop, login: !!document.querySelector("input[type=email]") })',
+          'JSON.stringify({ path: location.pathname, title: document.title, desktop: typeof window.bantayledgerDesktop, login: !!document.querySelector("input[type=email]") , splashStillShowing: !!document.getElementById("bl-splash")})',
         );
         console.log('BL_SMOKE', info);
         // A packaged Windows app has no console: BL_SMOKE=<file path> writes the result there.
         if (process.env.BL_SMOKE !== '1') fs.writeFileSync(process.env.BL_SMOKE, info);
         app.quit();
-      }, 4000);
+      }, 5000);
     });
   }
 

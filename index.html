@@ -22,8 +22,100 @@
     <meta name="apple-mobile-web-app-title" content="BantayLedger" />
 
     <title>BantayLedger AI</title>
+    <!-- Opening animation of the Android and Windows apps; see the script below. -->
+    <style>
+      #bl-splash { display: none; }
+      .bl-splash-on #bl-splash {
+        position: fixed; inset: 0; z-index: 100000; display: flex;
+        align-items: center; justify-content: center; background: #fff;
+        font-family: Inter, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+        transition: transform 480ms cubic-bezier(0.65, 0, 0.35, 1);
+      }
+      #bl-splash.is-leaving { transform: translateY(-100%); }
+      /* The same size and place as the phone's own start screen, so nothing jumps. */
+      .bl-splash__logo { height: min(34vmin, 300px); aspect-ratio: 967 / 1275; overflow: visible; }
+      .bl-splash__name {
+        position: absolute; left: 0; right: 0; top: calc(50% + min(17vmin, 150px) + 18px); margin: 0;
+        text-align: center; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: #17221e; opacity: 0;
+      }
+      .bl-splash__name b { color: #1f6f5b; }
+      /*
+       * The complete logo shows while the app's code loads, because a slow phone can
+       * pause animations then. Once the app is ready, the bars grow and the arrow shoots up.
+       */
+      .bl-splash__logo .sp-bar, .bl-splash__logo .sp-arrow { transform-box: fill-box; }
+      .is-playing .bl-splash__logo { animation: bl-sp-pulse 760ms cubic-bezier(0.22, 1, 0.36, 1); }
+      .is-playing .sp-bar { transform-origin: 50% 100%; animation: bl-sp-grow 420ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+      .is-playing .sp-bar1 { animation-delay: 80ms; }
+      .is-playing .sp-bar2 { animation-delay: 170ms; }
+      .is-playing .sp-bar3 { animation-delay: 260ms; }
+      .is-playing .sp-arrow { animation: bl-sp-shoot 500ms 340ms cubic-bezier(0.22, 1, 0.36, 1) backwards; }
+      .is-playing .bl-splash__name { animation: bl-sp-up 420ms 420ms ease-out forwards; }
+      @keyframes bl-sp-pulse { from { transform: scale(0.96); } to { transform: none; } }
+      @keyframes bl-sp-grow { from { transform: scaleY(0); } to { transform: none; } }
+      @keyframes bl-sp-shoot { from { opacity: 0; transform: translate(-130px, 130px); } to { opacity: 1; transform: none; } }
+      @keyframes bl-sp-up { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+      @media (prefers-reduced-motion: reduce) {
+        .is-playing .bl-splash__logo, .is-playing .sp-bar, .is-playing .sp-arrow { animation: none; }
+        .is-playing .bl-splash__name { animation: none; opacity: 1; }
+        .bl-splash-on #bl-splash { transition: opacity 200ms linear; }
+        #bl-splash.is-leaving { transform: none; opacity: 0; }
+      }
+    </style>
   </head>
   <body>
+    <div id="bl-splash" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="540 385 967 1275" class="bl-splash__logo" aria-hidden="true"><defs><mask id="spm3" maskUnits="userSpaceOnUse" x="0" y="0" width="2048" height="2048"><rect width="2048" height="2048" fill="#fff"/><path d="M1040 1118L1075 1118L1075 1155L1040 1155Z" fill="#000"/></mask><mask id="spm6" maskUnits="userSpaceOnUse" x="0" y="0" width="2048" height="2048"><rect width="2048" height="2048" fill="#fff"/><path d="M720 564L745 578L703 578Z" fill="#000"/></mask></defs><g class="sp-shield"><path fill="#26A554" d="M1024 405C1150 496 1290 544 1432 550C1458 551 1482 574 1482 600L1482 890C1482 960 1472 1020 1454 1072L1401 1072L1401 623C1270 617 1130 565 1040 510C1012 495 968 476 920 469Z"/></g><g class="sp-arrow"><path fill="#26A554" d="M1045 917L1252 718L1207 673L1367 648L1367 652L1045 961Z"/><path fill="#17693B" d="M1045 957L1367 648L1336 807L1292 760L1045 997Z"/></g><g class="sp-chart"><path fill="#26A554" mask="url(#spm3)" class="sp-bar sp-bar1" d="M1045 1038C1045 1031.4 1050.4 1026 1057 1026L1115 1026C1121.6 1026 1127 1031.4 1127 1038L1127 1345L1045 1345Z"/><path fill="#17693B" class="sp-bar sp-bar2" d="M1156 954C1156 947.4 1161.4 942 1168 942L1226 942C1232.6 942 1238 947.4 1238 954L1238 1212L1380 1212L1311 1292L1299 1304L1284 1316C1284 1316 1250 1345 1205 1375C1170 1388 1100 1392 1100 1392L1045 1392L1045 1296C1065 1316 1090 1330 1125 1335C1180 1340 1240 1322 1300 1287L1168 1287C1168 1287 1161 1287 1156 1275Z"/><path fill="#000000" class="sp-bar sp-bar3" d="M1267 854C1267 847.4 1272.4 842 1279 842L1337 842C1343.6 842 1349 847.4 1349 854L1349 1102L1442 1102L1402 1180L1267 1180Z"/></g><g class="sp-letter"><path fill="#26A554" mask="url(#spm6)" d="M565 569C565 540 596 510 625 510L895 510C1000 510 1084 595 1084 700C1084 760 1065 808 1026 845L976 899L950 880L840 830L712 868L706 800L704 740L736 672L815 765L838 763C856 758 875 757 895 758L937 762L972 786C972 786 996 765 1014 695C1014 625 965 572 895 572L565 569Z"/><path fill="#17693B" d="M565 567L716 567C660 622 627 700 627 795C627 835 637 860 636 895C636 925 630 950 614 968L565 1022Z"/><path fill="#17693B" d="M895 567C965 567 1019 625 1019 695C1019 735 1000 770 972 793C950 775 925 760 895 758C932 758 960 730 960 690C960 650 935 623 900 623L793 623C770 595 745 580 724 567Z"/></g><g class="sp-animal"><path fill="#26A554" d="M665 1428C586.6 1331.8 538.5 1222.6 612 1107.3C634.6 1071.8 667.2 1042.3 696.8 1012.8C725 984.5 752.1 952.5 783.2 927.5C789.7 922.3 807.2 915.5 807.9 914.9C808.9 914.1 809 912.4 810.1 911.8C824.9 961.1 836.9 965.4 887.3 965.5C892.9 965.5 902.3 969 905.9 968.8C907.9 968.6 909.8 967.3 911.8 967.5C902.7 976.8 867.1 1016.6 857.9 1020.6C839.7 1028.5 807.2 1009.5 793 999.5C717.4 1075.1 634.3 1137.9 624.3 1252.6C621.5 1284.5 624.1 1317.7 633.1 1348.5C641 1375.8 654 1402 665 1428Z"/><path fill="#26A554" d="M842 896L896 896L896 946L842 946Z"/><path fill="#17693B" d="M635 997C648.4 976.6 660.5 961.1 667 938.2C669.5 929.9 669.2 920.1 672.8 912.2C678.1 900.6 709 856 721 853C745 830 795 808 827.6 807.5C877.3 806.3 927.4 821.9 956.9 864.6C993.3 917.3 988.7 986.6 952.1 1038C934.8 1062.4 912.1 1082 895 1106.8C881.1 1126.8 868 1147.8 858.3 1170.1C854.1 1179.6 852 1191.9 846.7 1200.7C840.6 1210.8 810.8 1233.6 800.4 1245.2C788.4 1258.5 778.4 1274.4 766.9 1287.1C758.2 1296.7 747 1329.8 746.6 1342.8C746.5 1346.4 747.8 1349.4 748 1352.9C748.6 1366.2 744.5 1379.5 745.5 1393C751.2 1470.5 782.1 1510.4 837 1562C780.1 1534.3 749.2 1510.3 717.5 1454.6C712.9 1446.6 705 1435.8 702.9 1426.8C701.9 1422.9 704.1 1420.2 703.2 1416C700.4 1403.9 696.2 1392.4 694.7 1379.9C678.6 1244.4 761.5 1181 847 1095.5C887.6 1054.9 905.2 1041.3 924.1 985.5C924.6 988.9 923.6 992.3 923.7 995.6C923.9 999.6 927.8 1006 928.2 1010.9C929.4 1022.3 928.2 1034.2 927.6 1045.6C934.5 1025 940.6 1005 942.4 983.2C947.6 918.7 909.6 871.5 844.2 868.5C816.2 867.2 788.7 872.8 763.6 885.5C716.8 909.1 674.4 962.2 635 997Z"/><path fill="#000000" d="M671.7 918.8C672.2 887.1 666.9 856.6 664.5 825.1C658.8 747.2 676.8 670 723.9 607.3C774.8 650.9 814.6 700.5 839.8 763.3C824.3 767.7 810 773.1 795.3 779.7C780.1 740.7 763.5 712.5 735.3 682.3C706.5 738.9 707.3 790.3 722.1 851.1C703 872.1 686.7 894.7 671.7 918.8Z"/><path fill="#000000" d="M789.9 1537.3C749.4 1509.5 683.3 1461.7 659 1418.9C608 1329.4 605.8 1215.1 665.9 1129.3C696.9 1085.2 753.9 1035.6 793 996.5C816.7 1013.3 831.8 1017.6 860.8 1018.7C830 1049.5 799.1 1080.4 768.3 1111.2C744.8 1134.7 719.2 1157.3 701.6 1185.8C653.7 1263.8 667.3 1355.7 709 1432.7C718.1 1449.4 726.3 1466.2 737.7 1481.7C752.8 1502.3 771.2 1519.9 789.9 1537.3Z"/><path fill="#000000" fill-rule="evenodd" d="M577 1249.5C562.1 1215.8 560.5 1112 574.2 1077.2C592 1032.4 638 994.5 671.2 961.3C694 938.5 716 913.8 742.5 895.2C756 885.8 770.8 878.3 786.4 873C815.5 863.2 849.4 861.6 878.6 871.7C940.9 893.3 955.7 961.5 939.2 1019.5C933.8 1038.6 924.7 1056.1 915.9 1073.6C922.8 1046.8 929.4 1022.6 921.5 995.3C919.5 988.2 918.2 980.5 912.5 975.2C890.2 954.5 844.9 987.7 817.3 942C812.5 933.9 810.6 924.2 807.8 915.5C770.7 936.2 741.7 970.8 711.3 1001.2C679.8 1032.7 645.8 1063.6 619.9 1100C608.2 1116.5 598.4 1135.2 591.8 1154.3C584.2 1176.4 579.4 1199.3 577.6 1222.6C576.9 1231.6 578.6 1241.3 577 1249.5ZM889 922C880 912 878 906 868 905C858 904 851 912 851 922C851 932 858 938 870 938C878 938 883 931 889 922Z"/></g><g class="sp-base"><path fill="#26A554" d="M1024 1521C1057.5 1523.3 1090.5 1531.8 1124.5 1529.5C1229.5 1522.2 1327.5 1474.8 1397.5 1395.8C1412.1 1379.3 1423.7 1359.9 1436 1342C1428.7 1357.6 1424.1 1372.4 1415.3 1386.3C1371.6 1455.1 1288.3 1529 1213.3 1561.6C1204.5 1565.5 1197.5 1571.5 1188.2 1574.4C1046.7 1618.2 891.2 1559 800.4 1445.1C785 1425.8 763.4 1398 755.7 1374.5C752.7 1365.4 750.2 1356.1 747 1347C753.4 1356.2 759.6 1367.1 767.4 1375.8C831.5 1447.4 934.9 1490.5 1024 1521Z"/><path fill="#000000" d="M1024 1640C970.1 1622.6 918.7 1601.6 867.3 1577.9C853.7 1571.7 838 1566.3 826.2 1556.8C820 1551.7 814.7 1544.2 808.9 1538.4C753.9 1483.4 737.4 1421.5 745.7 1345.8C764 1386.5 785 1425.7 815 1459.4C883.5 1536.4 996.1 1593 1100.9 1586.5C1122.7 1585.1 1144.4 1583.1 1165.7 1577.9C1176.8 1575.2 1188 1570.6 1198.9 1569C1188.1 1577.3 1173.1 1582.8 1160.2 1588.7C1115.9 1608.8 1070.3 1625.1 1024 1640Z"/><path fill="#000000" d="M1024 1521C1219.2 1462.1 1408.4 1308.8 1482.5 1116.8C1482.5 1187.8 1478.1 1257.8 1448.8 1323.8C1435.3 1354 1415.5 1378.6 1393.6 1402.9C1324.5 1479.8 1227.7 1524.9 1125 1532.5C1091 1535 1057 1528.3 1024 1521Z"/></g><g class="sp-muzzle"><path fill="#26A554" d="M860 1338L900 1318L950 1306L985 1285L1015 1255L1030 1250L1050 1290L1050 1395L1000 1395L900 1368Z"/><path fill="#000000" fill-rule="evenodd" d="M770 1282C791.8 1249.1 819 1223.9 847.6 1197.3C844.9 1211 841.3 1224.7 842.6 1238.8C850.1 1318.6 952.5 1316.6 988.2 1257.9C995.6 1245.7 998.5 1231.5 1000.8 1218.5C984.2 1205.9 965.2 1193.8 952.1 1177.2C946.3 1170 943.5 1161.6 942.4 1152.6C937.3 1111.6 992 1104.2 1021.4 1102.5C1044.5 1101.2 1079.2 1106.1 1095.6 1124.1C1102.2 1131.3 1105.5 1140.1 1105.5 1149.9C1105.6 1176.9 1080.5 1193.5 1061.3 1208.1C1057 1211.5 1050.7 1214.8 1048 1219.8C1043 1229.4 1046.5 1285.6 1046.2 1299.2C1039.3 1289.8 1032 1280 1025.2 1270.2C1000.8 1310.6 974 1324.9 930.1 1339C1053.6 1425.5 1198.7 1374.8 1310.2 1293.3C1226.2 1377.4 1133.2 1426.4 1024 1470C936.6 1436.5 796.5 1381.8 770 1282ZM982 1136.5C982 1130.1 1000.8 1125 1024 1125C1047.2 1125 1066 1130.1 1066 1136.5C1066 1142.9 1047.2 1148 1024 1148C1000.8 1148 982 1142.9 982 1136.5Z"/></g></svg>
+      <p class="bl-splash__name">BantayLedger <b>AI</b></p>
+    </div>
+    <script>
+      /*
+       * Only the installed apps show the opening animation: Windows runs at app://,
+       * Android at https://localhost. ?blsplash shows it in a browser, to test or demonstrate it.
+       */
+      (function () {
+        var root = document.documentElement;
+        var splash = document.getElementById('bl-splash');
+        var cap = window.Capacitor;
+        var inApp =
+          location.protocol === 'app:' ||
+          (location.protocol === 'https:' && location.hostname === 'localhost') ||
+          !!window.bantayledgerDesktop ||
+          !!(cap && cap.isNativePlatform && cap.isNativePlatform());
+        if (!inApp && !/[?&]blsplash\b/.test(location.search)) {
+          splash.remove();
+          return;
+        }
+        root.classList.add('bl-splash-on');
+        var PLAY_MS = 1250;
+        var playedAt = 0;
+        var left = false;
+        window.__blSplashPlay = function () {
+          if (playedAt) return;
+          playedAt = Date.now();
+          splash.classList.add('is-playing');
+        };
+        window.__blSplashLeave = function leave() {
+          if (left) return;
+          var wait = playedAt ? PLAY_MS - (Date.now() - playedAt) : 100;
+          if (wait > 0) {
+            setTimeout(leave, wait);
+            return;
+          }
+          left = true;
+          splash.classList.add('is-leaving');
+          setTimeout(function () {
+            splash.remove();
+            root.classList.remove('bl-splash-on');
+          }, 520);
+        };
+        // The app normally says when it is ready; this covers a sleeping server or a failure.
+        setTimeout(function () {
+          window.__blSplashPlay();
+          window.__blSplashLeave();
+        }, 6000);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

@@ -1,5 +1,9 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { useLayoutEffect, useRef, type CSSProperties, type ReactNode } from 'react';
+import { skeletonJustEnded } from '../../lib/reveal';
 import './Workspace.css';
+
+/** Longest animation plus its longest delay, in Workspace.css. */
+const REVEAL_MS = 900;
 
 /**
  * Page frame for desktop "fit" mode (>= 1024px wide and >= 640px tall): the
@@ -10,7 +14,23 @@ import './Workspace.css';
  * Below that size it is a plain block and the page scrolls as before.
  */
 export function Workspace({ children, className }: { children: ReactNode; className?: string }) {
-  return <div className={['bl-ws', className ?? ''].filter(Boolean).join(' ')}>{children}</div>;
+  const ref = useRef<HTMLDivElement>(null);
+
+  // Slide-Up Reveal when this page replaces a loading skeleton. The class goes
+  // away afterwards, so nothing stays transformed for pop-ups or sticky headers.
+  useLayoutEffect(() => {
+    if (!skeletonJustEnded()) return;
+    const el = ref.current;
+    el?.classList.add('bl-reveal');
+    // Always runs, even if the page has already gone: it only touches this element.
+    window.setTimeout(() => el?.classList.remove('bl-reveal'), REVEAL_MS);
+  }, []);
+
+  return (
+    <div ref={ref} className={['bl-ws', className ?? ''].filter(Boolean).join(' ')}>
+      {children}
+    </div>
+  );
 }
 
 /**

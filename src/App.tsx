@@ -1,6 +1,6 @@
 import { IonApp, IonRouterOutlet, setupIonicReact } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import ProtectedRoute, { PublicOnlyRoute } from './components/auth/ProtectedRoute';
 import AppShell from './components/layout/AppShell';
@@ -43,6 +43,7 @@ import Landing from './pages/Landing';
 import Legal, { LEGAL_ROUTES } from './pages/Legal';
 import UpdatePrompt from './components/layout/UpdatePrompt';
 import { isInstalledApp } from './lib/platform';
+import { finishSplash, playSplash } from './lib/splash';
 
 setupIonicReact({ mode: 'md' });
 
@@ -68,6 +69,11 @@ function RouteFallback() {
 function Routes() {
   const { pathname } = useLocation();
   const { loading, needsPrivacyNotice, user } = useAuth();
+
+  // The sign-in check is done, so the opening animation can make way.
+  useEffect(() => {
+    if (!loading) finishSplash();
+  }, [loading]);
 
   // Policies open for everyone, signed in or not, before anything else.
   if (LEGAL_ROUTES[pathname]) {
@@ -171,6 +177,11 @@ function Routes() {
 }
 
 export function App() {
+  // First moment the code has loaded and mounted, so the animation runs smoothly.
+  useEffect(() => {
+    requestAnimationFrame(playSplash);
+  }, []);
+
   return (
     <IonApp>
       <LanguageProvider>

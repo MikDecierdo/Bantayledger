@@ -43,7 +43,7 @@
                     <tr>
                         <td valign="middle" style="padding-right:12px;">
                             <a href="{{ $siteUrl }}" style="text-decoration:none;">
-                                <img src="{{ $logoUrl }}" width="48" height="48" alt="BantayLedger" style="display:block; width:48px; height:48px; border:0; border-radius:50%;">
+                                <img src="{{ $logoUrl }}" width="48" height="48" alt="BantayLedger" style="display:block; width:48px; height:48px; border:0; border-radius:10px;">
                             </a>
                         </td>
                         <td valign="middle" style="font-family:Arial, Helvetica, sans-serif;">
