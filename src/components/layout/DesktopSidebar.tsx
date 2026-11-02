@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toUserMessage } from '../../lib/errors';
 import { alertError, confirmLogout } from '../../lib/swal';
 import { Logo } from '../brand/Logo';
-import { accountNav, intelligenceNav, primaryNav, profileShortcuts, type NavItem } from './navItems';
+import { accountNav, intelligenceNav, primaryNav, profileShortcuts, subscriptionNav, type NavItem } from './navItems';
 import './DesktopSidebar.css';
 import { t } from '../../i18n';
 
@@ -92,7 +92,8 @@ export function DesktopSidebar({
 }: SidebarProps) {
   const { pathname } = useLocation();
   const history = useHistory();
-  const { profile, activeBusiness, signOut } = useAuth();
+  const { profile, activeBusiness, isManager, signOut } = useAuth();
+  const onPlus = activeBusiness?.plan === 'plus';
 
   const displayName = profile?.full_name ?? profile?.email ?? t('Signed in');
   const initials = displayName
@@ -162,8 +163,8 @@ export function DesktopSidebar({
 
         <div className="bl-sidebar__footer">
           <NavGroup
-            // The narrow icon rail has no room beside Profile, so they get their own rows.
-            items={collapsed ? [...accountNav, ...profileShortcuts] : accountNav}
+            // The narrow icon rail has no room beside Profile or for the user card.
+            items={collapsed ? [...accountNav, ...profileShortcuts, subscriptionNav] : accountNav}
             collapsed={collapsed}
             alertCount={0}
             currentPath={pathname}
@@ -177,14 +178,22 @@ export function DesktopSidebar({
               <span className="bl-sidebar__user-text">
                 <span className="bl-sidebar__user-name bl-truncate">{displayName}</span>
                 <span className="bl-sidebar__user-biz bl-truncate">
-                  {activeBusiness?.name ?? t('No business yet')}
-                  {activeBusiness && (
-                    <span className={`bl-plan-chip ${activeBusiness.plan === 'plus' ? 'bl-plan-chip--plus' : ''}`}>
-                      {activeBusiness.plan === 'plus' ? t('Plus') : t('Free')}
-                    </span>
+                  {activeBusiness ? (
+                    <>
+                      <strong className={onPlus ? 'bl-sidebar__plan--plus' : undefined}>{onPlus ? t('Plus') : t('Free')}</strong>
+                      {' · '}
+                      {activeBusiness.name}
+                    </>
+                  ) : (
+                    t('No business yet')
                   )}
                 </span>
               </span>
+              {activeBusiness && isManager && (
+                <NavLink to="/subscription" className="bl-sidebar__upgrade">
+                  {onPlus ? t('Manage') : t('Upgrade')}
+                </NavLink>
+              )}
             </div>
           )}
 

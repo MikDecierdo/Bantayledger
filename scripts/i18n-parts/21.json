@@ -170,5 +170,133 @@
   "Your local events": [
     "Iyong mga lokal na okasyon",
     "Imong mga lokal nga okasyon"
+  ],
+  "/ week": [
+    "/ linggo",
+    "/ semana"
+  ],
+  "/ month": [
+    "/ buwan",
+    "/ bulan"
+  ],
+  "/ year": [
+    "/ taon",
+    "/ tuig"
+  ],
+  "Android, Windows and iPhone": [
+    "Android, Windows at iPhone",
+    "Android, Windows ug iPhone"
+  ],
+  "Ask the owner to upgrade": [
+    "Hilingin sa may-ari na mag-upgrade",
+    "Hangyoa ang tag-iya nga mo-upgrade"
+  ],
+  "Demo for project defense: no real payment is taken. The limits shown are planned; for now, every store keeps every feature.": [
+    "Demo para sa project defense: walang totoong bayad na kinukuha. Plano pa lang ang mga limitasyong ipinapakita; sa ngayon, magagamit ng bawat tindahan ang lahat ng feature.",
+    "Demo para sa project defense: walay tinuod nga bayad nga kuhaon. Plano pa lang ang mga limitasyon nga gipakita; karon, magamit sa matag tindahan ang tanang feature."
+  ],
+  "Event stock-up lists with Order buttons": [
+    "Listahan ng iimbakin para sa okasyon na may Order button",
+    "Lista sa i-stock para sa okasyon nga adunay Order button"
+  ],
+  "Everything you need to record your day.": [
+    "Lahat ng kailangan para maitala ang iyong araw.",
+    "Tanan nga kinahanglan aron matala ang imong adlaw."
+  ],
+  "Forecasts up to 30 days": [
+    "Forecast hanggang 30 araw",
+    "Forecast hangtod 30 ka adlaw"
+  ],
+  "Full AI Insights": [
+    "Buong AI Insights",
+    "Tibuok AI Insights"
+  ],
+  "Full report history and exports": [
+    "Buong kasaysayan ng report at pag-export",
+    "Tibuok kasaysayan sa report ug pag-export"
+  ],
+  "Grow your store": [
+    "Palaguin ang iyong tindahan",
+    "Padak-a ang imong tindahan"
+  ],
+  "Know what to stock, for every season and event.": [
+    "Alamin kung ano ang iimbakin sa bawat panahon at okasyon.",
+    "Hibaw-i kung unsa ang i-stock sa matag panahon ug okasyon."
+  ],
+  "Low-stock alerts and dashboard": [
+    "Babala sa paubos na stock at dashboard",
+    "Pahibalo sa nagkaubos nga stock ug dashboard"
+  ],
+  "Record sales, purchases and expenses": [
+    "Itala ang benta, binili at gastos",
+    "Itala ang halin, gipalit ug gasto"
+  ],
+  "Recommended": [
+    "Inirerekomenda",
+    "Girekomenda"
+  ],
+  "Reports for the last 3 months": [
+    "Report para sa huling 3 buwan",
+    "Report para sa katapusang 3 ka bulan"
+  ],
+  "Run your store": [
+    "Patakbuhin ang iyong tindahan",
+    "Padagana ang imong tindahan"
+  ],
+  "Supplier price and cost warnings": [
+    "Babala sa presyo ng supplier at gastos",
+    "Pahibalo sa presyo sa supplier ug gasto"
+  ],
+  "Up to 75 products": [
+    "Hanggang 75 produkto",
+    "Hangtod 75 ka produkto"
+  ],
+  "Upgrade": [
+    "Mag-upgrade",
+    "Pag-upgrade"
+  ],
+  "Upgrade your plan": [
+    "I-upgrade ang iyong plan",
+    "I-upgrade ang imong plan"
+  ],
+  "Your current plan": [
+    "Iyong kasalukuyang plan",
+    "Imong kasamtangang plan"
+  ],
+  "Manage": [
+    "Pamahalaan",
+    "Dumalaha"
+  ],
+  "Your own records": [
+    "Sarili mong tala",
+    "Imong kaugalingong rekord"
+  ],
+  "Calculated from your recorded sales, stock, purchases and spoiled or damaged items.": [
+    "Kinuwenta mula sa naitala mong benta, stock, binili at mga sira o nasirang paninda.",
+    "Gikwenta gikan sa imong narekord nga halin, stock, gipalit ug mga dunot o naguba nga baligya."
+  ],
+  "Explains why": [
+    "Ipinapaliwanag kung bakit",
+    "Gipatin-aw ngano"
+  ],
+  "Each insight says why it was flagged, so you can judge if it fits your store.": [
+    "Sinasabi ng bawat insight kung bakit ito lumabas, para mahusgahan mo kung bagay ito sa tindahan mo.",
+    "Ang matag insight nagsulti ngano kini migawas, aron mahukman nimo kon angay ba kini sa imong tindahan."
+  ],
+  "You decide": [
+    "Ikaw ang magpapasya",
+    "Ikaw ang modesisyon"
+  ],
+  "These are suggestions, not instructions.": [
+    "Mga mungkahi lang ito, hindi utos.",
+    "Mga sugyot lang kini, dili mando."
+  ],
+  "Stays up to date": [
+    "Laging napapanahon",
+    "Kanunay nga updated"
+  ],
+  "They update when your records change. Refresh recalculates right now.": [
+    "Nag-a-update ito kapag nagbago ang mga tala mo. Kinukuwenta muli ng Refresh ngayon din.",
+    "Mag-update kini kon mausab ang imong mga rekord. Ang Refresh mokwenta pag-usab karon dayon."
   ]
 }

@@ -55,11 +55,16 @@ export const accountNav: NavItem[] = [
   { label: t('Settings'), href: '/settings', icon: settingsOutline },
 ];
 
-/** Small shortcut buttons on the right of the Profile row in the menus. */
+/** Small shortcut button on the right of the Profile row in the menus. */
 export const profileShortcuts: NavItem[] = [
   { label: t('Local events'), href: '/local-events', icon: calendarOutline },
-  { label: t('Subscription'), href: '/subscription', icon: ribbonOutline },
 ];
+
+/**
+ * Reached from the Upgrade / Manage button beside the store name. The narrow
+ * icon rail has no room for that card, so it lists this as an icon instead.
+ */
+export const subscriptionNav: NavItem = { label: t('Subscription'), href: '/subscription', icon: ribbonOutline };
 
 export const logoutItem = { label: t('Logout'), href: '/login', icon: logOutOutline };
 
@@ -91,7 +96,7 @@ export const moreGroups: { title: string; items: NavItem[] }[] = [
   { title: t('Account'), items: accountNav },
 ];
 
-const ALL = [...primaryNav, ...intelligenceNav, ...accountNav, ...profileShortcuts];
+const ALL = [...primaryNav, ...intelligenceNav, ...accountNav, ...profileShortcuts, subscriptionNav];
 
 /** Page title used by the mobile header, matched on the longest prefix. */
 export function titleForPath(path: string): string {

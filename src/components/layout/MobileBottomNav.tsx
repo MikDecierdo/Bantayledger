@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import MoreSheet from './MoreSheet';
 import QuickAddSheet from './QuickAddSheet';
-import { bottomNav, moreGroups, profileShortcuts, type NavItem } from './navItems';
+import { bottomNav, moreGroups, profileShortcuts, subscriptionNav, type NavItem } from './navItems';
 import './MobileBottomNav.css';
 import { t } from '../../i18n';
 
@@ -26,6 +26,7 @@ export function MobileBottomNav({ alertCount }: MobileBottomNavProps) {
   const addOpen = sheet?.kind === 'add' && sheet.on === pathname;
 
   const inMore =
+    pathname === subscriptionNav.href ||
     profileShortcuts.some((i) => pathname === i.href) ||
     moreGroups.some((g) => g.items.some((i) => pathname === i.href || pathname.startsWith(`${i.href}/`)));
 

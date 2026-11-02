@@ -1,39 +1,157 @@
-/* Demo subscription (Settings → Subscription). */
-.bl-sub__note {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--bl-s2);
-  margin: 0;
-  padding: var(--bl-s3) var(--bl-s4);
-  background: var(--bl-green-soft);
-  color: var(--bl-green-dark);
-  font-size: var(--bl-fs-sm);
-  line-height: 1.45;
+/* Demo subscription page: compare Free and Plus, then a GCash reference step. */
+.bl-plans {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: var(--bl-s4) var(--bl-s4) var(--bl-s8);
 }
-.bl-sub__note ion-icon { flex-shrink: 0; margin-top: 2px; font-size: 16px; }
 
-.bl-sub__history-row { flex-direction: column; align-items: stretch; gap: var(--bl-s2); }
-.bl-sub__history { display: grid; gap: var(--bl-s2); margin: 0; padding: 0; list-style: none; font-size: var(--bl-fs-sm); }
-.bl-sub__history li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px var(--bl-s3); }
+.bl-plans__close {
+  position: absolute;
+  top: var(--bl-s3);
+  right: var(--bl-s3);
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: var(--bl-text-secondary);
+  font-size: 22px;
+  cursor: pointer;
+}
+.bl-plans__close:hover { background: var(--bl-green-soft); color: var(--bl-text); }
+.bl-plans__close:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
 
-.bl-sub__terms { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--bl-s2); }
-.bl-sub__term {
+.bl-plans__title {
+  margin: var(--bl-s2) 0 var(--bl-s4);
+  color: var(--bl-text);
+  font-size: clamp(1.4rem, 1.1rem + 1vw, 1.9rem);
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.bl-plans__status { text-align: center; }
+
+/* Weekly / Monthly / Yearly switch */
+.bl-plans__terms {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: var(--bl-s3);
-  border: 1px solid var(--bl-border-strong);
-  border-radius: var(--bl-r-md);
+  width: fit-content;
+  margin: 0 auto var(--bl-s5);
+  padding: 4px;
+  border: 1px solid var(--bl-border);
+  border-radius: 999px;
   background: var(--bl-surface);
+}
+.bl-plans__term {
+  min-height: 36px;
+  padding: 0 var(--bl-s4);
+  border: 0;
+  border-radius: 999px;
+  background: none;
   color: var(--bl-text-secondary);
   font: inherit;
   font-size: var(--bl-fs-sm);
-  text-align: center;
+  font-weight: var(--bl-fw-semibold);
   cursor: pointer;
 }
-.bl-sub__term strong { color: var(--bl-text); font-size: var(--bl-fs-md); }
-.bl-sub__term--on { border-color: var(--bl-green); background: var(--bl-green-soft); color: var(--bl-green-dark); }
+.bl-plans__term:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+.bl-plans__term--on { background: var(--bl-green); color: #fff; }
 
+/* The two plan cards */
+.bl-plans__cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--bl-s4);
+  max-width: 860px;
+  margin: 0 auto;
+}
+.bl-plan {
+  display: flex;
+  flex-direction: column;
+  padding: var(--bl-s5);
+  border: 1px solid var(--bl-border-strong);
+  border-radius: var(--bl-r-lg);
+  background: var(--bl-surface);
+}
+.bl-plan--plus { border-color: var(--bl-green); background: var(--bl-green-soft); }
+
+.bl-plan__top { display: flex; align-items: center; justify-content: space-between; gap: var(--bl-s2); min-height: 26px; }
+.bl-plan__name { margin: 0; min-height: 26px; color: var(--bl-text); font-weight: var(--bl-fw-semibold); line-height: 26px; }
+.bl-plan__badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: var(--bl-green);
+  color: #fff;
+  font-size: 11px;
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.bl-plan__headline {
+  margin: var(--bl-s3) 0 var(--bl-s1);
+  color: var(--bl-text);
+  font-size: 1.3rem;
+  font-weight: var(--bl-fw-semibold);
+  letter-spacing: -0.01em;
+}
+.bl-plan__lead { margin: 0 0 var(--bl-s4); color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); line-height: 1.45; }
+
+.bl-plan__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--bl-s2);
+  min-height: 44px;
+  padding: 0 var(--bl-s4);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  font: inherit;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-semibold);
+}
+.bl-plan__cta--primary { background: var(--bl-green); color: #fff; cursor: pointer; }
+.bl-plan__cta--primary:hover { background: var(--bl-green-dark); }
+.bl-plan__cta--outline { border-color: var(--bl-border-strong); background: none; color: var(--bl-text); cursor: pointer; }
+.bl-plan__cta--outline:hover { border-color: var(--bl-text-secondary); }
+.bl-plan__cta--current { border-color: var(--bl-border); color: var(--bl-text-secondary); }
+.bl-plan__cta:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+.bl-plan__price { margin: var(--bl-s4) 0 var(--bl-s1); color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); }
+.bl-plan__price strong { color: var(--bl-text); font-size: 1.75rem; font-weight: var(--bl-fw-semibold); letter-spacing: -0.02em; }
+.bl-plan__active { margin: 0; color: var(--bl-green-dark); font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-semibold); }
+
+.bl-plan__benefits { display: grid; gap: var(--bl-s3); margin: var(--bl-s3) 0 0; padding: 0; list-style: none; font-size: var(--bl-fs-sm); color: var(--bl-text); }
+.bl-plan__benefits li { display: flex; align-items: flex-start; gap: var(--bl-s3); line-height: 1.4; }
+.bl-plan__benefits ion-icon { flex-shrink: 0; margin-top: 1px; font-size: 18px; color: var(--bl-text-secondary); }
+.bl-plan__benefits--plus ion-icon { color: var(--bl-green); }
+
+.bl-plans__note {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--bl-s2);
+  max-width: 860px;
+  margin: var(--bl-s4) auto 0;
+  color: var(--bl-text-secondary);
+  font-size: var(--bl-fs-xs);
+  line-height: 1.45;
+}
+.bl-plans__note ion-icon { flex-shrink: 0; margin-top: 1px; font-size: 15px; }
+
+.bl-plans__history {
+  max-width: 860px;
+  margin: var(--bl-s5) auto 0;
+  padding-top: var(--bl-s4);
+  border-top: 1px solid var(--bl-border);
+}
+.bl-plans__history h3 { margin: 0 0 var(--bl-s2); color: var(--bl-text); font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-semibold); }
+.bl-plans__history ul { display: grid; gap: var(--bl-s2); margin: 0; padding: 0; list-style: none; font-size: var(--bl-fs-sm); }
+.bl-plans__history li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px var(--bl-s3); }
+
+/* GCash step */
 .bl-sub__pay {
   display: flex;
   align-items: center;
@@ -67,4 +185,11 @@
   font-weight: var(--bl-fw-semibold);
   line-height: 1.25;
   text-align: center;
+}
+
+@media (max-width: 699px) {
+  .bl-plans { padding: var(--bl-s2) 0 var(--bl-s6); }
+  .bl-plans__close { display: none; } /* the phone's top bar and menu handle going back */
+  .bl-plans__cards { grid-template-columns: minmax(0, 1fr); }
+  .bl-plan--plus { order: -1; } /* show what's on offer first on a narrow screen */
 }

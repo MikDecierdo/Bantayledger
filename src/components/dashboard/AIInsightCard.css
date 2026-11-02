@@ -168,7 +168,8 @@
 }
 .bl-insight__stock-row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto auto;
+  /* Name and amount stacked, so it fits however narrow the insight card is. */
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: var(--bl-s2) var(--bl-s3);
   padding: var(--bl-s3);
@@ -185,8 +186,6 @@
 .bl-insight__stock-qty--ok { color: var(--bl-green-dark, #174f42); font-weight: var(--bl-fw-medium, 500); }
 .bl-insight__stock-spacer { width: 0; }
 
-@media (max-width: 599px) {
-  .bl-insight__stock-row { grid-template-columns: minmax(0, 1fr) auto; }
-  .bl-insight__stock-qty { grid-column: 1; grid-row: 2; }
-  .bl-insight__stock-row > .bl-btn { grid-column: 2; grid-row: 1 / span 2; }
-}
+.bl-insight__stock-qty { grid-column: 1; grid-row: 2; }
+.bl-insight__stock-row > .bl-btn { grid-column: 2; grid-row: 1 / span 2; }
+

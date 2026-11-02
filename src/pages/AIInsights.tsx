@@ -1,5 +1,5 @@
 import { IonIcon } from '@ionic/react';
-import { bulbOutline, refreshOutline } from 'ionicons/icons';
+import { bulbOutline, helpCircleOutline, personOutline, receiptOutline, refreshOutline, syncOutline } from 'ionicons/icons';
 import { useMemo, useState } from 'react';
 import Button from '../components/common/Button';
 import { EmptyState, ErrorState, LoadingState, SkeletonGrid } from '../components/common/States';
@@ -30,6 +30,29 @@ const FILTERS: { value: Filter; label: string }[] = [
   { value: 'Purchasing', label: t('Purchasing') },
   { value: 'Sales', label: t('Sales') },
   { value: 'Waste', label: t('Spoiled & Damaged') },
+];
+
+const ABOUT_POINTS = [
+  {
+    icon: receiptOutline,
+    title: t('Your own records'),
+    text: t('Calculated from your recorded sales, stock, purchases and spoiled or damaged items.'),
+  },
+  {
+    icon: helpCircleOutline,
+    title: t('Explains why'),
+    text: t('Each insight says why it was flagged, so you can judge if it fits your store.'),
+  },
+  {
+    icon: personOutline,
+    title: t('You decide'),
+    text: t('These are suggestions, not instructions.'),
+  },
+  {
+    icon: syncOutline,
+    title: t('Stays up to date'),
+    text: t('They update when your records change. Refresh recalculates right now.'),
+  },
 ];
 
 export function AIInsights() {
@@ -121,26 +144,28 @@ export function AIInsights() {
     <Workspace>
       {header}
 
-      <Bento>
+      <Bento rows="auto minmax(0, 1fr)">
       {/* How insights are produced — stated plainly, not as a chat interface. */}
-      <Card className="bl-ai__about bl-span-3" padding="tight">
-        <span className="bl-ai__about-icon" aria-hidden="true">
-          <IonIcon icon={bulbOutline} />
-        </span>
-        <div>
-          <h2 className="bl-card-title">{t('How these are generated')}</h2>
-          <p className="bl-support">
-            Insights are calculated from your own recorded sales, stock levels, purchases and
-            spoiled or damaged items. Each one explains why it was flagged so you can judge whether it fits what you
-            know about your store. They are suggestions, not instructions. They update on their own
-            when your records change; Refresh just recalculates right now.
-          </p>
-        </div>
+      <Card className="bl-ai__about bl-span-12" padding="tight">
+        <h2 className="bl-card-title bl-ai__about-title">{t('How these are generated')}</h2>
+        <ul className="bl-ai__points">
+          {ABOUT_POINTS.map((point) => (
+            <li className="bl-ai__point" key={point.title}>
+              <span className="bl-ai__about-icon" aria-hidden="true">
+                <IonIcon icon={point.icon} />
+              </span>
+              <div className="bl-ai__point-text">
+                <strong>{point.title}</strong>
+                <span>{point.text}</span>
+              </div>
+            </li>
+          ))}
+        </ul>
       </Card>
 
       <Card
         fill
-        className="bl-span-9 bl-ai__panel"
+        className="bl-span-12 bl-ai__panel"
         action={
           <div className="bl-ai__filters">
             <ChipFilter
