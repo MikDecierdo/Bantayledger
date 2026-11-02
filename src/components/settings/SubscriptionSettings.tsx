@@ -1,6 +1,24 @@
 import { IonIcon } from '@ionic/react';
-import { informationCircleOutline, ribbonOutline } from 'ionicons/icons';
+import {
+  analyticsOutline,
+  barChartOutline,
+  bulbOutline,
+  calendarOutline,
+  closeOutline,
+  cloudOfflineOutline,
+  cubeOutline,
+  documentTextOutline,
+  informationCircleOutline,
+  notificationsOutline,
+  peopleOutline,
+  phonePortraitOutline,
+  receiptOutline,
+  sparkles,
+  sparklesOutline,
+  trendingUpOutline,
+} from 'ionicons/icons';
 import { useCallback, useEffect, useState } from 'react';
+import { useHistory } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { t } from '../../i18n';
 import { toUserMessage } from '../../lib/errors';
@@ -10,9 +28,7 @@ import Button from '../common/Button';
 import { TextField } from '../common/Field';
 import Modal, { ConfirmDialog } from '../common/Modal';
 import { GCashLogo } from '../common/PaymentLogos';
-import { Badge } from '../common/StatusBadge';
 import { useToast } from '../common/ToastProvider';
-import { Card } from '../layout/Section';
 import './SubscriptionSettings.css';
 
 const TERM_LABEL: Record<SubscriptionTerm, string> = {
@@ -21,12 +37,30 @@ const TERM_LABEL: Record<SubscriptionTerm, string> = {
   yearly: t('Yearly'),
 };
 
-const PLANNED_FEATURES = [
-  t('Event stock-up lists'),
-  t('Staff accounts'),
-  t('30-day forecasts'),
-  t('Report exports'),
-  t('Unlimited products'),
+const TERM_UNIT: Record<SubscriptionTerm, string> = {
+  weekly: t('/ week'),
+  monthly: t('/ month'),
+  yearly: t('/ year'),
+};
+
+const FREE_BENEFITS = [
+  { icon: receiptOutline, text: t('Record sales, purchases and expenses') },
+  { icon: cloudOfflineOutline, text: t('Works without internet') },
+  { icon: phonePortraitOutline, text: t('Android, Windows and iPhone') },
+  { icon: notificationsOutline, text: t('Low-stock alerts and dashboard') },
+  { icon: cubeOutline, text: t('Up to 75 products') },
+  { icon: barChartOutline, text: t('Reports for the last 3 months') },
+];
+
+const PLUS_BENEFITS = [
+  { icon: cubeOutline, text: t('Unlimited products') },
+  { icon: peopleOutline, text: t('Staff accounts') },
+  { icon: calendarOutline, text: t('Event stock-up lists with Order buttons') },
+  { icon: trendingUpOutline, text: t('Forecasts up to 30 days') },
+  { icon: analyticsOutline, text: t('Supplier price and cost warnings') },
+  { icon: bulbOutline, text: t('Full AI Insights') },
+  { icon: sparklesOutline, text: t('Explain with AI') },
+  { icon: documentTextOutline, text: t('Full report history and exports') },
 ];
 
 const REFERENCE_LENGTH = 13;
@@ -54,20 +88,35 @@ function SampleQr() {
   );
 }
 
+function Benefits({ items, plus }: { items: { icon: string; text: string }[]; plus?: boolean }) {
+  return (
+    <ul className={`bl-plan__benefits ${plus ? 'bl-plan__benefits--plus' : ''}`}>
+      {items.map((b) => (
+        <li key={b.text}>
+          <IonIcon icon={b.icon} aria-hidden="true" />
+          <span>{b.text}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 /**
- * Demo subscription for the project defense. Typing a full GCash reference
- * number activates Plus; no money moves, nothing is checked with GCash, and
- * the plan is only a label, so every feature stays on for every store.
+ * Demo subscription for the project defense: compare Free and Plus, then a
+ * typed GCash reference number activates Plus. No money moves, nothing is
+ * checked with GCash, and the plan is only a label, so every feature stays on
+ * for every store. Owners can change the plan; staff see it only.
  */
 export function SubscriptionSettings() {
   const { activeBusiness, isManager, refresh } = useAuth();
   const { showToast } = useToast();
+  const history = useHistory();
   const businessId = activeBusiness?.id;
 
   const [state, setState] = useState<SubscriptionState | null>(null);
   const [loading, setLoading] = useState(true);
-  const [open, setOpen] = useState(false);
   const [term, setTerm] = useState<SubscriptionTerm>('monthly');
+  const [open, setOpen] = useState(false);
   const [reference, setReference] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -133,97 +182,107 @@ export function SubscriptionSettings() {
   const currentPayment = state?.history.find((h) => !h.cancelled && new Date(h.expiresAt) > new Date());
 
   return (
-    <>
-      <Card className="bl-set__group" padding="none">
-        <header className="bl-set__group-head">
-          <span className="bl-set__group-icon" aria-hidden="true">
-            <IonIcon icon={ribbonOutline} />
-          </span>
-          <div>
-            <h2 className="bl-card-title">{t('Your plan')}</h2>
-            <p className="bl-caption">{t('Your store plan and GCash payments.')}</p>
+    <div className="bl-plans">
+      <button type="button" className="bl-plans__close" aria-label={t('Close')} onClick={() => history.goBack()}>
+        <IonIcon icon={closeOutline} aria-hidden="true" />
+      </button>
+
+      <h2 className="bl-plans__title">{onPlus ? t('Your plan') : t('Upgrade your plan')}</h2>
+
+      {loading ? (
+        <p className="bl-caption bl-plans__status">{t('Loading')}</p>
+      ) : !state ? (
+        <p className="bl-caption bl-plans__status">{t('Could not load your plan. Please try again.')}</p>
+      ) : (
+        <>
+          <div className="bl-plans__terms" role="radiogroup" aria-label={t('Choose a plan length')}>
+            {state.terms.map((o) => (
+              <button
+                key={o.term}
+                type="button"
+                role="radio"
+                aria-checked={term === o.term}
+                className={`bl-plans__term ${term === o.term ? 'bl-plans__term--on' : ''}`}
+                onClick={() => setTerm(o.term)}
+              >
+                {TERM_LABEL[o.term]}
+              </button>
+            ))}
           </div>
-          {isManager && state && (
-            <Button variant="primary" size="sm" onClick={() => setOpen(true)} style={{ marginLeft: 'auto' }}>
-              {onPlus ? t('Extend') : t('Upgrade to Plus')}
-            </Button>
-          )}
-        </header>
 
-        <p className="bl-sub__note" role="note">
-          <IonIcon icon={informationCircleOutline} aria-hidden="true" />
-          {t('Demo for project defense: no real payment is taken, and every feature stays available on every plan.')}
-        </p>
-
-        <div className="bl-set__rows">
-          {loading ? (
-            <div className="bl-set__row">
-              <span className="bl-caption">{t('Loading')}</span>
-            </div>
-          ) : !state ? (
-            <div className="bl-set__row">
-              <span className="bl-caption">{t('Could not load your plan. Please try again.')}</span>
-            </div>
-          ) : (
-            <>
-              <div className="bl-set__row">
-                <div className="bl-set__row-text">
-                  <span className="bl-set__row-title">{t('Current plan')}</span>
-                  <span className="bl-caption">
-                    {onPlus && state.expiresAt
-                      ? t('Active until {{date}}', { date: shortDate(state.expiresAt) })
-                      : t('No active subscription')}
-                    {onPlus && currentPayment ? ` · ${t('Ref {{reference}}', { reference: currentPayment.reference })}` : ''}
-                  </span>
-                </div>
-                <div className="bl-set__row-control" style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                  <Badge tone={onPlus ? 'success' : 'neutral'}>{onPlus ? t('Plus') : t('Free')}</Badge>
-                  {isManager && onPlus && (
-                    <Button variant="ghost" size="sm" onClick={() => setConfirmFree(true)}>
-                      {t('Go back to Free')}
-                    </Button>
-                  )}
-                </div>
-              </div>
-
-              <div className="bl-set__row">
-                <div className="bl-set__row-text">
-                  <span className="bl-set__row-title">{t('Plus prices')}</span>
-                  <span className="bl-caption">
-                    {state.terms.map((o) => `${TERM_LABEL[o.term]} ${peso(o.amount)}`).join(' · ')}
-                  </span>
-                </div>
-              </div>
-
-              <div className="bl-set__row">
-                <div className="bl-set__row-text">
-                  <span className="bl-set__row-title">{t('Planned for Plus')}</span>
-                  <span className="bl-caption">{PLANNED_FEATURES.join(' · ')}</span>
-                </div>
-              </div>
-
-              {state.history.length > 0 && (
-                <div className="bl-set__row bl-sub__history-row">
-                  <span className="bl-set__row-title">{t('Payment history')}</span>
-                  <ul className="bl-sub__history">
-                    {state.history.map((h) => (
-                      <li key={h.id}>
-                        <span>
-                          {TERM_LABEL[h.term]} · {peso(h.amount)}
-                          {h.cancelled ? ` · ${t('Ended early')}` : ''}
-                        </span>
-                        <span className="bl-caption">
-                          {shortDate(h.paidAt)} · {h.reference}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+          <div className="bl-plans__cards">
+            <article className="bl-plan">
+              <p className="bl-plan__name">{t('Free')}</p>
+              <h3 className="bl-plan__headline">{t('Run your store')}</h3>
+              <p className="bl-plan__lead">{t('Everything you need to record your day.')}</p>
+              {onPlus && isManager ? (
+                <button type="button" className="bl-plan__cta bl-plan__cta--outline" onClick={() => setConfirmFree(true)}>
+                  {t('Go back to Free')}
+                </button>
+              ) : (
+                <span className="bl-plan__cta bl-plan__cta--current">{onPlus ? t('Free') : t('Your current plan')}</span>
               )}
-            </>
+              <p className="bl-plan__price">
+                <strong>{peso(0)}</strong> {t('/ month')}
+              </p>
+              <Benefits items={FREE_BENEFITS} />
+            </article>
+
+            <article className="bl-plan bl-plan--plus">
+              <div className="bl-plan__top">
+                <p className="bl-plan__name">{t('Plus')}</p>
+                <span className="bl-plan__badge">{onPlus ? t('Your plan') : t('Recommended')}</span>
+              </div>
+              <h3 className="bl-plan__headline">{t('Grow your store')}</h3>
+              <p className="bl-plan__lead">{t('Know what to stock, for every season and event.')}</p>
+              {isManager ? (
+                <button type="button" className="bl-plan__cta bl-plan__cta--primary" onClick={() => setOpen(true)}>
+                  <IonIcon icon={sparkles} aria-hidden="true" />
+                  {onPlus ? t('Extend Plus') : t('Upgrade to Plus')}
+                </button>
+              ) : (
+                <span className="bl-plan__cta bl-plan__cta--current">
+                  {onPlus ? t('Your current plan') : t('Ask the owner to upgrade')}
+                </span>
+              )}
+              <p className="bl-plan__price">
+                <strong>{selected ? peso(selected.amount) : ''}</strong> {TERM_UNIT[term]}
+              </p>
+              {onPlus && state.expiresAt && (
+                <p className="bl-plan__active">
+                  {t('Active until {{date}}', { date: shortDate(state.expiresAt) })}
+                  {currentPayment ? ` · ${t('Ref {{reference}}', { reference: currentPayment.reference })}` : ''}
+                </p>
+              )}
+              <Benefits items={PLUS_BENEFITS} plus />
+            </article>
+          </div>
+
+          <p className="bl-plans__note" role="note">
+            <IonIcon icon={informationCircleOutline} aria-hidden="true" />
+            {t('Demo for project defense: no real payment is taken. The limits shown are planned; for now, every store keeps every feature.')}
+          </p>
+
+          {state.history.length > 0 && (
+            <section className="bl-plans__history">
+              <h3>{t('Payment history')}</h3>
+              <ul>
+                {state.history.map((h) => (
+                  <li key={h.id}>
+                    <span>
+                      {TERM_LABEL[h.term]} · {peso(h.amount)}
+                      {h.cancelled ? ` · ${t('Ended early')}` : ''}
+                    </span>
+                    <span className="bl-caption">
+                      {shortDate(h.paidAt)} · {h.reference}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </section>
           )}
-        </div>
-      </Card>
+        </>
+      )}
 
       <Modal
         isOpen={open}
@@ -243,27 +302,13 @@ export function SubscriptionSettings() {
         }
       >
         <div className="bl-form-grid">
-          <div className="bl-sub__terms" role="radiogroup" aria-label={t('Choose a plan length')}>
-            {state?.terms.map((o) => (
-              <button
-                key={o.term}
-                type="button"
-                role="radio"
-                aria-checked={term === o.term}
-                className={`bl-sub__term ${term === o.term ? 'bl-sub__term--on' : ''}`}
-                onClick={() => setTerm(o.term)}
-              >
-                <span>{TERM_LABEL[o.term]}</span>
-                <strong>{peso(o.amount)}</strong>
-              </button>
-            ))}
-          </div>
-
           <div className="bl-sub__pay">
             <SampleQr />
             <div className="bl-sub__pay-text">
               <GCashLogo size={30} />
-              <p>{t('Amount: {{amount}}', { amount: selected ? peso(selected.amount) : '' })}</p>
+              <p>
+                {t('Amount: {{amount}}', { amount: selected ? peso(selected.amount) : '' })} {TERM_UNIT[term]}
+              </p>
               <p className="bl-caption">{t('Type the reference number of the sample payment below.')}</p>
             </div>
           </div>
@@ -291,7 +336,7 @@ export function SubscriptionSettings() {
         onConfirm={() => void goFree()}
         onCancel={() => setConfirmFree(false)}
       />
-    </>
+    </div>
   );
 }
 

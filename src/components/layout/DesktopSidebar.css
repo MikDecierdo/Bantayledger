@@ -237,25 +237,28 @@
   .bl-sidebar-toggle { top: 22px; }
 }
 
-/* The Free/Plus label beside the store name. */
-.bl-plan-chip {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 0 6px;
+/* Plan and Upgrade button in the user card. */
+.bl-sidebar__user-biz strong { font-weight: var(--bl-fw-semibold); }
+.bl-sidebar__plan--plus { color: var(--bl-green); }
+.bl-sidebar__upgrade {
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 4px 10px;
+  border: 1px solid var(--bl-border-strong);
   border-radius: 999px;
-  background: var(--bl-border);
-  color: var(--bl-text-secondary);
-  font-size: 10px;
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font-size: var(--bl-fs-xs);
   font-weight: var(--bl-fw-semibold);
-  line-height: 16px;
-  vertical-align: 1px;
+  white-space: nowrap;
 }
-.bl-plan-chip--plus { background: var(--bl-green); color: #fff; }
+.bl-sidebar__upgrade:hover { border-color: var(--bl-green); color: var(--bl-green-dark); }
+.bl-sidebar__upgrade:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
 
 /* Shortcut buttons on the right of the Profile row. They sit beside the link,
    not inside it, because one link can't contain another. */
 .bl-sidebar__with-shortcuts { position: relative; }
-.bl-sidebar__with-shortcuts .bl-sidenav { padding-right: 68px; }
+.bl-sidebar__with-shortcuts .bl-sidenav { padding-right: 40px; }
 .bl-sidebar__shortcuts {
   position: absolute;
   top: 50%;

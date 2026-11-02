@@ -22,7 +22,7 @@ interface MoreSheetProps {
 export function MoreSheet({ isOpen, onClose, alertCount }: MoreSheetProps) {
   const { pathname } = useLocation();
   const history = useHistory();
-  const { activeBusiness, signOut } = useAuth();
+  const { activeBusiness, isManager, signOut } = useAuth();
 
   const handleLogout = async () => {
     onClose();
@@ -46,6 +46,16 @@ export function MoreSheet({ isOpen, onClose, alertCount }: MoreSheetProps) {
       size="sm"
     >
       <nav className="bl-more" aria-label={t('More')}>
+        {activeBusiness && isManager && (
+          <div className="bl-more__plan">
+            <span>
+              <strong>{activeBusiness.plan === 'plus' ? t('Plus') : t('Free')}</strong> · {t('Your current plan')}
+            </span>
+            <Link to="/subscription" className="bl-more__upgrade" onClick={onClose}>
+              {activeBusiness.plan === 'plus' ? t('Manage') : t('Upgrade')}
+            </Link>
+          </div>
+        )}
         {moreGroups.map((group) => (
           <section key={group.title} className="bl-more__group">
             <h3 className="bl-more__title">{group.title}</h3>

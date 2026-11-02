@@ -78,7 +78,7 @@
 
 /* Shortcut buttons on the right of the Profile row. */
 .bl-more__with-shortcuts { position: relative; }
-.bl-more__with-shortcuts .bl-more__item { padding-right: 112px; }
+.bl-more__with-shortcuts .bl-more__item { padding-right: 64px; }
 .bl-more__shortcuts {
   position: absolute;
   top: 50%;
@@ -99,3 +99,29 @@
 }
 .bl-more__shortcut:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
 .bl-more__shortcut--active { background: var(--bl-green); color: #fff; }
+
+/* Plan row with the Upgrade button. */
+.bl-more__plan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  margin-bottom: var(--bl-s3);
+  padding: var(--bl-s3) var(--bl-s4);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  background: var(--bl-surface);
+  color: var(--bl-text-secondary);
+  font-size: var(--bl-fs-sm);
+}
+.bl-more__plan strong { color: var(--bl-text); }
+.bl-more__upgrade {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--bl-green);
+  color: #fff;
+  font-weight: var(--bl-fw-semibold);
+  text-decoration: none;
+}
+.bl-more__upgrade:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
