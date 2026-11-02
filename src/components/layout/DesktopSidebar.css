@@ -251,3 +251,30 @@
   vertical-align: 1px;
 }
 .bl-plan-chip--plus { background: var(--bl-green); color: #fff; }
+
+/* Shortcut buttons on the right of the Profile row. They sit beside the link,
+   not inside it, because one link can't contain another. */
+.bl-sidebar__with-shortcuts { position: relative; }
+.bl-sidebar__with-shortcuts .bl-sidenav { padding-right: 68px; }
+.bl-sidebar__shortcuts {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: flex;
+  gap: 2px;
+  transform: translateY(-50%);
+}
+.bl-sidebar__shortcut {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--bl-r-sm, 6px);
+  color: var(--bl-text-secondary);
+  font-size: 17px;
+  transition: background var(--bl-dur-fast) var(--bl-ease), color var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-sidebar__shortcut:hover { background: var(--bl-green-light); color: var(--bl-green-dark); }
+.bl-sidebar__shortcut:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+.bl-sidebar__shortcut--active { background: var(--bl-green); color: #fff; }
+.bl-sidebar__shortcut--active:hover { background: var(--bl-green-dark); color: #fff; }

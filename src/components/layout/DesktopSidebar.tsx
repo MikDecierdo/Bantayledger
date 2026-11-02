@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toUserMessage } from '../../lib/errors';
 import { alertError, confirmLogout } from '../../lib/swal';
 import { Logo } from '../brand/Logo';
-import { accountNav, intelligenceNav, primaryNav, type NavItem } from './navItems';
+import { accountNav, intelligenceNav, primaryNav, profileShortcuts, type NavItem } from './navItems';
 import './DesktopSidebar.css';
 import { t } from '../../i18n';
 
@@ -44,7 +44,7 @@ function NavGroup({
           const badge = item.badgeKey === 'alerts' ? alertCount : 0;
 
           return (
-            <li key={item.href}>
+            <li key={item.href} className={item.href === '/profile' && !collapsed ? 'bl-sidebar__with-shortcuts' : undefined}>
               <NavLink
                 to={item.href}
                 className={`bl-sidenav ${active ? 'bl-sidenav--active' : ''}`}
@@ -60,6 +60,22 @@ function NavGroup({
                   </span>
                 )}
               </NavLink>
+              {item.href === '/profile' && !collapsed && (
+                <span className="bl-sidebar__shortcuts">
+                  {profileShortcuts.map((shortcut) => (
+                    <NavLink
+                      key={shortcut.href}
+                      to={shortcut.href}
+                      className={`bl-sidebar__shortcut ${currentPath === shortcut.href ? 'bl-sidebar__shortcut--active' : ''}`}
+                      aria-label={shortcut.label}
+                      aria-current={currentPath === shortcut.href ? 'page' : undefined}
+                      title={shortcut.label}
+                    >
+                      <IonIcon icon={shortcut.icon} aria-hidden="true" />
+                    </NavLink>
+                  ))}
+                </span>
+              )}
             </li>
           );
         })}
@@ -146,7 +162,8 @@ export function DesktopSidebar({
 
         <div className="bl-sidebar__footer">
           <NavGroup
-            items={accountNav}
+            // The narrow icon rail has no room beside Profile, so they get their own rows.
+            items={collapsed ? [...accountNav, ...profileShortcuts] : accountNav}
             collapsed={collapsed}
             alertCount={0}
             currentPath={pathname}

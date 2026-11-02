@@ -140,7 +140,7 @@ export function SubscriptionSettings() {
             <IonIcon icon={ribbonOutline} />
           </span>
           <div>
-            <h2 className="bl-card-title">{t('Subscription')}</h2>
+            <h2 className="bl-card-title">{t('Your plan')}</h2>
             <p className="bl-caption">{t('Your store plan and GCash payments.')}</p>
           </div>
           {isManager && state && (

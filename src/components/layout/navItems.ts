@@ -2,6 +2,7 @@ import {
   bagOutline,
   barChartOutline,
   bulbOutline,
+  calendarOutline,
   cartOutline,
   cubeOutline,
   homeOutline,
@@ -9,6 +10,7 @@ import {
   notificationsOutline,
   peopleOutline,
   personOutline,
+  ribbonOutline,
   settingsOutline,
   trashOutline,
   trendingUpOutline,
@@ -26,27 +28,37 @@ export interface NavItem {
   badgeKey?: 'alerts';
 }
 
-/** Grouped sidebar navigation for tablet and desktop. */
+/**
+ * Grouped sidebar navigation for tablet and desktop, in the order the system is
+ * used: set up suppliers and products, stock comes in, stock goes out, costs.
+ */
 export const primaryNav: NavItem[] = [
   { label: t('Dashboard'), href: '/dashboard', icon: homeOutline },
-  { label: t('Inventory'), href: '/inventory', icon: cubeOutline },
-  { label: t('Sales'), href: '/sales', icon: cartOutline },
-  { label: t('Purchases'), href: '/purchases', icon: bagOutline },
   { label: t('Suppliers'), href: '/suppliers', icon: peopleOutline },
+  { label: t('Inventory'), href: '/inventory', icon: cubeOutline },
+  { label: t('Purchases'), href: '/purchases', icon: bagOutline },
+  { label: t('Sales'), href: '/sales', icon: cartOutline },
   { label: t('Expenses'), href: '/expenses', icon: walletOutline },
   { label: t('Spoiled & Damaged'), href: '/waste', icon: trashOutline },
 ];
 
+/** What needs attention now, what is coming, what to do, then the summaries. */
 export const intelligenceNav: NavItem[] = [
+  { label: t('Alerts'), href: '/alerts', icon: notificationsOutline, badgeKey: 'alerts' },
   { label: t('Forecast'), href: '/forecast', icon: trendingUpOutline },
   { label: t('AI Insights'), href: '/ai-insights', icon: bulbOutline },
-  { label: t('Alerts'), href: '/alerts', icon: notificationsOutline, badgeKey: 'alerts' },
   { label: t('Reports'), href: '/reports', icon: barChartOutline },
 ];
 
 export const accountNav: NavItem[] = [
   { label: t('Profile'), href: '/profile', icon: personOutline },
   { label: t('Settings'), href: '/settings', icon: settingsOutline },
+];
+
+/** Small shortcut buttons on the right of the Profile row in the menus. */
+export const profileShortcuts: NavItem[] = [
+  { label: t('Local events'), href: '/local-events', icon: calendarOutline },
+  { label: t('Subscription'), href: '/subscription', icon: ribbonOutline },
 ];
 
 export const logoutItem = { label: t('Logout'), href: '/login', icon: logOutOutline };
@@ -79,7 +91,7 @@ export const moreGroups: { title: string; items: NavItem[] }[] = [
   { title: t('Account'), items: accountNav },
 ];
 
-const ALL = [...primaryNav, ...intelligenceNav, ...accountNav];
+const ALL = [...primaryNav, ...intelligenceNav, ...accountNav, ...profileShortcuts];
 
 /** Page title used by the mobile header, matched on the longest prefix. */
 export function titleForPath(path: string): string {
