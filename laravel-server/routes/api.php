@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BusinessController;
 use App\Http\Controllers\Api\CategoryController;
@@ -36,6 +37,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::patch('/profile', [BusinessController::class, 'updateProfile']);
     Route::post('/profile/consent', [BusinessController::class, 'acceptPrivacy']);
+
+    // Settings → Your data.
+    Route::get('/account/export', [AccountController::class, 'export'])->middleware('throttle:10,1');
+    Route::post('/account/delete', [AccountController::class, 'destroy'])->middleware('throttle:5,1');
 
     Route::prefix('/businesses/{business}')->group(function () {
         Route::get('/', [BusinessController::class, 'show'])->middleware('business.member');

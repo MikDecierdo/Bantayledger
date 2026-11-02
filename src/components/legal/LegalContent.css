@@ -1,0 +1,10 @@
+.bl-legal-text { display: grid; gap: var(--bl-s4); font-size: var(--bl-fs-base); line-height: var(--bl-lh-normal); color: var(--bl-text); }
+.bl-legal-text p { margin: 0; }
+.bl-legal-text section { display: grid; gap: var(--bl-s2); }
+.bl-legal-text h2 { margin: 0; font-size: var(--bl-fs-md); font-weight: var(--bl-fw-semibold); }
+.bl-legal-text ul { margin: 0; padding-left: var(--bl-s5); display: grid; gap: var(--bl-s2); list-style: disc; }
+.bl-legal-text__contact { display: grid; gap: var(--bl-s2); margin: 0; }
+.bl-legal-text__contact div { display: flex; flex-wrap: wrap; gap: var(--bl-s2); }
+.bl-legal-text__contact dt { font-weight: var(--bl-fw-semibold); }
+.bl-legal-text__contact dt::after { content: ':'; }
+.bl-legal-text__contact dd { margin: 0; }

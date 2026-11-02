@@ -298,5 +298,357 @@
   "They update when your records change. Refresh recalculates right now.": [
     "Nag-a-update ito kapag nagbago ang mga tala mo. Kinukuwenta muli ng Refresh ngayon din.",
     "Mag-update kini kon mausab ang imong mga rekord. Ang Refresh mokwenta pag-usab karon dayon."
+  ],
+  "Privacy Policy": [
+    "Patakaran sa Privacy",
+    "Palisiya sa Privacy"
+  ],
+  "Terms of Service": [
+    "Mga Tuntunin ng Serbisyo",
+    "Mga Termino sa Serbisyo"
+  ],
+  "Refund Policy": [
+    "Patakaran sa Refund",
+    "Palisiya sa Refund"
+  ],
+  "Cookie Policy": [
+    "Patakaran sa Cookie",
+    "Palisiya sa Cookie"
+  ],
+  "Policies": [
+    "Mga Patakaran",
+    "Mga Palisiya"
+  ],
+  "Back": [
+    "Bumalik",
+    "Balik"
+  ],
+  "Age": [
+    "Edad",
+    "Edad"
+  ],
+  "Last updated: {{date}}": [
+    "Huling na-update: {{date}}",
+    "Katapusang na-update: {{date}}"
+  ],
+  "BantayLedger AI is made by Kim G. Decierdo. This page is written in plain language so that it is easy to understand.": [
+    "Ginawa ni Kim G. Decierdo ang BantayLedger AI. Nakasulat ang pahinang ito sa simpleng salita para madaling maintindihan.",
+    "Gihimo ni Kim G. Decierdo ang BantayLedger AI. Gisulat kini nga panid sa yanong pulong aron sayon masabtan."
+  ],
+  "What we collect": [
+    "Ano ang kinokolekta namin",
+    "Unsay among gikolekta"
+  ],
+  "The names and contact details of the suppliers and staff you add, and optional map locations of your suppliers.": [
+    "Ang mga pangalan at kontak ng mga supplier at staff na idinagdag mo, at ang opsyonal na lokasyon sa mapa ng iyong mga supplier.",
+    "Ang mga ngalan ug kontak sa mga supplier ug staff nga imong gidugang, ug ang opsyonal nga lokasyon sa mapa sa imong mga supplier."
+  ],
+  "Why we use it": [
+    "Bakit namin ito ginagamit",
+    "Nganong gigamit namo kini"
+  ],
+  "Who helps run the system": [
+    "Sino ang tumutulong magpatakbo ng system",
+    "Kinsa ang motabang sa pagpadagan sa sistema"
+  ],
+  "Render, in the United States, runs the app server and the website.": [
+    "Ang Render, sa United States, ang nagpapatakbo ng server ng app at ng website.",
+    "Ang Render, sa United States, ang nagpadagan sa server sa app ug sa website."
+  ],
+  "Aiven, in the United States, stores the database.": [
+    "Ang Aiven, sa United States, ang nag-iimbak ng database.",
+    "Ang Aiven, sa United States, ang nagtipig sa database."
+  ],
+  "Brevo sends password reset emails, so it receives your email address when you ask for one.": [
+    "Ang Brevo ang nagpapadala ng email para sa pag-reset ng password, kaya natatanggap nito ang email address mo kapag humiling ka nito.",
+    "Ang Brevo ang nagpadala sa email para sa pag-reset sa password, busa madawat niini ang imong email address kon mangayo ka."
+  ],
+  "GitHub provides the app downloads and the update check.": [
+    "Ang GitHub ang nagbibigay ng mga download ng app at ng pagsusuri ng update.",
+    "Ang GitHub ang naghatag sa mga download sa app ug sa pagsusi sa update."
+  ],
+  "If \"Explain with AI\" is turned on, only a product name, its category and its weekly unit counts are sent to the AI service. Your name, customers and prices are never sent.": [
+    "Kung naka-on ang \"Explain with AI\", pangalan ng produkto, kategorya nito at lingguhang bilang ng unit lang ang ipinapadala sa serbisyo ng AI. Hindi kailanman ipinapadala ang pangalan mo, mga customer at mga presyo.",
+    "Kon naka-on ang \"Explain with AI\", ngalan sa produkto, kategorya niini ug senemanang ihap sa unit ra ang ipadala sa serbisyo sa AI. Dili gayud ipadala ang imong ngalan, mga customer ug mga presyo."
+  ],
+  "This means your information is stored and processed outside the Philippines.": [
+    "Ibig sabihin, iniimbak at pinoproseso ang impormasyon mo sa labas ng Pilipinas.",
+    "Nagpasabot kini nga ang imong impormasyon gitipigan ug giproseso sa gawas sa Pilipinas."
+  ],
+  "How long we keep it": [
+    "Gaano katagal namin ito itinatago",
+    "Unsa kadugay namo kini tipigan"
+  ],
+  "We keep your data until you delete it or delete your account.": [
+    "Itinatago namin ang data mo hanggang burahin mo ito o ang account mo.",
+    "Tipigan namo ang imong data hangtod nga imo kining papason o ang imong account."
+  ],
+  "After deletion, copies may remain in the service providers' backups for a limited time.": [
+    "Pagkatapos burahin, maaaring may kopya pa sa mga backup ng mga service provider sa limitadong panahon.",
+    "Human mapapas, mahimong naa pay kopya sa mga backup sa mga service provider sulod sa limitadong panahon."
+  ],
+  "Your rights": [
+    "Ang iyong mga karapatan",
+    "Ang imong mga katungod"
+  ],
+  "Under the Data Privacy Act of 2012, you can ask to see, correct or delete your data, and you can withdraw your consent.": [
+    "Sa ilalim ng Data Privacy Act of 2012, maaari mong hilingin na makita, itama o burahin ang data mo, at maaari mong bawiin ang pahintulot mo.",
+    "Ubos sa Data Privacy Act of 2012, mahimo nimong hangyoon nga makita, matul-id o mapapas ang imong data, ug mahimo nimong bawion ang imong pagtugot."
+  ],
+  "You can download or delete your data yourself in Settings → Your data.": [
+    "Maaari mong i-download o burahin mismo ang data mo sa Settings → Ang data mo.",
+    "Mahimo nimong i-download o papason mismo ang imong data sa Settings → Imong data."
+  ],
+  "The owner controls a store's records. Deleting a staff account removes the login, but the records it entered stay with the store, without the name.": [
+    "Ang may-ari ang may kontrol sa mga tala ng tindahan. Kapag binura ang account ng staff, mawawala ang login nito, pero mananatili sa tindahan ang mga itinala nito, nang walang pangalan.",
+    "Ang tag-iya ang adunay kontrol sa mga rekord sa tindahan. Kon papason ang account sa staff, mawala ang login niini, apan magpabilin sa tindahan ang mga narekord niini, walay ngalan."
+  ],
+  "BantayLedger AI is for people aged 18 or older.": [
+    "Para sa mga edad 18 pataas ang BantayLedger AI.",
+    "Para sa mga edad 18 pataas ang BantayLedger AI."
+  ],
+  "About this service": [
+    "Tungkol sa serbisyong ito",
+    "Mahitungod niini nga serbisyo"
+  ],
+  "BantayLedger AI is a student project prepared for a project defense. It is provided as it is, and it may change or stop at any time.": [
+    "Ang BantayLedger AI ay proyekto ng estudyante na inihanda para sa project defense. Ibinibigay ito kung ano ito, at maaari itong magbago o tumigil anumang oras.",
+    "Ang BantayLedger AI usa ka proyekto sa estudyante nga giandam para sa project defense. Gihatag kini kung unsa kini, ug mahimo kining mausab o mohunong bisan unsang orasa."
+  ],
+  "Using your account": [
+    "Paggamit ng account mo",
+    "Paggamit sa imong account"
+  ],
+  "You must be 18 or older to create an account.": [
+    "Dapat 18 taong gulang pataas ka para gumawa ng account.",
+    "Kinahanglan 18 anyos pataas ka aron makahimo og account."
+  ],
+  "Keep your password private. You are responsible for what is done with your account.": [
+    "Panatilihing pribado ang password mo. Ikaw ang responsable sa mga ginagawa gamit ang account mo.",
+    "Ayaw ipaambit ang imong password. Ikaw ang responsable sa mga gibuhat gamit ang imong account."
+  ],
+  "Use the system only for lawful business records, and add other people's details only when you have the right to.": [
+    "Gamitin ang system para lang sa mga legal na tala ng negosyo, at idagdag lang ang detalye ng ibang tao kung may karapatan ka.",
+    "Gamita ang sistema para lang sa mga legal nga rekord sa negosyo, ug idugang lang ang detalye sa ubang tawo kon aduna kay katungod."
+  ],
+  "Your records": [
+    "Ang iyong mga tala",
+    "Ang imong mga rekord"
+  ],
+  "Your records stay yours, and you are responsible for checking that they are correct.": [
+    "Sa iyo pa rin ang mga tala mo, at ikaw ang responsable sa pagsuri kung tama ang mga ito.",
+    "Imo gihapon ang imong mga rekord, ug ikaw ang responsable sa pagsusi kon husto kini."
+  ],
+  "Keep your own copy of important records. We cannot promise that the service will always be available or that data will never be lost.": [
+    "Magtabi ng sarili mong kopya ng mahahalagang tala. Hindi namin maipapangako na laging available ang serbisyo o na hindi kailanman mawawala ang data.",
+    "Pagtipig og imong kaugalingong kopya sa importanteng mga rekord. Dili namo masaad nga kanunay magamit ang serbisyo o nga dili gayud mawala ang data."
+  ],
+  "Forecasts and AI": [
+    "Mga forecast at AI",
+    "Mga forecast ug AI"
+  ],
+  "Forecasts, alerts and AI-written text are estimates and suggestions, not guarantees or professional advice. You make the final decision.": [
+    "Mga tantiya at mungkahi lang ang mga forecast, alert at tekstong isinulat ng AI, hindi garantiya o propesyonal na payo. Ikaw ang huling magpapasya.",
+    "Mga banabana ug sugyot lang ang mga forecast, alert ug tekstong gisulat sa AI, dili garantiya o propesyonal nga tambag. Ikaw ang katapusang modesisyon."
+  ],
+  "Plans and payments": [
+    "Mga plano at bayad",
+    "Mga plano ug bayad"
+  ],
+  "The Subscription page is a demonstration. It takes no real payment, and every store keeps every feature.": [
+    "Demonstrasyon lang ang pahina ng Subscription. Walang totoong bayad na kinukuha, at nananatili sa bawat tindahan ang lahat ng feature.",
+    "Demonstrasyon lang ang panid sa Subscription. Walay tinuod nga bayad nga gikuha, ug magpabilin sa matag tindahan ang tanang feature."
+  ],
+  "Limits and ending": [
+    "Mga limitasyon at pagtatapos",
+    "Mga limitasyon ug pagtapos"
+  ],
+  "As far as the law allows, the developer is not liable for losses from using the system.": [
+    "Hangga't pinapayagan ng batas, walang pananagutan ang developer sa mga pagkalugi mula sa paggamit ng system.",
+    "Kutob sa gitugot sa balaod, walay tulubagon ang developer sa mga kapildihan gikan sa paggamit sa sistema."
+  ],
+  "You can stop at any time by deleting your account in Settings → Your data.": [
+    "Maaari kang tumigil anumang oras sa pamamagitan ng pagbura ng account mo sa Settings → Ang data mo.",
+    "Mahimo kang mohunong bisan unsang orasa pinaagi sa pagpapas sa imong account sa Settings → Imong data."
+  ],
+  "No real payments": [
+    "Walang totoong bayad",
+    "Walay tinuod nga bayad"
+  ],
+  "This system takes no real payment, so there is nothing to refund.": [
+    "Walang totoong bayad na kinukuha ang system na ito, kaya walang kailangang i-refund.",
+    "Walay tinuod nga bayad nga gikuha kini nga sistema, busa walay kinahanglan i-refund."
+  ],
+  "The GCash reference typed on the Subscription page is a demonstration. It is not checked with GCash, and no money moves.": [
+    "Demonstrasyon lang ang GCash reference na tina-type sa pahina ng Subscription. Hindi ito sinusuri sa GCash, at walang perang gumagalaw.",
+    "Demonstrasyon lang ang GCash reference nga gi-type sa panid sa Subscription. Dili kini gisusi sa GCash, ug walay kwarta nga mabalhin."
+  ],
+  "If that changes": [
+    "Kung magbago ito",
+    "Kon mausab kini"
+  ],
+  "If real payments are added, the refund terms will be published here before anyone is charged.": [
+    "Kung madagdag ang totoong bayad, ilalathala rito ang mga tuntunin sa refund bago singilin ang sinuman.",
+    "Kon madugang ang tinuod nga bayad, ipatik dinhi ang mga termino sa refund sa dili pa singilon ang bisan kinsa."
+  ],
+  "Your own customers": [
+    "Ang sarili mong mga customer",
+    "Ang imong kaugalingong mga customer"
+  ],
+  "Cash and GCash sales you record are between you and your customers. The system only keeps a record of them.": [
+    "Sa pagitan mo at ng mga customer mo ang mga benta sa Cash at GCash na itinala mo. Talaan lang ang itinatago ng system.",
+    "Tali kanimo ug sa imong mga customer ang mga halin sa Cash ug GCash nga imong girekord. Rekord lang ang gitipigan sa sistema."
+  ],
+  "Cookies and tracking": [
+    "Cookies at pagsubaybay",
+    "Cookies ug pagsubay"
+  ],
+  "BantayLedger AI does not use cookies, advertising trackers or analytics tools, so there is no cookie banner.": [
+    "Hindi gumagamit ang BantayLedger AI ng cookies, tracker ng advertising o analytics tools, kaya walang cookie banner.",
+    "Wala mogamit ang BantayLedger AI og cookies, tracker sa advertising o analytics tools, busa walay cookie banner."
+  ],
+  "What is saved on your device": [
+    "Ano ang naka-save sa device mo",
+    "Unsay natipig sa imong device"
+  ],
+  "Your sign-in, so you stay signed in until you sign out or it expires after 30 days.": [
+    "Ang sign-in mo, para manatili kang naka-sign in hanggang mag-sign out ka o mag-expire ito pagkalipas ng 30 araw.",
+    "Ang imong sign-in, aron magpabilin kang naka-sign in hangtod mag-sign out ka o ma-expire kini human sa 30 ka adlaw."
+  ],
+  "Your language, your chosen store and your update reminders.": [
+    "Ang wika mo, ang napili mong tindahan at ang mga paalala sa update.",
+    "Ang imong pinulongan, ang imong napiling tindahan ug ang mga pahinumdom sa update."
+  ],
+  "Records made offline until they are sent, and saved copies so pages can open without internet.": [
+    "Mga talang ginawa nang offline hanggang maipadala, at mga naka-save na kopya para bumukas ang mga pahina kahit walang internet.",
+    "Mga rekord nga gihimo nga offline hangtod maipadala, ug mga natipig nga kopya aron maablihan ang mga panid bisan walay internet."
+  ],
+  "Removing it": [
+    "Pag-alis nito",
+    "Pagtangtang niini"
+  ],
+  "Signing out removes your sign-in and saved copies. Clearing your browser's site data removes everything, including records that have not been sent yet.": [
+    "Inaalis ng pag-sign out ang sign-in mo at mga naka-save na kopya. Inaalis ng pag-clear ng site data ng browser ang lahat, pati ang mga talang hindi pa naipapadala.",
+    "Ang pag-sign out mokuha sa imong sign-in ug mga natipig nga kopya. Ang pag-clear sa site data sa browser mokuha sa tanan, lakip ang mga rekord nga wala pa maipadala."
+  ],
+  "Please confirm you are 18 or older and agree to the Terms and Privacy Policy.": [
+    "Pakikumpirma na 18 taong gulang pataas ka at sumasang-ayon sa Mga Tuntunin at Patakaran sa Privacy.",
+    "Palihug kumpirmaha nga 18 anyos pataas ka ug miuyon sa mga Termino ug Palisiya sa Privacy."
+  ],
+  "I am 18 or older and I agree to the Terms of Service and Privacy Policy.": [
+    "18 taong gulang pataas ako at sumasang-ayon ako sa Mga Tuntunin ng Serbisyo at Patakaran sa Privacy.",
+    "18 anyos pataas ako ug miuyon ako sa mga Termino sa Serbisyo ug Palisiya sa Privacy."
+  ],
+  "Read the Terms of Service": [
+    "Basahin ang Mga Tuntunin ng Serbisyo",
+    "Basaha ang mga Termino sa Serbisyo"
+  ],
+  "Read the Privacy Policy": [
+    "Basahin ang Patakaran sa Privacy",
+    "Basaha ang Palisiya sa Privacy"
+  ],
+  "The database is run by Aiven and the app server by Render, both in the United States, so your information is stored outside the Philippines.": [
+    "Aiven ang nagpapatakbo ng database at Render ang sa server ng app, parehong nasa United States, kaya iniimbak ang impormasyon mo sa labas ng Pilipinas.",
+    "Aiven ang nagpadagan sa database ug Render sa server sa app, parehong anaa sa United States, busa gitipigan ang imong impormasyon sa gawas sa Pilipinas."
+  ],
+  "Only people you add to your business (owner or staff) can see your business data, and what they can change depends on their role.": [
+    "Ang mga taong idinagdag mo lang sa negosyo mo (may-ari o staff) ang makakakita ng data ng negosyo mo, at nakadepende sa tungkulin nila ang maaari nilang baguhin.",
+    "Ang mga tawo lang nga imong gidugang sa imong negosyo (tag-iya o staff) ang makakita sa data sa imong negosyo, ug nagdepende sa ilang tahas ang mahimo nilang usbon."
+  ],
+  "You can see and correct your details in Profile, and download or delete your data in Settings → Your data. Deleting your account withdraws your consent.": [
+    "Makikita at maitatama mo ang mga detalye mo sa Profile, at mada-download o mabubura ang data mo sa Settings → Ang data mo. Ang pagbura ng account mo ay pagbawi ng pahintulot mo.",
+    "Makita ug matul-id nimo ang imong mga detalye sa Profile, ug ma-download o mapapas ang imong data sa Settings → Imong data. Ang pagpapas sa imong account mao ang pagbawi sa imong pagtugot."
+  ],
+  "I am 18 or older, I have read this notice, and I agree to it and to the Terms of Service.": [
+    "18 taong gulang pataas ako, nabasa ko ang abisong ito, at sumasang-ayon ako rito at sa Mga Tuntunin ng Serbisyo.",
+    "18 anyos pataas ako, nabasa nako kini nga pahibalo, ug miuyon ako niini ug sa mga Termino sa Serbisyo."
+  ],
+  "Your data": [
+    "Ang data mo",
+    "Imong data"
+  ],
+  "Your data has been downloaded.": [
+    "Na-download na ang data mo.",
+    "Na-download na ang imong data."
+  ],
+  "Could not download your data. Please try again.": [
+    "Hindi ma-download ang data mo. Pakisubukang muli.",
+    "Dili ma-download ang imong data. Palihug sulayi pag-usab."
+  ],
+  "Could not delete your account. Please try again.": [
+    "Hindi mabura ang account mo. Pakisubukang muli.",
+    "Dili mapapas ang imong account. Palihug sulayi pag-usab."
+  ],
+  "Your account has been deleted.": [
+    "Nabura na ang account mo.",
+    "Napapas na ang imong account."
+  ],
+  "Download or delete your information, and read our policies.": [
+    "I-download o burahin ang impormasyon mo, at basahin ang mga patakaran namin.",
+    "I-download o papasa ang imong impormasyon, ug basaha ang among mga palisiya."
+  ],
+  "Download my data": [
+    "I-download ang data ko",
+    "I-download ang akong data"
+  ],
+  "A file with your account details and all the records of the stores you own.": [
+    "Isang file ng mga detalye ng account mo at lahat ng tala ng mga tindahang pag-aari mo.",
+    "Usa ka file sa mga detalye sa imong account ug tanang rekord sa mga tindahan nga imong gipanag-iya."
+  ],
+  "A file with your account details. The owner keeps the store's records.": [
+    "Isang file ng mga detalye ng account mo. Nasa may-ari ang mga tala ng tindahan.",
+    "Usa ka file sa mga detalye sa imong account. Anaa sa tag-iya ang mga rekord sa tindahan."
+  ],
+  "Delete my account": [
+    "Burahin ang account ko",
+    "Papasa ang akong account"
+  ],
+  "This cannot be undone. We suggest downloading your data first.": [
+    "Hindi na ito mababawi. Iminumungkahi naming i-download muna ang data mo.",
+    "Dili na kini mabalik. Among gisugyot nga i-download una ang imong data."
+  ],
+  "Delete account": [
+    "Burahin ang account",
+    "Papasa ang account"
+  ],
+  "Delete your account?": [
+    "Burahin ang account mo?",
+    "Papason ang imong account?"
+  ],
+  "This permanently deletes your account, the stores you own and all their records, photos and staff logins. It cannot be undone.": [
+    "Permanenteng buburahin nito ang account mo, ang mga tindahang pag-aari mo at lahat ng tala, larawan at login ng staff nito. Hindi na ito mababawi.",
+    "Permanente niining papason ang imong account, ang mga tindahan nga imong gipanag-iya ug tanang rekord, litrato ug login sa staff niini. Dili na kini mabalik."
+  ],
+  "This permanently deletes your account. The records you entered stay with the store, without your name.": [
+    "Permanenteng buburahin nito ang account mo. Mananatili sa tindahan ang mga itinala mo, nang wala ang pangalan mo.",
+    "Permanente niining papason ang imong account. Magpabilin sa tindahan ang imong mga narekord, walay imong ngalan."
+  ],
+  "Your data is protected by your sign-in and shared only with people in your business.": [
+    "Protektado ng sign-in mo ang data mo at ibinabahagi lang sa mga tao sa negosyo mo.",
+    "Protektado sa imong sign-in ang imong data ug ipaambit lang sa mga tawo sa imong negosyo."
+  ],
+  "See low stock early": [
+    "Makita nang maaga ang mababang stock",
+    "Makita og sayo ang ubos nga stock"
+  ],
+  "Made for store owners: simple screens, clear numbers, and help when something needs your attention.": [
+    "Ginawa para sa mga may-ari ng tindahan: simpleng screen, malinaw na numero, at tulong kapag may kailangang asikasuhin.",
+    "Gihimo para sa mga tag-iya sa tindahan: yanong screen, klarong numero, ug tabang kon adunay kinahanglan atimanon."
+  ],
+  "Simple to set up": [
+    "Madaling i-set up",
+    "Sayon i-set up"
+  ],
+  "Made to be simple, with everyday words and clear numbers.": [
+    "Ginawang simple, gamit ang mga salitang pang-araw-araw at malinaw na numero.",
+    "Gihimong yano, gamit ang adlaw-adlaw nga pulong ug klarong numero."
+  ],
+  "What your records suggest about demand, supplier prices and purchasing cost. These are estimates, not guarantees.": [
+    "Ang ipinapahiwatig ng mga tala mo tungkol sa demand, presyo ng supplier at gastos sa pagbili. Mga tantiya ito, hindi garantiya.",
+    "Ang gipakita sa imong mga rekord bahin sa demand, presyo sa supplier ug gasto sa pagpalit. Mga banabana kini, dili garantiya."
+  ],
+  "Their login is deleted unless they belong to another store. Their past records stay with the store, without their name.": [
+    "Mabubura ang login nila maliban kung kabilang sila sa ibang tindahan. Mananatili sa tindahan ang mga dati nilang tala, nang wala ang pangalan nila.",
+    "Mapapas ang ilang login gawas kon sakop sila sa laing tindahan. Magpabilin sa tindahan ang ilang daang rekord, walay ilang ngalan."
   ]
 }

@@ -238,5 +238,7 @@
   "You can save up to :max events.": "Hangtod :max ka okasyon ra ang ma-save.",
   "That event is already saved.": "Naka-save na kana nga okasyon.",
   "Enter the full 13-digit GCash reference number.": "Isulat ang tibuok 13 ka digit nga GCash reference number.",
-  "That reference number was already used.": "Nagamit na kana nga reference number."
+  "That reference number was already used.": "Nagamit na kana nga reference number.",
+  "That password is not correct.": "Dili husto kana nga password.",
+  "To create an account, confirm you are 18 or older and agree to the Terms. If you do not see that checkbox, please update the app.": "Aron makahimo og account, kumpirmaha nga 18 anyos pataas ka ug uyon sa mga Termino. Kon dili nimo makita ang checkbox, palihug i-update ang app."
 }

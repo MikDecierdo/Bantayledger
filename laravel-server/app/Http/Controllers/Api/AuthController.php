@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
  */
 class AuthController extends Controller
 {
-    public const PRIVACY_NOTICE_VERSION = '1';
+    public const PRIVACY_NOTICE_VERSION = '2';
 
     public function signup(Request $request)
     {
@@ -33,9 +33,11 @@ class AuthController extends Controller
             'fullName' => 'required|string',
             'phone' => ['nullable', 'string', 'regex:/^\+639\d{9}$/'],
             'businessName' => 'required|string',
+            'acceptTerms' => 'accepted',
         ], [
             'password.regex' => __('Use a stronger password: at least 8 characters with an uppercase letter, a lowercase letter, a number and a symbol.'),
             'phone.regex' => __('Enter a valid Philippine mobile number, e.g. +63 917 123 4567.'),
+            'acceptTerms.accepted' => __('To create an account, confirm you are 18 or older and agree to the Terms. If you do not see that checkbox, please update the app.'),
         ]);
 
         $email = strtolower(trim($data['email']));
@@ -51,6 +53,7 @@ class AuthController extends Controller
                 'name' => trim($data['fullName']),
                 'phone' => isset($data['phone']) ? trim($data['phone']) : null,
                 'password' => Hash::make($data['password']),
+                'terms_accepted_at' => now(),
             ]);
 
             $businessId = (string) Str::uuid();

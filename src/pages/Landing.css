@@ -364,7 +364,7 @@
   border-top: 1px solid var(--bl-border);
 }
 @media (min-width: 900px) {
-  .bl-land__footer-grid { grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); }
+  .bl-land__footer-grid { grid-template-columns: minmax(0, 1.6fr) repeat(4, minmax(0, 1fr)); }
   .bl-land__footer-brand { grid-column: auto; }
 }
 

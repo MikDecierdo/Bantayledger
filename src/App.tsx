@@ -40,6 +40,7 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Welcome from './pages/Welcome';
 import Landing from './pages/Landing';
+import Legal, { LEGAL_ROUTES } from './pages/Legal';
 import UpdatePrompt from './components/layout/UpdatePrompt';
 import { isInstalledApp } from './lib/platform';
 
@@ -67,6 +68,11 @@ function RouteFallback() {
 function Routes() {
   const { pathname } = useLocation();
   const { loading, needsPrivacyNotice, user } = useAuth();
+
+  // Policies open for everyone, signed in or not, before anything else.
+  if (LEGAL_ROUTES[pathname]) {
+    return <Legal />;
+  }
 
   // The website's public home page (download buttons, web app link). The
   // installed Android and Windows apps skip it and open on sign-in.

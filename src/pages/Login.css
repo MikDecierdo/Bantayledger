@@ -195,6 +195,11 @@
 }
 
 .bl-login__foot { text-align: center; max-width: 420px; }
+.bl-login__legal { display: flex; flex-wrap: wrap; justify-content: center; gap: var(--bl-s1) var(--bl-s3); margin: var(--bl-s2) 0 0; }
+.bl-login__legal a { color: var(--bl-text-secondary); }
+.bl-login__terms { align-items: flex-start; }
+.bl-login__terms input { flex-shrink: 0; margin-top: 2px; }
+.bl-login__policies { display: flex; flex-wrap: wrap; gap: var(--bl-s1) var(--bl-s3); margin: var(--bl-s1) 0 0; }
 
 /* ---- Breakpoints --------------------------------------------------------- */
 

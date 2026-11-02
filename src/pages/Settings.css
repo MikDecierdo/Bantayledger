@@ -68,6 +68,8 @@
   width: auto;
 }
 .bl-set__row-control:empty { display: none; }
+.bl-set__links { display: flex; flex-wrap: wrap; gap: var(--bl-s1) var(--bl-s3); }
+.bl-set__links a { color: var(--bl-green-dark); }
 .bl-set__row-control > .bl-field { width: 200px; max-width: 100%; }
 
 /* Inputs move below their label on phones so neither is squeezed. */

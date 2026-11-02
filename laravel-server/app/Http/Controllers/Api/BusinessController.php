@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Services\AccountData;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -53,6 +54,7 @@ class BusinessController extends Controller
         DB::table('users')->where('user_id', $request->user()->user_id)->update([
             'privacy_accepted_at' => now(),
             'privacy_version' => $data['version'],
+            'terms_accepted_at' => now(),
             'language' => $data['language'],
         ]);
 
@@ -201,8 +203,12 @@ class BusinessController extends Controller
             throw ApiException::badRequest('The owner cannot be removed.');
         }
 
-        DB::table('business_users')->where('business_id', $business)->where('user_id', $userId)->delete();
-        DB::table('personal_access_tokens')->where('tokenable_id', $userId)->delete();
+        DB::transaction(function () use ($business, $userId) {
+            DB::table('business_users')->where('business_id', $business)->where('user_id', $userId)->delete();
+            DB::table('personal_access_tokens')->where('tokenable_id', $userId)->delete();
+            // A helper's login exists only for the store; it goes once they have none left.
+            AccountData::deleteUserIfUnattached($userId);
+        });
 
         return response()->noContent();
     }

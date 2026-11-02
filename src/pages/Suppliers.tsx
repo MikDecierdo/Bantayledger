@@ -243,7 +243,16 @@ export function Suppliers() {
                               {initialsOf(supplier.name)}
                             </span>
                             <div>
-                              <div className="bl-table__primary">{supplier.name}</div>
+                              <button
+                                type="button"
+                                className="bl-table__primary bl-sup__namebtn"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDetail(supplier);
+                                }}
+                              >
+                                {supplier.name}
+                              </button>
                               <div className="bl-table__sub">{supplier.address}</div>
                             </div>
                           </div>
