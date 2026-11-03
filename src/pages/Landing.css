@@ -1,7 +1,7 @@
 /* ==========================================================================
    Public home page (Landing.tsx). Ionic pins <body>, so the page scrolls in
    its own container. Restrained, product-led layout: generous whitespace,
-   real screenshots, one accent colour.
+   an animated tour of the app, one accent colour.
    ========================================================================== */
 
 .bl-land {
@@ -145,31 +145,8 @@
 .bl-land__proof li { display: inline-flex; align-items: center; gap: var(--bl-s2); }
 .bl-land__proof ion-icon { font-size: 17px; color: var(--bl-green); }
 
-/* Product shots: a browser window with a phone overlapping its corner. */
-.bl-land__hero-art { position: relative; padding-bottom: var(--bl-s8); }
-.bl-land__screen {
-  border-radius: var(--bl-r-lg);
-  border: 1px solid var(--bl-border-strong);
-  background: var(--bl-surface);
-  box-shadow: 0 30px 60px -20px rgba(23, 34, 30, 0.28), 0 12px 24px -12px rgba(23, 34, 30, 0.16);
-  overflow: hidden;
-}
-.bl-land__screen-bar { display: flex; gap: 6px; padding: 10px 12px; background: #F1F4F2; border-bottom: 1px solid var(--bl-border); }
-.bl-land__screen-bar span { width: 10px; height: 10px; border-radius: 50%; background: #D3DED8; }
-.bl-land__screen img { display: block; width: 100%; height: auto; }
-.bl-land__phone {
-  position: absolute;
-  right: -8px;
-  bottom: 0;
-  width: 30%;
-  min-width: 120px;
-  border-radius: 22px;
-  border: 6px solid #17221E;
-  background: #17221E;
-  box-shadow: 0 24px 48px -16px rgba(23, 34, 30, 0.45);
-  overflow: hidden;
-}
-.bl-land__phone img { display: block; width: 100%; height: auto; border-radius: 16px; }
+/* The animated tour of the app. */
+.bl-land__hero-art { width: 100%; max-width: 720px; min-width: 0; margin: 0 auto; }
 
 @media (min-width: 1000px) {
   .bl-land__hero { padding: 88px 0 72px; }
@@ -405,7 +382,6 @@
   .bl-land__hero { padding: var(--bl-s10) 0 var(--bl-s8); }
   .bl-land__cta .bl-land__btn { flex: 1 1 100%; }
   .bl-land__section { padding: 64px 0; }
-  .bl-land__phone { width: 34%; right: 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {

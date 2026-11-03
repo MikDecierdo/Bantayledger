@@ -21,6 +21,7 @@ import { Link } from 'react-router-dom';
 import Logo from '../components/brand/Logo';
 import LanguageSelect from '../components/common/LanguageSelect';
 import { DOWNLOADS } from '../data/downloads';
+import AppTour from '../components/brand/AppTour';
 import './Landing.css';
 import { t } from '../i18n';
 
@@ -203,16 +204,8 @@ export function Landing() {
               </ul>
             </div>
 
-            <div className="bl-land__hero-art" aria-hidden="true">
-              <div className="bl-land__screen">
-                <div className="bl-land__screen-bar">
-                  <span /><span /><span />
-                </div>
-                <img src="/landing/dashboard.jpg" alt="" loading="eager" />
-              </div>
-              <div className="bl-land__phone">
-                <img src="/landing/phone.jpg" alt="" loading="eager" />
-              </div>
+            <div className="bl-land__hero-art">
+              <AppTour tone="light" />
             </div>
           </div>
         </section>
