@@ -1,0 +1,23 @@
+{
+  "{{count}} cans": ["{{count}} lata", "{{count}} ka lata"],
+  "{{count}} bottles": ["{{count}} bote", "{{count}} ka botelya"],
+  "{{count}} kg": ["{{count}} kg", "{{count}} kg"],
+  "A quick tour of BantayLedger AI": ["Mabilis na pasyal sa BantayLedger AI", "Dali nga pagpaila sa BantayLedger AI"],
+  "Back online": ["May internet na ulit", "Naay internet na usab"],
+  "Go to step {{n}}: {{title}}": ["Pumunta sa hakbang {{n}}: {{title}}", "Adto sa lakang {{n}}: {{title}}"],
+  "In the menu: {{page}}": ["Sa menu: {{page}}", "Sa menu: {{page}}"],
+  "No internet": ["Walang internet", "Walay internet"],
+  "Order {{count}} more before you run out.": ["Umorder ng {{count}} pa bago maubos.", "Pag-order og {{count}} pa sa dili pa mahurot."],
+  "Pause tour": ["I-pause ang pasyal", "I-pause ang pagpaila"],
+  "Play tour": ["I-play ang pasyal", "I-play ang pagpaila"],
+  "Record a sale in a few taps": ["Magtala ng benta sa ilang pindot", "Pagtala og baligya sa pipila ka pindot"],
+  "Restock {{name}}": ["Magdagdag ng stock ng {{name}}", "Pagdugang og stock sa {{name}}"],
+  "Sample data": ["Halimbawang datos", "Pananglitan nga datos"],
+  "See your store at a glance": ["Makita agad ang lagay ng tindahan", "Makita dayon ang kahimtang sa tindahan"],
+  "Sent": ["Naipadala", "Napadala"],
+  "Short by {{count}}": ["Kulang ng {{count}}", "Kulang og {{count}}"],
+  "Step {{n}} of {{total}}": ["Hakbang {{n}} ng {{total}}", "Lakang {{n}} sa {{total}}"],
+  "Tap products, choose Cash or GCash, and the change is worked out for you.": ["Pindutin ang mga produkto, piliin ang Cash o GCash, at kusang makukuwenta ang sukli.", "Pindota ang mga produkto, pilia ang Cash o GCash, ug awtomatikong makwenta ang sukli."],
+  "Today's sales, low stock and alerts are the first thing you see.": ["Benta ngayon, paubos na stock at mga alerto ang una mong makikita.", "Baligya karon, ubos nga stock ug mga alerto ang una nimong makita."],
+  "You have {{stock}} cans, but should sell about {{need}} in the next 7 days.": ["May {{stock}} lata ka, pero inaasahang mabebenta ang mga {{need}} sa susunod na 7 araw.", "Naa kay {{stock}} ka lata, pero gipaabot nga mabaligya ang mga {{need}} sa sunod nga 7 ka adlaw."]
+}
