@@ -10,8 +10,6 @@ import {
   cubeOutline,
   homeOutline,
   notificationsOutline,
-  pauseOutline,
-  playOutline,
   sparklesOutline,
   trendingUpOutline,
 } from 'ionicons/icons';
@@ -21,20 +19,16 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type AnimationEvent,
   type CSSProperties,
   type ReactNode,
 } from 'react';
 import { t } from '../../i18n';
-import './LoginShowcase.css';
+import './AppTour.css';
 
 /**
- * The sign-in page's left panel: a looping tour of the app, drawn in code rather
+ * A looping tour of the app for the sign-in and home pages, drawn in code rather
  * than filmed, so it stays sharp at any size and follows the chosen language.
  * A cursor opens each page from the menu and does the job, using sample data.
- *
- * One clock runs each step: the progress bar's animation ends, and the next step
- * starts. Pausing freezes every animation inside the tour, so they stay in step.
  */
 
 /** Delay (seconds) before an element animates; `until` is when a swapped value leaves. */
@@ -384,7 +378,8 @@ const SCENES: {
 function animatePointer(stage: HTMLElement, pointer: HTMLElement, ring: HTMLElement, path: CursorStep[], seconds: number) {
   const place = (name: string) => {
     let el = stage.querySelector<HTMLElement>(`[data-sc="${name}"]`);
-    if (!el) return null;
+    // Small stages hide the mini menu, so there's nothing there to point at.
+    if (!el || el.offsetParent === null) return null;
     const width = el.offsetWidth;
     const height = el.offsetHeight;
     let x = 0;
@@ -443,90 +438,81 @@ class TourBoundary extends Component<{ children: ReactNode }, { failed: boolean 
   }
 }
 
-export function LoginShowcase() {
+interface AppTourProps {
+  /** Don't load at all on phones, for pages where the panel only shows on desktop. */
+  desktopOnly?: boolean;
+  /** Caption colours: `dark` for a dark background, `light` for a light one. */
+  tone?: 'dark' | 'light';
+}
+
+export function AppTour(props: AppTourProps) {
   return (
     <TourBoundary>
-      <Tour />
+      <Tour {...props} />
     </TourBoundary>
   );
 }
 
-function Tour() {
-  const [isDesktop, setIsDesktop] = useState(() => window.matchMedia('(min-width: 1024px)').matches);
-  // Reduced motion: no autoplay. Each step shows finished, and the steps are chosen by hand.
+/** With reduced motion, each step shows finished and changes after this many seconds. */
+const STILL_SECONDS = 9;
+
+function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
+  const [show, setShow] = useState(() => !desktopOnly || window.matchMedia('(min-width: 1024px)').matches);
   const [reduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [step, setStep] = useState(0);
   const [run, setRun] = useState(0);
-  const [playing, setPlaying] = useState(!reduced);
-  const [frozen, setFrozen] = useState(reduced);
-  const rootRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
 
-  // Phones never see this panel, so nothing should run for them.
   useEffect(() => {
+    if (!desktopOnly) return;
     const query = window.matchMedia('(min-width: 1024px)');
-    const onChange = () => setIsDesktop(query.matches);
+    const onChange = () => setShow(query.matches);
     query.addEventListener('change', onChange);
     return () => query.removeEventListener('change', onChange);
-  }, []);
+  }, [desktopOnly]);
 
   const scene = SCENES[step];
 
   useLayoutEffect(() => {
-    if (!isDesktop || frozen) return;
+    if (!show || reduced) return;
     const stage = stageRef.current;
     const pointer = pointerRef.current;
     const ring = ringRef.current;
     if (stage && pointer && ring) animatePointer(stage, pointer, ring, scene.path, scene.seconds);
-    // A resize changes the pointer's targets, so that step starts over cleanly.
-  }, [isDesktop, frozen, step, run, scene]);
+  }, [show, reduced, step, run, scene]);
 
   useEffect(() => {
-    if (!isDesktop || reduced) return;
-    const restart = () => setRun((r) => r + 1);
-    window.addEventListener('resize', restart);
-    return () => window.removeEventListener('resize', restart);
-  }, [isDesktop, reduced]);
-
-  if (!isDesktop) return null;
-
-  const allAnimations = () => rootRef.current?.getAnimations({ subtree: true }) ?? [];
-
-  const goTo = (index: number) => {
-    setStep(index);
-    setRun((r) => r + 1);
-    // Chosen while paused: show that step finished, without starting the clock.
-    if (!playing) setFrozen(true);
-  };
-
-  const togglePlaying = () => {
-    if (playing) {
-      allAnimations().forEach((a) => a.pause());
-      setPlaying(false);
-      return;
-    }
-    if (frozen) {
-      setFrozen(false);
+    if (!show) return;
+    const timer = window.setTimeout(() => {
+      setStep((s) => (s + 1) % SCENES.length);
       setRun((r) => r + 1);
-    } else {
-      allAnimations().forEach((a) => a.play());
-    }
-    setPlaying(true);
-  };
+    }, (reduced ? STILL_SECONDS : scene.seconds) * 1000);
+    return () => window.clearTimeout(timer);
+  }, [show, reduced, step, run, scene]);
 
-  const onStepDone = (e: AnimationEvent) => {
-    e.stopPropagation();
-    setStep((s) => (s + 1) % SCENES.length);
-    setRun((r) => r + 1);
-  };
+  // A new width moves the pointer's targets, so the step starts over. Height doesn't
+  // count: phone browsers change it whenever the address bar hides during scrolling.
+  useEffect(() => {
+    if (!show || reduced) return;
+    let width = window.innerWidth;
+    const onResize = () => {
+      if (window.innerWidth === width) return;
+      width = window.innerWidth;
+      setRun((r) => r + 1);
+    };
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, [show, reduced]);
+
+  if (!show) return null;
 
   const previousNav = SCENES[(step - 1 + SCENES.length) % SCENES.length].nav;
   const Content = scene.Content;
 
   return (
-    <div ref={rootRef} className={`bl-tour${frozen ? ' is-frozen' : ''}`}>
+    <div className={`bl-tour bl-tour--${tone}${reduced ? ' is-frozen' : ''}`}>
       <div className="bl-tour__frame" aria-hidden="true">
         <div ref={stageRef} className="bl-tour__stage" key={`${step}-${run}`}>
           <div className="sc-side">
@@ -564,56 +550,22 @@ function Tour() {
         </div>
       </div>
 
-      <div className="bl-tour__caption" key={`c${step}`}>
-        <p className="bl-tour__where">
-          <span>{t('Step {{n}} of {{total}}', { n: step + 1, total: SCENES.length })}</span>
-          <IonIcon icon={chevronForwardOutline} aria-hidden="true" />
-          <span>{t('In the menu: {{page}}', { page: NAV[scene.nav].label })}</span>
-        </p>
-        <h3>{scene.title}</h3>
-        <p>{scene.body}</p>
-      </div>
-
-      <div className="bl-tour__controls">
-        {!reduced && (
-          <button
-            type="button"
-            className="bl-tour__toggle"
-            onClick={togglePlaying}
-            aria-label={playing ? t('Pause tour') : t('Play tour')}
-          >
-            <IonIcon icon={playing ? pauseOutline : playOutline} aria-hidden="true" />
-          </button>
-        )}
-        <div className="bl-tour__steps">
-          {SCENES.map((s, i) => (
-            <button
-              key={s.title}
-              type="button"
-              className="bl-tour__step"
-              aria-label={t('Go to step {{n}}: {{title}}', { n: i + 1, title: s.title })}
-              aria-current={i === step ? 'step' : undefined}
-              onClick={() => goTo(i)}
-            >
-              <span>
-                {i < step && <i className="is-full" />}
-                {i === step && (frozen ? (
-                  <i className="is-full" />
-                ) : (
-                  <i
-                    key={run}
-                    className="is-running"
-                    style={{ animationDuration: `${s.seconds}s` }}
-                    onAnimationEnd={onStepDone}
-                  />
-                ))}
-              </span>
-            </button>
-          ))}
-        </div>
+      {/* All six share one spot, so the height always fits the longest and the page doesn't jump. */}
+      <div className="bl-tour__captions">
+        {SCENES.map((s, i) => (
+          <div key={s.title} className={`bl-tour__caption${i === step ? ' is-on' : ''}`}>
+            <p className="bl-tour__where">
+              <span>{t('Step {{n}} of {{total}}', { n: i + 1, total: SCENES.length })}</span>
+              <IonIcon icon={chevronForwardOutline} aria-hidden="true" />
+              <span>{t('In the menu: {{page}}', { page: NAV[s.nav].label })}</span>
+            </p>
+            <h3>{s.title}</h3>
+            <p>{s.body}</p>
+          </div>
+        ))}
       </div>
     </div>
   );
 }
 
-export default LoginShowcase;
+export default AppTour;
