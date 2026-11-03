@@ -79,4 +79,4 @@
    scrolls inside the card. */
 .bl-ai__panel > .bl-card__header { justify-content: flex-start; min-width: 0; }
 .bl-ai__panel > .bl-card__header > .bl-card__header-text { display: none; }
-.bl-ai__filters { margin: 0; flex: 1 1 auto; min-width: 0; overflow-x: auto; scrollbar-width: none; }
+.bl-ai__filters { margin: 0; flex: 1 1 auto; min-width: 0; }

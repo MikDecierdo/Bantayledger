@@ -14,11 +14,8 @@
 
 .bl-rep__tabs {
   margin-bottom: var(--bl-s5);
-  overflow-x: auto;
-  scrollbar-width: none;
   padding-bottom: 2px;
 }
-.bl-rep__tabs::-webkit-scrollbar { display: none; }
 
 .bl-rep__note {
   margin-top: var(--bl-s4);

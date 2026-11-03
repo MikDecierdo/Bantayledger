@@ -32,7 +32,7 @@ export function Segmented<T extends string>({
   label,
 }: SegmentedProps<T>) {
   return (
-    <div className="bl-segment" role="tablist" aria-label={label}>
+    <div className="bl-segment bl-scroll" role="tablist" aria-label={label}>
       {options.map((option) => (
         <button
           key={option.value}

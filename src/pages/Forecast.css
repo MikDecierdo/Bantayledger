@@ -25,13 +25,11 @@
   display: flex;
   gap: var(--bl-s2);
   overflow-x: auto;
-  padding-bottom: var(--bl-s3);
+  padding-bottom: var(--bl-s2);
   margin-bottom: var(--bl-s4);
   border-bottom: 1px solid var(--bl-border);
-  scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
-.bl-fcast__picker::-webkit-scrollbar { display: none; }
 
 /* ---- Selected product detail --------------------------------------------- */
 
