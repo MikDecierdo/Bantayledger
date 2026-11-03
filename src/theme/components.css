@@ -193,6 +193,9 @@
 }
 
 .bl-card__header-text { min-width: 0; }
+/* Not enough room for a heading and its tabs: the tabs move to their own line. */
+.bl-card__header:has(> .bl-segment) { flex-wrap: wrap; }
+.bl-card__header:has(> .bl-segment) > .bl-card__header-text { flex: 1 1 120px; }
 .bl-card__header-text p { margin-top: 2px; }
 
 /* ---- Fill card (desktop fit mode) -----------------------------------------
@@ -587,9 +590,9 @@
   gap: 2px;
   max-width: 100%;
   overflow-x: auto;
-  scrollbar-width: none;
+  /* Next to a heading, the heading gives way: tabs only scroll when they can't fit at all. */
+  flex-shrink: 0;
 }
-.bl-segment::-webkit-scrollbar { display: none; }
 .bl-segment__btn {
   border: 0;
   background: transparent;
@@ -619,10 +622,8 @@
   gap: var(--bl-s2);
   overflow-x: auto;
   padding-bottom: 2px;
-  scrollbar-width: none;
   -webkit-overflow-scrolling: touch;
 }
-.bl-chiprow::-webkit-scrollbar { display: none; }
 
 .bl-chip {
   border: 1px solid var(--bl-border-strong);

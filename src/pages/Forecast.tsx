@@ -206,7 +206,7 @@ export function Forecast() {
             />
           ) : (
             <>
-              <div className="bl-fcast__picker" role="tablist" aria-label={t('Select a product to chart')}>
+              <div className="bl-fcast__picker bl-scroll" role="tablist" aria-label={t('Select a product to chart')}>
                 {demand.map((d, i) => (
                   <button
                     key={d.productId}
