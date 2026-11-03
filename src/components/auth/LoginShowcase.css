@@ -1,0 +1,350 @@
+/* The sign-in page's animated tour.
+   The stage is drawn in `em`, with 1em = 1/52 of its width, so the whole mini
+   app scales as one picture. Elements animate on a delay set by `--t`. */
+
+.bl-tour { display: flex; flex-direction: column; gap: var(--bl-s4); min-width: 0; }
+
+/* Width follows the window's height as well, so short windows still fit. */
+.bl-tour__frame {
+  container-type: inline-size;
+  width: min(100%, calc((100dvh - 340px) * 1.625));
+  min-width: 300px;
+}
+
+.bl-tour__stage {
+  position: relative;
+  font-size: calc(100cqw / 52);
+  aspect-ratio: 52 / 32;
+  display: grid;
+  grid-template-columns: 13.4em minmax(0, 1fr);
+  overflow: hidden;
+  border-radius: 1.4em;
+  background: #F6F8F7;
+  color: #17222E;
+  box-shadow: 0 1.8em 4.4em rgba(4, 22, 16, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.18);
+  font-family: inherit;
+  line-height: 1.3;
+  user-select: none;
+}
+
+/* ---- Timing helpers ------------------------------------------------------ */
+
+.sc-a { animation-delay: var(--t, 0s); animation-fill-mode: both; }
+.sc-up { animation-name: sc-up; animation-duration: 460ms; animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1); }
+.sc-pop { animation-name: sc-pop; animation-duration: 380ms; }
+.sc-fade { animation-name: sc-fade; animation-duration: 500ms; }
+
+@keyframes sc-up { from { opacity: 0; transform: translateY(1.8em); } to { opacity: 1; transform: none; } }
+@keyframes sc-pop { 0% { opacity: 0; transform: scale(0.55); } 70% { opacity: 1; transform: scale(1.1); } 100% { opacity: 1; transform: none; } }
+@keyframes sc-fade { from { opacity: 0; } to { opacity: 1; } }
+
+/* Values that replace each other all sit in one spot. */
+.sc-swap { display: inline-grid; justify-items: inherit; }
+.sc-swap > span {
+  grid-area: 1 / 1;
+  animation: sc-fade 160ms var(--t, 0s) both, sc-gone 120ms var(--e, 0s) forwards;
+}
+.sc-swap > span.is-last { animation: sc-fade 160ms var(--t, 0s) both; }
+@keyframes sc-gone { to { opacity: 0; visibility: hidden; } }
+
+/* ---- Menu ---------------------------------------------------------------- */
+
+.sc-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3em;
+  padding: 1.2em 0.8em;
+  background: #fff;
+  border-right: 1px solid #E2E9E5;
+  min-width: 0;
+}
+.sc-brand { display: flex; align-items: center; gap: 0.45em; padding: 0 0.2em 0.9em; font-size: 1em; font-weight: 700; }
+.sc-brand img { width: 2em; height: 2em; object-fit: contain; }
+.sc-brand span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.58em 0.6em;
+  border-radius: 0.7em;
+  color: #5E6D65;
+  font-size: 1.04em;
+  font-weight: 500;
+  min-width: 0;
+}
+.sc-nav ion-icon { font-size: 1.25em; flex-shrink: 0; }
+.sc-nav span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-nav--to { animation: sc-nav-on 220ms var(--t, 0s) both; }
+.sc-nav--from { animation: sc-nav-off 220ms var(--t, 0s) both; }
+@keyframes sc-nav-on {
+  from { background: transparent; color: #5E6D65; }
+  to { background: #E9F4EF; color: #174F42; font-weight: 700; }
+}
+@keyframes sc-nav-off {
+  from { background: #E9F4EF; color: #174F42; }
+  to { background: transparent; color: #5E6D65; }
+}
+
+/* ---- Page area ------------------------------------------------------------ */
+
+.sc-main { position: relative; display: flex; flex-direction: column; gap: 1em; padding: 1.3em 1.5em; min-width: 0; overflow: hidden; }
+.sc-head { display: flex; align-items: center; justify-content: space-between; gap: 1em; min-height: 2.6em; }
+.sc-head strong { font-size: 1.65em; font-weight: 700; }
+.sc-bell { position: relative; font-size: 1.5em; color: #5E6D65; display: inline-flex; }
+.sc-bell i {
+  position: absolute;
+  top: -0.3em;
+  right: -0.35em;
+  min-width: 1.05em;
+  height: 1.05em;
+  display: grid;
+  place-items: center;
+  border-radius: 1em;
+  background: #B23E3E;
+  color: #fff;
+  font-size: 0.62em;
+  font-style: normal;
+  font-weight: 700;
+}
+.sc-sample { position: absolute; right: 1.1em; bottom: 0.7em; font-size: 0.9em; color: #7A8981; }
+
+.sc-panel { flex: 1 1 auto; min-height: 0; padding: 0.9em; background: #fff; border: 1px solid #E2E9E5; border-radius: 1em; }
+.sc-chart { display: block; width: 100%; height: 100%; }
+.sc-reveal { animation-name: sc-reveal; animation-duration: 900ms; animation-timing-function: ease-out; }
+.sc-reveal--slow { animation-duration: 1.4s; animation-timing-function: ease-in-out; }
+@keyframes sc-reveal { from { clip-path: inset(-10% 100% -10% 0); } to { clip-path: inset(-10% -1% -10% 0); } }
+
+/* The loading skeleton, gone just as the page slides up, as in the real app. */
+.sc-skel {
+  position: absolute;
+  inset: 1.3em 1.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  animation: sc-gone 140ms 0.8s forwards;
+}
+.sc-skel i { display: block; border-radius: 0.8em; background: #E7EDEA; animation: sc-shimmer 800ms ease-in-out infinite alternate; }
+.sc-skel i:nth-child(1) { width: 36%; height: 2.2em; }
+.sc-skel i:nth-child(2) { height: 6em; }
+.sc-skel i:nth-child(3) { flex: 1 1 auto; }
+@keyframes sc-shimmer { from { opacity: 1; } to { opacity: 0.55; } }
+
+/* Dashboard */
+.sc-stats { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 0.8em; }
+.sc-stat { display: flex; flex-direction: column; gap: 0.25em; padding: 0.9em 1em; background: #fff; border: 1px solid #E2E9E5; border-radius: 1em; min-width: 0; }
+.sc-stat span { font-size: 1em; color: #5E6D65; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-stat b { font-size: 2em; font-weight: 700; }
+.sc-stat small { font-size: 0.95em; }
+.sc-stat--main { background: #1F6F5B; border-color: #1F6F5B; color: #fff; }
+.sc-stat--main span { color: rgba(255, 255, 255, 0.82); }
+
+/* Buttons and small tags */
+.sc-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55em 1em;
+  border-radius: 0.7em;
+  font-size: 1.1em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.sc-btn--primary { background: #1F6F5B; color: #fff; box-shadow: 0 0.2em 0 #174F42; }
+.sc-btn--block { display: flex; width: 100%; animation: sc-push 240ms 6s both; }
+.sc-pressed { animation: sc-up 460ms cubic-bezier(0.22, 1, 0.36, 1) var(--t, 0s) both, sc-push 240ms 1.6s; }
+.sc-pressed--order { animation: sc-push 240ms 4.6s; }
+@keyframes sc-push { 50% { transform: translateY(0.15em) scale(0.96); box-shadow: 0 0 0 #174F42; } }
+
+.sc-tag { display: inline-flex; align-items: center; gap: 0.3em; padding: 0.22em 0.7em; border-radius: 1em; font-size: 1em; font-weight: 700; white-space: nowrap; }
+.sc-tag--good { background: #E9F4EF; color: #1F7050; }
+.sc-tag--bad { background: #FBEDED; color: #B23E3E; }
+.sc-tag--warn { background: #FBF1DE; color: #8A5A10; }
+.sc-pulse { animation-name: sc-pop, sc-pulse; animation-duration: 380ms, 1s; animation-delay: var(--t, 0s), calc(var(--t, 0s) + 0.5s); animation-iteration-count: 1, 2; animation-fill-mode: both, none; }
+@keyframes sc-pulse { 50% { box-shadow: 0 0 0 0.5em rgba(178, 62, 62, 0.16); } }
+
+/* Add Sale */
+.sc-pos { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: 0.9em; }
+.sc-pos__left { display: flex; flex-direction: column; gap: 0.8em; min-width: 0; }
+.sc-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.5em; }
+.sc-tile { display: flex; flex-direction: column; align-items: center; gap: 0.25em; padding: 0.6em 0.3em; background: #fff; border: 1px solid #E2E9E5; border-radius: 0.8em; text-align: center; min-width: 0; }
+.sc-tile em { display: grid; place-items: center; width: 2.4em; height: 2.4em; border-radius: 0.5em; background: #E9F4EF; color: #174F42; font-size: 0.95em; font-style: normal; font-weight: 700; }
+.sc-tile span { width: 100%; font-size: 0.92em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-tile b { font-size: 1.05em; }
+.sc-picked { animation-name: sc-picked; animation-duration: 220ms; }
+@keyframes sc-picked {
+  0% { transform: scale(0.94); background: #fff; border-color: #E2E9E5; }
+  100% { transform: none; background: #E9F4EF; border-color: #6FB296; }
+}
+.sc-pay, .sc-chips { display: flex; gap: 0.5em; flex-wrap: wrap; min-width: 0; }
+.sc-choice { flex: 1 1 0; padding: 0.6em; border: 1px solid #D3DED8; border-radius: 0.7em; background: #fff; font-size: 1.05em; font-weight: 700; text-align: center; }
+.sc-chip { padding: 0.32em 0.85em; border: 1px solid #D3DED8; border-radius: 1em; background: #fff; font-size: 1em; font-weight: 600; white-space: nowrap; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+.sc-selected { animation-name: sc-selected; animation-duration: 200ms; }
+@keyframes sc-selected {
+  from { background: #fff; border-color: #D3DED8; color: #17222E; }
+  to { background: #E9F4EF; border-color: #6FB296; color: #174F42; }
+}
+.sc-cart { display: flex; flex-direction: column; gap: 0.35em; padding: 0.8em; background: #fff; border: 1px solid #E2E9E5; border-radius: 1em; min-width: 0; min-height: 0; }
+.sc-line { display: flex; justify-content: space-between; gap: 0.5em; font-size: 1em; }
+.sc-line span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sc-cart__foot { margin-top: auto; display: flex; flex-direction: column; gap: 0.35em; padding-top: 0.5em; border-top: 1px solid #E2E9E5; }
+.sc-sum { display: flex; justify-content: space-between; align-items: baseline; gap: 0.5em; }
+.sc-sum > span { font-size: 1em; color: #5E6D65; }
+.sc-sum b { font-size: 1.35em; }
+.sc-sum--good b { color: #1F7050; }
+.sc-toast {
+  position: absolute;
+  left: 1.4em;
+  bottom: 2.4em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4em;
+  padding: 0.6em 1em;
+  border-radius: 0.8em;
+  background: #174F42;
+  color: #fff;
+  font-size: 1.1em;
+  font-weight: 700;
+  box-shadow: 0 0.6em 1.6em rgba(4, 22, 16, 0.35);
+}
+
+/* Inventory and the offline list */
+.sc-rows { display: flex; flex-direction: column; gap: 0.7em; min-height: 0; }
+.sc-row { padding: 0.8em 1em; background: #fff; border: 1px solid #E2E9E5; border-radius: 1em; min-width: 0; }
+.sc-row__top { display: flex; justify-content: space-between; align-items: center; gap: 0.6em; }
+.sc-row__top strong { font-size: 1.15em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.sc-row__meta { margin: 0.1em 0 0.35em; color: #5E6D65; font-size: 1em; }
+.sc-bar { height: 0.55em; border-radius: 1em; background: #E9EEEB; overflow: hidden; }
+.sc-bar i { display: block; height: 100%; border-radius: 1em; background: #1F6F5B; }
+.sc-bar--bad i { background: #B23E3E; }
+.sc-barfill { animation-name: sc-bar; animation-duration: 700ms; animation-timing-function: cubic-bezier(0.3, 0.7, 0.2, 1); }
+@keyframes sc-bar { from { width: var(--from, 0%); } }
+.sc-row--sale { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 0.8em; }
+.sc-row--sale strong { font-size: 1.15em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sc-row--sale b { font-size: 1.15em; }
+.sc-row--sale .sc-swap { justify-items: end; }
+.sc-net__pill { display: inline-flex; align-items: center; gap: 0.35em; padding: 0.3em 0.8em; border-radius: 1em; font-size: 1.05em; font-weight: 700; white-space: nowrap; }
+.sc-net__pill--off { background: #FBF1DE; color: #8A5A10; }
+.sc-net__pill--on { background: #E9F4EF; color: #1F7050; }
+.sc-net .sc-swap { justify-items: end; }
+
+/* Forecast */
+.sc-metrics { display: flex; align-items: center; gap: 1.5em; flex-wrap: wrap; padding-bottom: 0.6em; }
+.sc-metrics > div { display: flex; flex-direction: column; min-width: 0; }
+.sc-metrics span { font-size: 1em; color: #5E6D65; }
+.sc-metrics b { font-size: 1.45em; }
+.sc-metrics .sc-tag { margin-left: auto; color: #8A5A10; font-size: 1.05em; }
+
+/* AI Insights */
+.sc-insight { display: flex; flex-direction: column; gap: 0.75em; padding: 1.1em 1.2em; background: #fff; border: 1px solid #E2E9E5; border-radius: 1em; min-height: 0; }
+.sc-insight__tags { display: flex; gap: 0.5em; flex-wrap: wrap; }
+.sc-insight > strong { font-size: 1.4em; }
+.sc-insight__block > span { font-size: 0.92em; font-weight: 700; color: #5E6D65; letter-spacing: 0.03em; text-transform: uppercase; }
+.sc-insight p { margin: 0.15em 0 0; font-size: 1.1em; }
+.sc-insight__foot { display: flex; align-items: center; justify-content: space-between; gap: 0.8em; margin-top: 0.2em; }
+.sc-insight__foot small { font-size: 0.92em; color: #5E6D65; min-width: 0; }
+
+/* ---- Pointer and click ring ----------------------------------------------- */
+
+.sc-pointer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2.2em;
+  height: 2.2em;
+  margin: -0.3em 0 0 -0.4em;
+  transform-origin: 0.4em 0.3em;
+  pointer-events: none;
+  filter: drop-shadow(0 0.15em 0.25em rgba(0, 0, 0, 0.35));
+  z-index: 3;
+}
+.sc-ring {
+  position: absolute;
+  top: -2em;
+  left: -2em;
+  width: 4em;
+  height: 4em;
+  border-radius: 50%;
+  background: rgba(31, 111, 91, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ---- Finished state (paused step, or reduced motion) ------------------------ */
+
+.bl-tour.is-frozen .bl-tour__stage * {
+  animation-delay: 0s !important;
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+}
+.bl-tour.is-frozen .sc-pointer,
+.bl-tour.is-frozen .sc-ring { display: none; }
+
+/* ---- Caption and controls -------------------------------------------------- */
+
+.bl-tour__caption { min-height: 4.9em; animation: sc-up 420ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+.bl-tour__caption h3 { margin: 2px 0 0; color: #fff; font-size: var(--bl-fs-lg); font-weight: var(--bl-fw-bold); line-height: 1.3; }
+.bl-tour__caption > p:last-child { margin: 2px 0 0; color: rgba(255, 255, 255, 0.8); font-size: var(--bl-fs-sm); line-height: var(--bl-lh-normal); }
+.bl-tour__where { display: flex; align-items: center; gap: 4px; margin: 0; color: #BDE8D8; font-size: var(--bl-fs-xs); font-weight: var(--bl-fw-semibold); }
+
+.bl-tour__controls { display: flex; align-items: center; gap: var(--bl-s3); }
+.bl-tour__toggle {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+}
+.bl-tour__toggle:hover { background: rgba(255, 255, 255, 0.22); }
+.bl-tour__toggle:focus-visible,
+.bl-tour__step:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.bl-tour__steps { flex: 1 1 auto; display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 6px; min-width: 0; }
+/* The visible bar is thin, but the button around it is a comfortable target. */
+.bl-tour__step { display: flex; align-items: center; height: 24px; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 4px; }
+.bl-tour__step > span { display: block; width: 100%; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.26); overflow: hidden; }
+.bl-tour__step:hover > span { background: rgba(255, 255, 255, 0.42); }
+.bl-tour__step i { display: block; height: 100%; border-radius: 4px; background: #fff; }
+.bl-tour__step i.is-full { width: 100%; }
+.bl-tour__step i.is-running { width: 0; animation-name: bl-tour-fill; animation-timing-function: linear; animation-fill-mode: forwards; }
+@keyframes bl-tour-fill { to { width: 100%; } }
+
+/* ---- The panel around the tour --------------------------------------------- */
+
+@media (min-width: 1024px) {
+  /* The form comes first for keyboards, so it's before this panel in the page. */
+  .bl-login__aside--tour {
+    order: -1;
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background-image: none;
+  }
+  /* The photo stays as a darker, slowly drifting backdrop. */
+  .bl-login__aside--tour::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background-image:
+      linear-gradient(180deg, rgba(14, 44, 36, 0.82) 0%, rgba(16, 58, 47, 0.8) 45%, rgba(10, 26, 22, 0.94) 100%),
+      url('/login-hero.jpg');
+    background-size: cover;
+    background-position: 58% 15%;
+    animation: bl-tour-drift 28s ease-in-out infinite alternate;
+  }
+  .bl-login__aside--tour .bl-login__aside-inner {
+    gap: var(--bl-s4);
+    padding: var(--bl-s5) var(--bl-s6);
+    max-width: 700px;
+  }
+  .bl-login__aside--tour .bl-login__pitch h2 { max-width: none; font-size: var(--bl-fs-2xl); }
+  .bl-login__aside--tour .bl-login__aside-foot { margin: 0; }
+}
+@keyframes bl-tour-drift { from { transform: scale(1); } to { transform: scale(1.07); } }

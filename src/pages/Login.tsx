@@ -1,11 +1,5 @@
 import { IonIcon } from '@ionic/react';
-import {
-  bulbOutline,
-  cubeOutline,
-  eyeOffOutline,
-  eyeOutline,
-  trendingUpOutline,
-} from 'ionicons/icons';
+import { eyeOffOutline, eyeOutline } from 'ionicons/icons';
 import { useState, type FormEvent } from 'react';
 import { Link, useHistory, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -18,6 +12,7 @@ import './Login.css';
 import { transitionClick } from '../lib/viewTransition';
 import { t } from '../i18n';
 import LanguageSelect from '../components/common/LanguageSelect';
+import LoginShowcase from '../components/auth/LoginShowcase';
 
 interface Errors {
   email?: string;
@@ -25,24 +20,6 @@ interface Errors {
   /** Errors that belong to the whole form, e.g. wrong credentials. */
   form?: string;
 }
-
-const HIGHLIGHTS = [
-  {
-    icon: cubeOutline,
-    title: t('Track stock in real time'),
-    body: t('Know what is running low before it runs out.'),
-  },
-  {
-    icon: trendingUpOutline,
-    title: t('Know what to buy and what it costs'),
-    body: t('See what you will need next week and what it will cost.'),
-  },
-  {
-    icon: bulbOutline,
-    title: t('Act on clear recommendations'),
-    body: t('Plain-language guidance backed by your own records.'),
-  },
-];
 
 export function Login() {
   const history = useHistory();
@@ -87,36 +64,6 @@ export function Login() {
 
   return (
     <div className="bl-login">
-      {/* Brand panel — desktop only, so phones get the form immediately. */}
-      <aside className="bl-login__aside" aria-hidden="true">
-        <div className="bl-login__aside-inner">
-          <Logo size="lg" inverse />
-
-          <div className="bl-login__pitch">
-            <h2>{t('Run your store on numbers, not guesswork.')}</h2>
-            <p>
-              {t('BantayLedger AI keeps your inventory, sales and supplier costs in one place, then forecasts what comes next.')}
-            </p>
-          </div>
-
-          <ul className="bl-login__highlights">
-            {HIGHLIGHTS.map((item) => (
-              <li key={item.title}>
-                <span className="bl-login__highlight-icon">
-                  <IonIcon icon={item.icon} />
-                </span>
-                <span>
-                  <strong>{item.title}</strong>
-                  <span>{item.body}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-
-          <p className="bl-login__aside-foot">{t('Built for Philippine small businesses.')}</p>
-        </div>
-      </aside>
-
       <main className="bl-login__main">
         <div className="bl-login__card">
           <div className="bl-login__top">
@@ -208,6 +155,22 @@ export function Login() {
           <Link to="/terms">{t('Terms of Service')}</Link>
         </p>
       </main>
+
+      {/* The animated tour, desktop only. Shown on the left, but after the form in
+          the page, so the keyboard reaches the sign-in fields first. */}
+      <aside className="bl-login__aside bl-login__aside--tour" aria-label={t('A quick tour of BantayLedger AI')}>
+        <div className="bl-login__aside-inner">
+          <Logo size="lg" inverse />
+
+          <div className="bl-login__pitch">
+            <h2>{t('Run your store on numbers, not guesswork.')}</h2>
+          </div>
+
+          <LoginShowcase />
+
+          <p className="bl-login__aside-foot">{t('Built for Philippine small businesses.')}</p>
+        </div>
+      </aside>
     </div>
   );
 }
