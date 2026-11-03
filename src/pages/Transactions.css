@@ -183,8 +183,9 @@
   .bl-grid--tiles { max-height: 56vh; }
 }
 
-/* Two columns on desktop: products + cart on the left, a "Sale details"
-   sidebar (date, payment, GCash reference) on the right. Stacks below 1024px. */
+/* Three columns on desktop: products, the cart, then "Sale details" (date,
+   payment, cash and change). Tablets put the cart and details side by side
+   under the products, and phones stack everything. */
 .bl-pos__layout { display: grid; gap: var(--bl-s5); }
 .bl-pos__main { min-width: 0; display: grid; gap: var(--bl-s4); align-content: start; }
 .bl-pos__side {
@@ -199,18 +200,26 @@
 .bl-pos__side-title { margin: 0; font-size: 1rem; }
 .bl-pos__side-count { font-weight: 400; color: var(--bl-text-secondary); }
 .bl-pos__side-fields { display: grid; gap: var(--bl-s4); }
+/* The date shares the heading's row, to leave room for the payment fields. */
+.bl-pos__details-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--bl-s2); flex-shrink: 0; }
+.bl-pos__details-date { flex: 0 1 150px; }
+.bl-pos__details-date .bl-input { padding: 0 var(--bl-s2); font-size: var(--bl-fs-sm); }
 .bl-pos__summary { display: grid; gap: var(--bl-s2); margin: 0; padding-top: var(--bl-s3); border-top: 1px solid var(--bl-border); }
 .bl-pos__summary > div { display: flex; justify-content: space-between; }
 .bl-pos__summary dt { color: var(--bl-text-secondary); }
 .bl-pos__summary dd { margin: 0; font-weight: 700; }
 
-/* The cart lives in the sidebar and scrolls on its own. */
+/* The cart has its own panel and scrolls on its own. */
 .bl-pos__side .bl-cart {
   max-height: 40vh;
   overflow-y: auto;
   overflow-x: hidden;
   padding-bottom: var(--bl-s3);
-  border-bottom: 1px solid var(--bl-border);
+}
+
+@media (min-width: 600px) and (max-width: 1023px) {
+  .bl-pos__layout { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+  .bl-pos__main { grid-column: 1 / -1; }
 }
 
 /* Narrow sidebar: each cart row is two lines (item + remove, then price,
@@ -313,7 +322,7 @@
 
 @media (min-width: 1024px) {
   .bl-pos__layout {
-    grid-template-columns: minmax(0, 1fr) 400px;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 340px) minmax(280px, 320px);
     flex: 1 1 auto;
     min-height: 0;
     grid-template-rows: minmax(0, 1fr);
@@ -324,6 +333,51 @@
   .bl-pos__side { display: flex; flex-direction: column; min-height: 0; overflow-x: hidden; overflow-y: auto; }
   .bl-pos__side .bl-cart { flex: 1 1 auto; min-height: 184px; max-height: none; align-content: start; }
   .bl-pos__side-title, .bl-pos__side-fields { flex-shrink: 0; }
+
+  /* Sale details fits without scrolling, even in Cash + GCash, so the change or
+     "Still short" amount is always in view. */
+  .bl-pos__side--details { gap: 10px; padding: var(--bl-s3) var(--bl-s4); }
+  .bl-pos__side--details .bl-pos__side-fields { gap: 10px; }
+  .bl-pos__side--details .bl-field { gap: 4px; }
+  .bl-pos__side--details .bl-input { height: 38px; min-height: 38px; }
+  .bl-pos__side--details .bl-paychoice { gap: 4px; }
+  .bl-pos__side--details .bl-paychoice__btn { gap: 2px; min-height: 56px; padding: 5px 2px; font-size: var(--bl-fs-xs); }
+  .bl-pos__side--details .bl-paychoice__logo { min-height: 22px; }
+  .bl-pos__side--details .bl-paychoice__logo svg,
+  .bl-pos__side--details .bl-paychoice__logo img { height: 22px; width: auto; }
+  .bl-pos__side--details .bl-paysplit { gap: 6px; }
+  .bl-pos__side--details .bl-paysplit__fields { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; }
+  .bl-pos__side--details .bl-paysplit__fields .bl-field__hint { display: none; }
+  .bl-pos__side--details .bl-paysplit__sum { padding: 4px var(--bl-s2); font-size: var(--bl-fs-xs); }
+  .bl-pos__side--details .bl-pos__cash { gap: 6px; }
+  .bl-pos__side--details .bl-pos__cash-chips { gap: 4px; }
+  .bl-pos__side--details .bl-pos__chip { min-height: 28px; padding: 2px 4px; white-space: nowrap; }
+  .bl-pos__side--details .bl-pos__change { padding: 5px var(--bl-s3); font-size: var(--bl-fs-xs); }
+}
+
+/* Short windows, such as the Windows app at its smallest: the payment buttons
+   explain themselves, so their label goes (screen readers keep the group's
+   name), and everything tightens a little more. */
+@media (min-width: 1024px) and (max-height: 720px) {
+  .bl-pos__side--details,
+  .bl-pos__side--details .bl-pos__side-fields { gap: var(--bl-s2); }
+  .bl-pos__side--details { padding-top: var(--bl-s2); padding-bottom: var(--bl-s2); }
+  .bl-pos__side--details .bl-paychoice > .bl-label { display: none; }
+  .bl-pos__side--details .bl-input { height: 34px; min-height: 34px; }
+  .bl-pos__side--details .bl-paychoice__btn { min-height: 46px; padding: 3px 2px; }
+  .bl-pos__side--details .bl-paychoice__logo { min-height: 18px; }
+  .bl-pos__side--details .bl-paychoice__logo svg,
+  .bl-pos__side--details .bl-paychoice__logo img { height: 18px; }
+  .bl-pos__side--details .bl-pos__chip { min-height: 26px; }
+}
+
+/* Small laptops: tighter side columns, so the products keep at least two tiles across. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .bl-pos__layout {
+    grid-template-columns: minmax(0, 1fr) 296px 264px;
+    gap: var(--bl-s3);
+  }
+  .bl-pos__details-date { flex-basis: 128px; }
 }
 
 .bl-cart { display: grid; gap: var(--bl-s2); }
@@ -368,6 +422,9 @@
   margin-right: auto;
 }
 .bl-cart__total strong { font-size: var(--bl-fs-lg); color: var(--bl-green-dark); }
+
+/* Checkout problems, in the footer between the total and the buttons. */
+.bl-pos__footer-error { flex: 1 1 200px; min-width: 0; margin: 0; padding: 6px var(--bl-s3); }
 
 @media (max-width: 480px) {
   .bl-cart__row { flex-wrap: wrap; }
@@ -421,7 +478,8 @@
 
 .bl-pos__cash { display: grid; gap: var(--bl-s2); flex-shrink: 0; }
 
-.bl-pos__cash-chips { display: flex; flex-wrap: wrap; gap: var(--bl-s2); }
+/* Always two even rows of three. */
+.bl-pos__cash-chips { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--bl-s2); }
 
 .bl-pos__chip {
   border: 1px solid var(--bl-border-strong);
@@ -578,7 +636,11 @@
 .bl-paychoice__logo { display: inline-flex; align-items: center; min-height: 26px; }
 .bl-paychoice__duo { display: inline-flex; gap: 4px; align-items: center; }
 .bl-paysplit { display: grid; gap: var(--bl-s2); }
+.bl-paysplit__fields { display: grid; gap: var(--bl-s2); }
+/* The line under the fields shows this message instead. */
+.bl-paysplit__fields .bl-field__error { display: none; }
 .bl-paysplit__sum { margin: 0; padding: var(--bl-s2) var(--bl-s3); border-radius: var(--bl-r-md); background: var(--bl-surface-muted); font-size: var(--bl-fs-sm); }
+.bl-paysplit__sum--error { color: var(--bl-danger); }
 
 /* Desktop fit mode: the "Total shown" strip sits flush under a fill card's
    heading row. */

@@ -212,10 +212,25 @@ ion-modal.bl-modal::part(backdrop) {
   ion-modal.bl-modal--md { --width: min(600px, calc(100vw - 48px)); }
   ion-modal.bl-modal--lg { --width: min(880px, calc(100vw - 48px)); }
   ion-modal.bl-modal--sm { --width: min(480px, calc(100vw - 48px)); }
-  ion-modal.bl-modal--xl { --width: min(1200px, calc(100vw - 48px)); --height: calc(100dvh - 32px); }
+  ion-modal.bl-modal--xl { --width: min(1360px, calc(100vw - 48px)); --height: calc(100dvh - 32px); }
   /* Fixed frame: the body itself never scrolls; the content scrolls in its own regions. */
   ion-modal.bl-modal--xl .bl-modal__body { overflow: hidden; display: flex; flex-direction: column; flex: 1 1 auto; background: var(--bl-surface); }
   ion-modal.bl-modal--xl .bl-modal__shell { height: 100%; }
 
   .bl-modal__shell { max-height: calc(100dvh - 32px); }
+}
+
+/* Small laptops: Add Sale's three columns need the extra width. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  ion-modal.bl-modal--xl { --width: calc(100vw - 24px); }
+}
+
+/* Short windows: Add Sale gives its height to the columns. */
+@media (min-width: 1024px) and (max-height: 720px) {
+  ion-modal.bl-modal--xl { --height: calc(100dvh - 12px); --max-height: calc(100dvh - 12px); }
+  ion-modal.bl-modal--xl .bl-modal__shell { max-height: calc(100dvh - 12px); }
+  ion-modal.bl-modal--xl .bl-modal__header { padding-top: var(--bl-s2); padding-bottom: var(--bl-s2); }
+  ion-modal.bl-modal--xl .bl-modal__header .bl-caption { display: none; }
+  ion-modal.bl-modal--xl .bl-modal__body { padding-top: var(--bl-s2); padding-bottom: var(--bl-s2); }
+  ion-modal.bl-modal--xl .bl-modal__footer { padding-top: var(--bl-s2); padding-bottom: var(--bl-s2); }
 }

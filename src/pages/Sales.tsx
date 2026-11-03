@@ -5,7 +5,7 @@ import {
   searchOutline,
   trashOutline,
 } from 'ionicons/icons';
-import type { ReactNode } from 'react';
+import type { ChangeEvent, ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import TrendChart from '../components/charts/TrendChart';
@@ -202,7 +202,17 @@ export function Sales() {
   const gcashPart = paymentMode === 'Split' ? Math.round(Number(gcashAmount || 0) * 100) / 100 : 0;
   const cashPart = paymentMode === 'Split' ? Math.round((cartTotal - gcashPart) * 100) / 100 : cartTotal;
   const splitValid = gcashPart > 0 && cashPart > 0;
+  const splitAmountError = gcashAmount !== '' && !splitValid ? t('Must be more than zero and less than the total.') : undefined;
   const cash = cashChange(cashReceived, cashPart);
+  const referenceFieldProps = {
+    required: true,
+    inputMode: 'numeric' as const,
+    maxLength: 4,
+    placeholder: '1234',
+    hint: t('Last 4 digits of the reference number in the customer\'s GCash receipt'),
+    value: paymentReference,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => setPaymentReference(e.target.value.replace(/\D/g, '').slice(0, 4)),
+  };
 
   const cartQtyFor = (productId: string) => cart.find((l) => l.productId === productId)?.quantity ?? 0;
 
@@ -717,6 +727,12 @@ export function Sales() {
               <span className="bl-label">{t('Total')}</span>
               <strong>{peso(cartTotal)}</strong>
             </div>
+            {/* Beside Checkout, so it's always in view and doesn't squeeze the columns. */}
+            {formError && (
+              <p className="bl-form-error bl-pos__footer-error" role="alert">
+                {formError}
+              </p>
+            )}
             <Button variant="secondary" onClick={closeAddModal} disabled={saving}>
               {t('Cancel')}
             </Button>
@@ -731,12 +747,6 @@ export function Sales() {
           </>
         }
       >
-        {formError && (
-          <p className="bl-form-error" role="alert">
-            {formError}
-          </p>
-        )}
-
         <div className="bl-pos__layout">
           <div className="bl-pos__main">
             <div className="bl-pos__picker">
@@ -805,9 +815,9 @@ export function Sales() {
             </div>
 
           </div>
-          <aside className="bl-pos__side" aria-label={t('Sale details')}>
+          <aside className="bl-pos__side bl-pos__side--cart" aria-label={t('Cart')}>
             <h3 className="bl-pos__side-title">
-              Cart
+              {t('Cart')}
               {cart.length > 0 && (
                 <span className="bl-pos__side-count">
                   {` · ${t('{{count}} items', { count: cart.reduce((n, l) => n + l.quantity, 0) })}`}
@@ -862,9 +872,20 @@ export function Sales() {
                 ))
               )}
             </div>
-            <h3 className="bl-pos__side-title">{t('Sale details')}</h3>
+          </aside>
+          <aside className="bl-pos__side bl-pos__side--details bl-scroll" aria-label={t('Sale details')}>
+            <div className="bl-pos__details-head">
+              <h3 className="bl-pos__side-title">{t('Sale details')}</h3>
+              <DateField
+                label={t('Date')}
+                hideLabel
+                required
+                className="bl-pos__details-date"
+                value={saleDate}
+                onChange={(e) => setSaleDate(e.target.value)}
+              />
+            </div>
             <div className="bl-pos__side-fields">
-              <DateField label={t('Date')} required value={saleDate} onChange={(e) => setSaleDate(e.target.value)} />
               <div className="bl-paychoice" role="radiogroup" aria-label={t('How did the customer pay?')}>
                 <span className="bl-label">{t('How did the customer pay?')}</span>
                 <div className="bl-paychoice__grid">
@@ -900,35 +921,36 @@ export function Sales() {
               </div>
               {paymentMode === 'Split' && (
                 <div className="bl-paysplit">
-                  <CurrencyField
-                    label={t('Paid by GCash')}
-                    required
-                    value={gcashAmount}
-                    onChange={(e) => setGcashAmount(e.target.value)}
-                    error={gcashAmount !== '' && !splitValid ? t('Must be more than zero and less than the total.') : undefined}
-                  />
-                  <p className="bl-paysplit__sum" role="status" aria-live="polite">
-                    {splitValid
-                      ? t('Total {{total}} = {{cash}} cash + {{gcash}} GCash', {
-                          total: peso(cartTotal),
-                          cash: peso(cashPart),
-                          gcash: peso(gcashPart),
-                        })
-                      : t('Total {{total}}. Type the GCash part; the rest is paid in cash.', { total: peso(cartTotal) })}
+                  <div className="bl-paysplit__fields">
+                    <CurrencyField
+                      label={t('Paid by GCash')}
+                      required
+                      value={gcashAmount}
+                      onChange={(e) => setGcashAmount(e.target.value)}
+                      error={splitAmountError}
+                    />
+                    <TextField label={t('GCash ref. (last 4)')} {...referenceFieldProps} />
+                  </div>
+                  {/* The field's own error is hidden in CSS: this line says it, without taking more height. */}
+                  <p
+                    className={`bl-paysplit__sum${splitAmountError ? ' bl-paysplit__sum--error' : ''}`}
+                    role="status"
+                    aria-live="polite"
+                  >
+                    {splitAmountError
+                      ? splitAmountError
+                      : splitValid
+                        ? t('Total {{total}} = {{cash}} cash + {{gcash}} GCash', {
+                            total: peso(cartTotal),
+                            cash: peso(cashPart),
+                            gcash: peso(gcashPart),
+                          })
+                        : t('Total {{total}}. Type the GCash part; the rest is paid in cash.', { total: peso(cartTotal) })}
                   </p>
                 </div>
               )}
-              {paymentMode !== 'Cash' && (
-                <TextField
-                  label={t('GCash reference (last 4 digits)')}
-                  required
-                  inputMode="numeric"
-                  maxLength={4}
-                  placeholder="1234"
-                  hint={t('Last 4 digits of the reference number in the customer\'s GCash receipt')}
-                  value={paymentReference}
-                  onChange={(e) => setPaymentReference(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                />
+              {paymentMode === 'GCash' && (
+                <TextField label={t('GCash reference (last 4 digits)')} {...referenceFieldProps} />
               )}
               {paymentMode !== 'GCash' && (
                 <div className="bl-pos__cash">
@@ -958,27 +980,30 @@ export function Sales() {
                       </button>
                     ))}
                   </div>
-                  <div
-                    className={`bl-pos__change bl-pos__change--${cash.state}`}
-                    role="status"
-                    aria-live="polite"
-                  >
-                    {cash.state === 'blank' && (
-                      <span>{t('Enter the cash received to see the change.')}</span>
-                    )}
-                    {cash.state === 'change' && (
-                      <>
-                        <span>{t('Change')}</span>
-                        <strong>{peso(cash.centavos / 100)}</strong>
-                      </>
-                    )}
-                    {cash.state === 'short' && (
-                      <>
-                        <span>{t('Still short')}</span>
-                        <strong>{peso(cash.centavos / 100)}</strong>
-                      </>
-                    )}
-                  </div>
+                  {/* No change to work out until the GCash amount makes sense. */}
+                  {!splitAmountError && (
+                    <div
+                      className={`bl-pos__change bl-pos__change--${cash.state}`}
+                      role="status"
+                      aria-live="polite"
+                    >
+                      {cash.state === 'blank' && (
+                        <span>{t('Enter the cash received to see the change.')}</span>
+                      )}
+                      {cash.state === 'change' && (
+                        <>
+                          <span>{t('Change')}</span>
+                          <strong>{peso(cash.centavos / 100)}</strong>
+                        </>
+                      )}
+                      {cash.state === 'short' && (
+                        <>
+                          <span>{t('Still short')}</span>
+                          <strong>{peso(cash.centavos / 100)}</strong>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
