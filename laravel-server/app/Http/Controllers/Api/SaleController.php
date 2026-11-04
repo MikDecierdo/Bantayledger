@@ -348,6 +348,14 @@ class SaleController extends Controller
                     ]);
                 }
             }
+
+            ActivityLog::record($business, ActivityLog::SALE, 'sale_recorded', [
+                'subjectId' => $saleId,
+                'subject' => ActivityLog::itemSummary('sale_items', 'sale_id', $saleId),
+                'new' => $total,
+                'notes' => $summaryMethod,
+                'recordDate' => $saleDate,
+            ]);
         });
 
         return response()->json($this->toSale($saleId), 201);
@@ -356,10 +364,19 @@ class SaleController extends Controller
     public function destroy(string $business, string $id)
     {
         DB::transaction(function () use ($business, $id) {
-            $exists = DB::table('sales')->where('business_id', $business)->where('sale_id', $id)->exists();
-            if (! $exists) {
+            $sale = DB::table('sales')->where('business_id', $business)->where('sale_id', $id)->first();
+            if (! $sale) {
                 throw ApiException::notFound('That sale could not be found.');
             }
+
+            // Named before its items go.
+            ActivityLog::record($business, ActivityLog::SALE, 'sale_deleted', [
+                'subjectId' => $id,
+                'subject' => ActivityLog::itemSummary('sale_items', 'sale_id', $id),
+                'old' => round((float) $sale->total_amount, 2),
+                'notes' => $sale->payment_method,
+                'recordDate' => $sale->sale_date,
+            ]);
 
             InventoryService::removeMovementsByReference($business, 'sale', $id, 'SALE');
 

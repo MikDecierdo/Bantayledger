@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLog;
 use App\Services\SubscriptionPlan;
 use Carbon\Carbon;
 use Illuminate\Database\UniqueConstraintViolationException;
@@ -40,16 +41,23 @@ class SubscriptionController extends Controller
         $start = $currentEnd ? Carbon::parse($currentEnd) : now();
 
         try {
-            DB::table('subscription_payments')->insert([
-                'payment_id' => (string) Str::uuid(),
-                'business_id' => $business,
-                'user_id' => $request->user()->user_id,
-                'term' => $data['term'],
-                'amount' => SubscriptionPlan::TERMS[$data['term']],
-                'reference' => $data['reference'],
-                'starts_at' => $start,
-                'expires_at' => SubscriptionPlan::endOf($data['term'], $start),
-            ]);
+            DB::transaction(function () use ($business, $request, $data, $start) {
+                DB::table('subscription_payments')->insert([
+                    'payment_id' => (string) Str::uuid(),
+                    'business_id' => $business,
+                    'user_id' => $request->user()->user_id,
+                    'term' => $data['term'],
+                    'amount' => SubscriptionPlan::TERMS[$data['term']],
+                    'reference' => $data['reference'],
+                    'starts_at' => $start,
+                    'expires_at' => SubscriptionPlan::endOf($data['term'], $start),
+                ]);
+                ActivityLog::record($business, ActivityLog::STORE, 'plan_started', [
+                    'subject' => 'BantayLedger Plus',
+                    'new' => (float) SubscriptionPlan::TERMS[$data['term']],
+                    'notes' => $data['term'],
+                ]);
+            });
         } catch (UniqueConstraintViolationException) {
             throw ApiException::conflict('That reference number was already used.');
         }
@@ -60,7 +68,12 @@ class SubscriptionController extends Controller
     /** Back to Free, so the demo can be repeated. History is kept. */
     public function destroy(string $business)
     {
-        SubscriptionPlan::active()->where('business_id', $business)->update(['cancelled_at' => now()]);
+        DB::transaction(function () use ($business) {
+            $cancelled = SubscriptionPlan::active()->where('business_id', $business)->update(['cancelled_at' => now()]);
+            if ($cancelled > 0) {
+                ActivityLog::record($business, ActivityLog::STORE, 'plan_cancelled', ['subject' => 'BantayLedger Plus']);
+            }
+        });
 
         return response()->json($this->state($business));
     }

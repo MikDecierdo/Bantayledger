@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Services\ActivityLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -50,21 +51,39 @@ class EventController extends Controller
         }
 
         $id = (string) Str::uuid();
-        DB::table('business_events')->insert([
-            'event_id' => $id,
-            'business_id' => $business,
-            'name' => $name,
-            'month' => (int) $data['month'],
-            'day' => (int) $data['day'],
-            'prep_days' => (int) ($data['prepDays'] ?? 21),
-        ]);
+        DB::transaction(function () use ($id, $business, $name, $data) {
+            DB::table('business_events')->insert([
+                'event_id' => $id,
+                'business_id' => $business,
+                'name' => $name,
+                'month' => (int) $data['month'],
+                'day' => (int) $data['day'],
+                'prep_days' => (int) ($data['prepDays'] ?? 21),
+            ]);
+            ActivityLog::record($business, ActivityLog::STORE, 'event_added', [
+                'subjectId' => $id,
+                'subject' => $name,
+                'notes' => sprintf('%02d-%02d', $data['month'], $data['day']),
+            ]);
+        });
 
         return response()->json(DB::table('business_events')->where('event_id', $id)->first(self::COLUMNS), 201);
     }
 
     public function destroy(string $business, string $id)
     {
-        DB::table('business_events')->where('business_id', $business)->where('event_id', $id)->delete();
+        DB::transaction(function () use ($business, $id) {
+            $event = DB::table('business_events')->where('business_id', $business)->where('event_id', $id)->first();
+            if (! $event) {
+                return;
+            }
+            DB::table('business_events')->where('business_id', $business)->where('event_id', $id)->delete();
+            ActivityLog::record($business, ActivityLog::STORE, 'event_removed', [
+                'subjectId' => $id,
+                'subject' => $event->name,
+                'notes' => sprintf('%02d-%02d', $event->month, $event->day),
+            ]);
+        });
 
         return response()->noContent();
     }

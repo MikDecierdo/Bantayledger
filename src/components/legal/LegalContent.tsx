@@ -37,7 +37,7 @@ function sectionsFor(doc: LegalDoc): Section[] {
           t('Your business name, type and address.'),
           t('The products, stock, prices, sales, purchases, expenses and spoiled or damaged items you record, and any photos you upload.'),
           t('The names and contact details of the suppliers and staff you add, and optional map locations of your suppliers.'),
-          t('A log of changes to prices, stock and expenses, including the name of the person who made each change. The store owner can see it. It stays with the store after a staff member is removed, and your name is taken off it if you delete your own account.'),
+          t('A log of what happens in the store, such as sales, purchases, price, stock and expense changes, staff changes, and when each person signs in and out, including the name of the person who did it. The store owner can see it. It stays with the store after a staff member is removed, and your name is taken off it if you delete your own account.'),
         ],
       },
       {
