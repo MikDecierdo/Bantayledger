@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\ActivityLog;
 use App\Services\SubscriptionPlan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -68,6 +69,11 @@ class AuthController extends Controller
                 'user_id' => $user->user_id,
                 'role' => 'OWNER',
             ]);
+            ActivityLog::record($businessId, ActivityLog::STORE, 'store_created', [
+                'subjectId' => $businessId,
+                'subject' => trim($data['businessName']),
+                'actor' => $user,
+            ]);
 
             return $user;
         });
@@ -91,6 +97,7 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('api')->plainTextToken;
+        ActivityLog::account($user, 'signed_in');
 
         return response()->json(['userId' => $user->user_id, 'accessToken' => $token]);
     }
@@ -145,6 +152,7 @@ class AuthController extends Controller
 
     public function logout(Request $request)
     {
+        ActivityLog::account($request->user(), 'signed_out');
         $request->user()->currentAccessToken()->delete();
 
         return response()->noContent();
@@ -193,6 +201,7 @@ class AuthController extends Controller
                 'user_id' => $user->user_id,
                 'role' => 'OWNER',
             ]);
+            ActivityLog::record($businessId, ActivityLog::STORE, 'store_created', ['subjectId' => $businessId, 'subject' => trim($data['name'])]);
 
             return $businessId;
         });

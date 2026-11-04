@@ -39,15 +39,100 @@ const ACTION_LABELS: Record<string, string> = {
   stock_removed: t('Product removed: stock'),
   expense_added: t('Expense added'),
   expense_deleted: t('Expense deleted'),
+  sale_recorded: t('Sale recorded'),
+  sale_deleted: t('Sale deleted'),
+  purchase_recorded: t('Purchase recorded'),
+  purchase_status: t('Purchase status changed'),
+  purchase_deleted: t('Purchase deleted'),
+  product_added: t('Product added'),
+  product_renamed: t('Product renamed'),
+  product_details_changed: t('Product details changed'),
+  product_removed: t('Product removed'),
+  product_photo_changed: t('Product photo changed'),
+  product_photo_removed: t('Product photo removed'),
+  staff_added: t('Staff member added'),
+  staff_password_reset: t('Staff password reset'),
+  staff_removed: t('Staff member removed'),
+  store_created: t('Store created'),
+  store_details_changed: t('Store details changed'),
+  category_added: t('Category added'),
+  category_removed: t('Category removed'),
+  supplier_added: t('Supplier added'),
+  supplier_changed: t('Supplier details changed'),
+  supplier_removed: t('Supplier removed'),
+  event_added: t('Event added'),
+  event_removed: t('Event removed'),
+  plan_started: t('Plus plan started'),
+  plan_cancelled: t('Plus plan cancelled'),
+  signed_in: t('Signed in'),
+  signed_out: t('Signed out'),
 };
 
 const CATEGORY_LABELS: Record<ActivityCategory, string> = {
+  sale: t('Sale'),
+  purchase: t('Purchase'),
   price: t('Price'),
   stock: t('Stock'),
   expense: t('Expense'),
+  product: t('Product'),
+  staff: t('Staff'),
+  store: t('Store'),
+  account: t('Sign-in'),
 };
 
-const CATEGORY_TONES = { price: 'info', stock: 'neutral', expense: 'warning' } as const;
+const CATEGORY_TONES = {
+  sale: 'success',
+  purchase: 'brand',
+  price: 'info',
+  stock: 'neutral',
+  expense: 'warning',
+  product: 'brand',
+  staff: 'danger',
+  store: 'neutral',
+  account: 'info',
+} as const;
+
+/** The names of the details an edit can change, as the server sends them. */
+const FIELD_LABELS: Record<string, string> = {
+  category: t('category'),
+  supplier: t('supplier'),
+  unit: t('unit'),
+  sku: t('SKU'),
+  minimum_stock: t('minimum stock'),
+  maximum_stock: t('maximum stock'),
+  reorder_quantity: t('reorder quantity'),
+  is_active: t('shown in sales'),
+  size_of: t('size group'),
+  name: t('name'),
+  business_type: t('type of business'),
+  address: t('address'),
+  phone: t('phone'),
+  email: t('email'),
+  purchase_budget: t('monthly purchase budget'),
+  contact_person: t('contact person'),
+  location: t('map location'),
+  status: t('status'),
+};
+
+const PAYMENT_LABELS: Record<string, string> = {
+  Cash: t('Cash'),
+  GCash: t('GCash'),
+  Mixed: t('Cash + GCash'),
+  Card: t('Card'),
+  Other: t('Other'),
+};
+
+const PURCHASE_STATUS_LABELS: Record<string, string> = {
+  received: t('Received'),
+  pending: t('Pending'),
+  cancelled: t('Cancelled'),
+};
+
+const TERM_LABELS: Record<string, string> = {
+  weekly: t('Weekly'),
+  monthly: t('Monthly'),
+  yearly: t('Yearly'),
+};
 
 function timeOf(iso: string): string {
   const d = new Date(iso);
@@ -74,14 +159,57 @@ function Change({ entry }: { entry: ActivityEntry }) {
   );
 }
 
-/** The reason: a spoiled item's reason, an expense's category and date, or a typed note. */
+/** A month and day saved as "MM-DD", e.g. "Dec 25". */
+function monthDay(code: string): string {
+  const [month, day] = code.split('-').map(Number);
+  if (!month || !day) return code;
+  return new Date(2024, month - 1, day).toLocaleDateString(intlLocale(), { month: 'short', day: 'numeric' });
+}
+
+/** Changed-detail codes ("unit,sku") as words, in the app's language. */
+function fieldsText(codes: string): string {
+  const names = codes.split(',').filter(Boolean).map((code) => FIELD_LABELS[code] ?? code);
+  return names.length ? `${t('Changed')}: ${names.join(', ')}` : '';
+}
+
+/** A record's own date, shown when the entry is about a dated record. */
+function withDate(text: string, entry: ActivityEntry): string {
+  return entry.recordDate ? [text, shortDate(entry.recordDate)].filter(Boolean).join(' · ') : text;
+}
+
+/** The details: the reason, payment, status, what changed, or a typed note. */
 function reasonOf(entry: ActivityEntry): string {
-  if (entry.category === 'expense') {
-    const category = entry.notes ? label(entry.notes) : '';
-    return entry.recordDate ? `${category} · ${shortDate(entry.recordDate)}` : category;
+  const notes = entry.notes ?? '';
+  switch (entry.action) {
+    case 'expense_added':
+    case 'expense_deleted':
+      return withDate(notes ? label(notes) : '', entry);
+    case 'stock_waste':
+      return notes ? wasteReasonLabel(notes) : '';
+    case 'sale_recorded':
+    case 'sale_deleted':
+      return withDate(PAYMENT_LABELS[notes] ?? notes, entry);
+    case 'purchase_recorded':
+    case 'purchase_deleted':
+      return withDate(PURCHASE_STATUS_LABELS[notes] ?? notes, entry);
+    case 'purchase_status': {
+      const [from, to] = notes.split('>');
+      return `${PURCHASE_STATUS_LABELS[from] ?? from} → ${PURCHASE_STATUS_LABELS[to] ?? to}`;
+    }
+    case 'product_renamed':
+      return t('Was: {{name}}', { name: notes });
+    case 'product_details_changed':
+    case 'store_details_changed':
+    case 'supplier_changed':
+      return fieldsText(notes);
+    case 'event_added':
+    case 'event_removed':
+      return notes ? monthDay(notes) : '';
+    case 'plan_started':
+      return TERM_LABELS[notes] ?? notes;
+    default:
+      return notes;
   }
-  if (entry.action === 'stock_waste' && entry.notes) return wasteReasonLabel(entry.notes);
-  return entry.notes ?? '';
 }
 
 export function ActivityLog() {
@@ -157,7 +285,7 @@ export function ActivityLog() {
   const header = (
     <PageHeader
       title={t('Activity log')}
-      description={t('Who changed prices, stock and expenses, when, and from what to what. Entries can\'t be edited or deleted.')}
+      description={t('Everything that happens in your store: who did it, when, and what changed. Entries can\'t be edited or deleted.')}
     />
   );
 
@@ -211,13 +339,13 @@ export function ActivityLog() {
           padding="none"
           as="h2"
           className="bl-span-12"
-          title={t('All changes')}
+          title={t('All activity')}
           action={
             <Toolbar>
               <ToolbarSearch>
                 <SearchInput
-                  label={t('Search by product, description or person')}
-                  placeholder={t('Search product, description or person')}
+                  label={t('Search by item, person or note')}
+                  placeholder={t('Search item, person or note')}
                   value={typed}
                   onValueChange={setTyped}
                 />
@@ -232,9 +360,15 @@ export function ActivityLog() {
               onChange={setCategory}
               options={[
                 { value: 'all', label: t('All') },
+                { value: 'sale', label: t('Sales') },
+                { value: 'purchase', label: t('Purchases') },
                 { value: 'price', label: t('Prices') },
                 { value: 'stock', label: t('Stock') },
                 { value: 'expense', label: t('Expenses') },
+                { value: 'product', label: t('Products') },
+                { value: 'staff', label: t('Staff') },
+                { value: 'store', label: t('Store settings') },
+                { value: 'account', label: t('Sign-ins') },
               ]}
             />
             <div className="bl-activity__dates">
@@ -246,11 +380,11 @@ export function ActivityLog() {
           {entries.length === 0 ? (
             <EmptyState
               icon={filtering ? searchOutline : listOutline}
-              title={filtering ? t('No changes match your search') : t('No changes logged yet')}
+              title={filtering ? t('No activity matches your search') : t('Nothing logged yet')}
               description={
                 filtering
                   ? t('Try a different word, type or date.')
-                  : t('Changes to prices, stock and expenses will appear here as they happen.')
+                  : t('Sales, purchases, price and stock changes, expenses, staff changes and sign-ins will appear here as they happen.')
               }
               actionLabel={filtering ? t('Clear filters') : undefined}
               onAction={filtering ? clearFilters : undefined}
@@ -261,7 +395,7 @@ export function ActivityLog() {
               <div className="bl-responsive-table">
                 <div className="bl-table-wrap bl-scroll">
                   <table className="bl-table">
-                    <caption className="bl-sr-only">{t('Changes to prices, stock and expenses, newest first')}</caption>
+                    <caption className="bl-sr-only">{t('Everything that happened in the store, newest first')}</caption>
                     <thead>
                       <tr>
                         <th scope="col">{t('When')}</th>

@@ -13,7 +13,7 @@ class ActivityController extends Controller
     public function index(Request $request, string $business)
     {
         $data = $request->validate([
-            'category' => 'nullable|in:price,stock,expense',
+            'category' => 'nullable|in:price,stock,expense,sale,purchase,product,staff,store,account',
             'q' => 'nullable|string|max:100',
             'from' => 'nullable|date_format:Y-m-d',
             'to' => 'nullable|date_format:Y-m-d',

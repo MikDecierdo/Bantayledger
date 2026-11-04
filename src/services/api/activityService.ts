@@ -1,6 +1,6 @@
 import { api } from './client';
 
-export type ActivityCategory = 'price' | 'stock' | 'expense';
+export type ActivityCategory = 'sale' | 'purchase' | 'price' | 'stock' | 'expense' | 'product' | 'staff' | 'store' | 'account';
 
 export interface ActivityEntry {
   id: number;
@@ -15,7 +15,7 @@ export interface ActivityEntry {
   newValue: number | null;
   unit: string | null;
   notes: string | null;
-  /** The expense's own date, which can differ from when it was logged. */
+  /** The record's own date (an expense, sale or purchase), which can differ from when it was logged. */
   recordDate: string | null;
 }
 

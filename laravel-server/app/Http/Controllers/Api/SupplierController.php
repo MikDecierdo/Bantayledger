@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Services\ActivityLog;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -114,18 +115,21 @@ class SupplierController extends Controller
         ]);
 
         $id = (string) Str::uuid();
-        DB::table('suppliers')->insert([
-            'supplier_id' => $id,
-            'business_id' => $business,
-            'name' => trim($data['name']),
-            'contact_person' => isset($data['contactPerson']) ? trim($data['contactPerson']) : null,
-            'phone' => isset($data['phone']) ? trim($data['phone']) : null,
-            'email' => isset($data['email']) ? trim($data['email']) : null,
-            'address' => isset($data['address']) ? trim($data['address']) : null,
-            'latitude' => $data['latitude'] ?? null,
-            'longitude' => $data['longitude'] ?? null,
-            'status' => $data['status'] ?? 'active',
-        ]);
+        DB::transaction(function () use ($id, $business, $data) {
+            DB::table('suppliers')->insert([
+                'supplier_id' => $id,
+                'business_id' => $business,
+                'name' => trim($data['name']),
+                'contact_person' => isset($data['contactPerson']) ? trim($data['contactPerson']) : null,
+                'phone' => isset($data['phone']) ? trim($data['phone']) : null,
+                'email' => isset($data['email']) ? trim($data['email']) : null,
+                'address' => isset($data['address']) ? trim($data['address']) : null,
+                'latitude' => $data['latitude'] ?? null,
+                'longitude' => $data['longitude'] ?? null,
+                'status' => $data['status'] ?? 'active',
+            ]);
+            ActivityLog::record($business, ActivityLog::STORE, 'supplier_added', ['subjectId' => $id, 'subject' => trim($data['name'])]);
+        });
 
         return response()->json(DB::table('suppliers')->where('supplier_id', $id)->first(['suppliers.*', 'supplier_id as id']), 201);
     }
@@ -167,17 +171,45 @@ class SupplierController extends Controller
             $patch['status'] = $data['status'];
         }
 
-        $updated = DB::table('suppliers')->where('business_id', $business)->where('supplier_id', $id)->update($patch);
-        if (! $updated) {
-            throw ApiException::notFound('That supplier could not be found.');
-        }
+        DB::transaction(function () use ($business, $id, $patch) {
+            $before = DB::table('suppliers')->where('business_id', $business)->where('supplier_id', $id)->lockForUpdate()->first();
+            if (! $before) {
+                throw ApiException::notFound('That supplier could not be found.');
+            }
+            DB::table('suppliers')->where('business_id', $business)->where('supplier_id', $id)->update($patch);
+
+            $codes = ['name' => 'name', 'contact_person' => 'contact_person', 'phone' => 'phone', 'email' => 'email',
+                'address' => 'address', 'location' => 'latitude', 'location_lng' => 'longitude', 'status' => 'status'];
+            $fields = [];
+            foreach ($codes as $code => $column) {
+                if (array_key_exists($column, $patch)) {
+                    $fields[$code] = [$before->{$column}, $patch[$column]];
+                }
+            }
+            // Latitude and longitude are one change: "location".
+            $changed = str_replace(['location,location_lng', 'location_lng'], ['location', 'location'], ActivityLog::changedFields($fields));
+            if ($changed !== '') {
+                ActivityLog::record($business, ActivityLog::STORE, 'supplier_changed', [
+                    'subjectId' => $id,
+                    'subject' => $patch['name'] ?? $before->name,
+                    'notes' => $changed,
+                ]);
+            }
+        });
 
         return DB::table('suppliers')->where('supplier_id', $id)->first(['suppliers.*', 'supplier_id as id']);
     }
 
     public function destroy(string $business, string $id)
     {
-        DB::table('suppliers')->where('business_id', $business)->where('supplier_id', $id)->delete();
+        DB::transaction(function () use ($business, $id) {
+            $name = DB::table('suppliers')->where('business_id', $business)->where('supplier_id', $id)->value('name');
+            if ($name === null) {
+                return;
+            }
+            DB::table('suppliers')->where('business_id', $business)->where('supplier_id', $id)->delete();
+            ActivityLog::record($business, ActivityLog::STORE, 'supplier_removed', ['subjectId' => $id, 'subject' => $name]);
+        });
 
         return response()->noContent();
     }

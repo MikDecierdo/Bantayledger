@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLog;
 use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -104,6 +105,14 @@ class PurchaseController extends Controller
 
             $total = DB::table('purchase_items')->where('purchase_id', $purchaseId)->sum('subtotal');
             DB::table('purchases')->where('purchase_id', $purchaseId)->update(['total_amount' => $total]);
+
+            ActivityLog::record($business, ActivityLog::PURCHASE, 'purchase_recorded', [
+                'subjectId' => $purchaseId,
+                'subject' => ActivityLog::purchaseSubject($business, $purchaseId),
+                'new' => round((float) $total, 2),
+                'notes' => $status,
+                'recordDate' => $data['purchaseDate'] ?? now()->format('Y-m-d'),
+            ]);
         });
 
         return response()->noContent(201);
@@ -135,6 +144,14 @@ class PurchaseController extends Controller
             }
 
             DB::table('purchases')->where('purchase_id', $id)->update(['status' => $data['status']]);
+
+            ActivityLog::record($business, ActivityLog::PURCHASE, 'purchase_status', [
+                'subjectId' => $id,
+                'subject' => ActivityLog::purchaseSubject($business, $id),
+                'new' => round((float) $purchase->total_amount, 2),
+                'notes' => "{$purchase->status}>{$data['status']}",
+                'recordDate' => $purchase->purchase_date,
+            ]);
         });
 
         return response()->noContent();
@@ -143,10 +160,18 @@ class PurchaseController extends Controller
     public function destroy(string $business, string $id)
     {
         DB::transaction(function () use ($business, $id) {
-            $exists = DB::table('purchases')->where('business_id', $business)->where('purchase_id', $id)->exists();
-            if (! $exists) {
+            $purchase = DB::table('purchases')->where('business_id', $business)->where('purchase_id', $id)->first();
+            if (! $purchase) {
                 throw ApiException::notFound('That purchase could not be found.');
             }
+
+            ActivityLog::record($business, ActivityLog::PURCHASE, 'purchase_deleted', [
+                'subjectId' => $id,
+                'subject' => ActivityLog::purchaseSubject($business, $id),
+                'old' => round((float) $purchase->total_amount, 2),
+                'notes' => $purchase->status,
+                'recordDate' => $purchase->purchase_date,
+            ]);
 
             // No-ops cleanly for a purchase that was never 'received'.
             InventoryService::removeMovementsByReference($business, 'purchase', $id, 'PURCHASE');

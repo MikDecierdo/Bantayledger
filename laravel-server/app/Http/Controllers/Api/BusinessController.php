@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use App\Services\AccountData;
+use App\Services\ActivityLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -107,7 +108,32 @@ class BusinessController extends Controller
         // same budget twice — so existence is checked separately above
         // rather than inferred from that count.
         if ($patch !== []) {
-            DB::table('businesses')->where('business_id', $business)->update($patch);
+            DB::transaction(function () use ($business, $patch, $existing) {
+                DB::table('businesses')->where('business_id', $business)->update($patch);
+
+                $codes = [
+                    'name' => 'name',
+                    'business_type' => 'business_type',
+                    'address' => 'address',
+                    'phone' => 'phone',
+                    'email' => 'email',
+                    'purchase_budget' => 'monthly_purchase_budget',
+                ];
+                $fields = [];
+                foreach ($codes as $code => $column) {
+                    if (array_key_exists($column, $patch)) {
+                        $fields[$code] = [$existing->{$column}, $patch[$column]];
+                    }
+                }
+                $changed = ActivityLog::changedFields($fields);
+                if ($changed !== '') {
+                    ActivityLog::record($business, ActivityLog::STORE, 'store_details_changed', [
+                        'subjectId' => $business,
+                        'subject' => $patch['name'] ?? $existing->name,
+                        'notes' => $changed,
+                    ]);
+                }
+            });
         }
 
         return DB::table('businesses')->where('business_id', $business)->first(['businesses.*', 'business_id as id']);
@@ -170,6 +196,7 @@ class BusinessController extends Controller
                 'user_id' => $userId,
                 'role' => 'STAFF',
             ]);
+            ActivityLog::record($business, ActivityLog::STAFF, 'staff_added', ['subjectId' => $userId, 'subject' => trim($data['fullName'])]);
         });
 
         return response()->json(['userId' => $userId], 201);
@@ -186,9 +213,15 @@ class BusinessController extends Controller
             throw ApiException::notFound('That person is not a member of this business.');
         }
 
-        DB::table('users')->where('user_id', $userId)->update(['password' => Hash::make($data['password'])]);
-        // Sign the staff member out everywhere so the old password stops working.
-        DB::table('personal_access_tokens')->where('tokenable_id', $userId)->delete();
+        DB::transaction(function () use ($business, $userId, $data) {
+            DB::table('users')->where('user_id', $userId)->update(['password' => Hash::make($data['password'])]);
+            // Sign the staff member out everywhere so the old password stops working.
+            DB::table('personal_access_tokens')->where('tokenable_id', $userId)->delete();
+            ActivityLog::record($business, ActivityLog::STAFF, 'staff_password_reset', [
+                'subjectId' => $userId,
+                'subject' => DB::table('users')->where('user_id', $userId)->value('name') ?? '—',
+            ]);
+        });
 
         return response()->noContent();
     }
@@ -204,6 +237,11 @@ class BusinessController extends Controller
         }
 
         DB::transaction(function () use ($business, $userId) {
+            // Named before their login may go below.
+            ActivityLog::record($business, ActivityLog::STAFF, 'staff_removed', [
+                'subjectId' => $userId,
+                'subject' => DB::table('users')->where('user_id', $userId)->value('name') ?? '—',
+            ]);
             DB::table('business_users')->where('business_id', $business)->where('user_id', $userId)->delete();
             DB::table('personal_access_tokens')->where('tokenable_id', $userId)->delete();
             // A helper's login exists only for the store; it goes once they have none left.

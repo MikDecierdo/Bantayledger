@@ -160,6 +160,8 @@ class ProductController extends Controller
                     'status' => InventoryService::computeStatus(0, (float) $data['minimumStock']),
                 ]);
 
+                ActivityLog::record($business, ActivityLog::PRODUCT, 'product_added', ['subjectId' => $id, 'subject' => $name]);
+
                 foreach (['selling_price_set' => 'sellingPrice', 'cost_price_set' => 'costPrice'] as $action => $field) {
                     ActivityLog::record($business, ActivityLog::PRICE, $action, [
                         'subjectId' => $id,
@@ -236,32 +238,57 @@ class ProductController extends Controller
 
         try {
             DB::transaction(function () use ($data, $patch, $business, $id) {
-                // Read the old prices under a lock, so the log has the true "from" value.
-                $before = null;
-                if (array_key_exists('costPrice', $data) || array_key_exists('sellingPrice', $data)) {
-                    $before = DB::table('products')->where('product_id', $id)->where('business_id', $business)
-                        ->lockForUpdate()->first(['name', 'cost_price', 'selling_price']);
-                    if (! $before) {
-                        throw ApiException::notFound('That product could not be found.');
-                    }
-                }
-
-                if (array_key_exists('minimumStock', $data)) {
-                    $current = DB::table('products')->where('product_id', $id)->where('business_id', $business)
-                        ->lockForUpdate()->first('current_stock');
-                    if (! $current) {
-                        throw ApiException::notFound('That product could not be found.');
-                    }
-                    $patch['minimum_stock'] = $data['minimumStock'];
-                    $patch['status'] = InventoryService::computeStatus((float) $current->current_stock, (float) $data['minimumStock']);
-                }
-
-                $updated = DB::table('products')->where('business_id', $business)->where('product_id', $id)->update($patch);
-                if (! $updated && ! DB::table('products')->where('business_id', $business)->where('product_id', $id)->exists()) {
+                // Read the product under a lock, so the log has the true "from" values.
+                $before = DB::table('products')->where('product_id', $id)->where('business_id', $business)
+                    ->lockForUpdate()->first();
+                if (! $before) {
                     throw ApiException::notFound('That product could not be found.');
                 }
 
-                if ($before) {
+                if (array_key_exists('minimumStock', $data)) {
+                    $patch['minimum_stock'] = $data['minimumStock'];
+                    $patch['status'] = InventoryService::computeStatus((float) $before->current_stock, (float) $data['minimumStock']);
+                }
+
+                DB::table('products')->where('business_id', $business)->where('product_id', $id)->update($patch);
+
+                $name = $patch['name'] ?? $before->name;
+                if ($name !== $before->name) {
+                    ActivityLog::record($business, ActivityLog::PRODUCT, 'product_renamed', [
+                        'subjectId' => $id,
+                        'subject' => $name,
+                        'notes' => $before->name,
+                    ]);
+                }
+
+                // Every other detail that really changed, by code (shown translated in the app).
+                $columns = [
+                    'category' => 'category_id',
+                    'supplier' => 'supplier_id',
+                    'unit' => 'unit',
+                    'sku' => 'sku',
+                    'minimum_stock' => 'minimum_stock',
+                    'maximum_stock' => 'maximum_stock',
+                    'reorder_quantity' => 'reorder_quantity',
+                    'is_active' => 'is_active',
+                    'size_of' => 'variant_group_product_id',
+                ];
+                $fields = [];
+                foreach ($columns as $code => $column) {
+                    if (array_key_exists($column, $patch)) {
+                        $fields[$code] = [$before->{$column}, $patch[$column]];
+                    }
+                }
+                $changed = ActivityLog::changedFields($fields);
+                if ($changed !== '') {
+                    ActivityLog::record($business, ActivityLog::PRODUCT, 'product_details_changed', [
+                        'subjectId' => $id,
+                        'subject' => $name,
+                        'notes' => $changed,
+                    ]);
+                }
+
+                if (array_key_exists('costPrice', $data) || array_key_exists('sellingPrice', $data)) {
                     $prices = [
                         'selling_price_changed' => ['sellingPrice', (float) $before->selling_price],
                         'cost_price_changed' => ['costPrice', (float) $before->cost_price],
@@ -306,6 +333,7 @@ class ProductController extends Controller
 
                 if ($product) {
                     $entry = ['subjectId' => $id, 'subject' => $product->name];
+                    ActivityLog::record($business, ActivityLog::PRODUCT, 'product_removed', $entry);
                     ActivityLog::record($business, ActivityLog::PRICE, 'selling_price_removed', $entry + ['old' => (float) $product->selling_price]);
                     ActivityLog::record($business, ActivityLog::PRICE, 'cost_price_removed', $entry + ['old' => (float) $product->cost_price]);
                     ActivityLog::record($business, ActivityLog::STOCK, 'stock_removed', $entry + ['old' => (float) $product->current_stock, 'unit' => $product->unit]);
@@ -328,34 +356,47 @@ class ProductController extends Controller
             'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:2048',
         ]);
 
-        $existing = DB::table('products')->where('business_id', $business)->where('product_id', $id)->first('image_path');
+        $existing = DB::table('products')->where('business_id', $business)->where('product_id', $id)->first(['image_path', 'name']);
         if (! $existing) {
             throw ApiException::notFound('That product could not be found.');
         }
 
         $path = $data['image']->store('products', 'public');
 
+        try {
+            DB::transaction(function () use ($business, $id, $path, $existing) {
+                DB::table('products')->where('business_id', $business)->where('product_id', $id)->update(['image_path' => $path]);
+                ActivityLog::record($business, ActivityLog::PRODUCT, 'product_photo_changed', ['subjectId' => $id, 'subject' => $existing->name]);
+            });
+        } catch (\Throwable $e) {
+            Storage::disk('public')->delete($path);
+            throw $e;
+        }
+
         if ($existing->image_path) {
             Storage::disk('public')->delete($existing->image_path);
         }
-
-        DB::table('products')->where('business_id', $business)->where('product_id', $id)->update(['image_path' => $path]);
 
         return $this->show($business, $id);
     }
 
     public function removeImage(string $business, string $id)
     {
-        $existing = DB::table('products')->where('business_id', $business)->where('product_id', $id)->first('image_path');
+        $existing = DB::table('products')->where('business_id', $business)->where('product_id', $id)->first(['image_path', 'name']);
         if (! $existing) {
             throw ApiException::notFound('That product could not be found.');
         }
 
+        DB::transaction(function () use ($business, $id, $existing) {
+            DB::table('products')->where('business_id', $business)->where('product_id', $id)->update(['image_path' => null]);
+            if ($existing->image_path) {
+                ActivityLog::record($business, ActivityLog::PRODUCT, 'product_photo_removed', ['subjectId' => $id, 'subject' => $existing->name]);
+            }
+        });
+
         if ($existing->image_path) {
             Storage::disk('public')->delete($existing->image_path);
         }
-
-        DB::table('products')->where('business_id', $business)->where('product_id', $id)->update(['image_path' => null]);
 
         return response()->noContent();
     }
