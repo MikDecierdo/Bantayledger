@@ -397,10 +397,9 @@
 .bl-cart__name {
   font-size: var(--bl-fs-sm);
   font-weight: var(--bl-fw-medium);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
+/* A long name scrolls (Ticker); it holds still while the cashier edits that row. */
+.bl-cart__row:focus-within .bl-ticker__text { animation-play-state: paused; }
 .bl-cart__unit { font-size: 11px; color: var(--bl-text-secondary); }
 
 .bl-cart__price { width: 92px; flex-shrink: 0; }
