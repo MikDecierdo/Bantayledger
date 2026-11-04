@@ -10,6 +10,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import TrendChart from '../components/charts/TrendChart';
 import Button from '../components/common/Button';
+import Ticker from '../components/common/Ticker';
 import { CurrencyField, DateField, SearchInput, SelectField, TextField } from '../components/common/Field';
 import { Modal } from '../components/common/Modal';
 import { GCashLogo, PaymentBadges, PesoCashLogo } from '../components/common/PaymentLogos';
@@ -832,7 +833,7 @@ export function Sales() {
                   <div key={line.productId} className="bl-cart__row">
                     <ProductThumbnail src={line.imageUrl} name={line.name} size="sm" />
                     <div className="bl-cart__info">
-                      <span className="bl-cart__name">{line.name}</span>
+                      <Ticker text={line.name} className="bl-cart__name" />
                       <span className="bl-cart__unit">{line.unit}</span>
                     </div>
                     <CurrencyField

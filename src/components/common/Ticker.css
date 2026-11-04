@@ -1,0 +1,35 @@
+/* A line of text that scrolls sideways only when it doesn't fit (Ticker.tsx). */
+
+.bl-ticker {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.bl-ticker__text { display: inline; }
+
+.bl-ticker.is-moving {
+  text-overflow: clip;
+  /* A soft right edge shows there's more text. */
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 14px), transparent 100%);
+  mask-image: linear-gradient(90deg, #000 calc(100% - 14px), transparent 100%);
+}
+.bl-ticker.is-moving .bl-ticker__text {
+  display: inline-block;
+  animation: bl-ticker var(--bl-ticker-time, 8s) ease-in-out infinite;
+}
+/* Holds still while pointed at, so it can be read at leisure. */
+.bl-ticker.is-moving:hover .bl-ticker__text { animation-play-state: paused; }
+
+/* Wait at the start, glide to the end, wait, glide back. */
+@keyframes bl-ticker {
+  0%, 20% { transform: translateX(0); }
+  50%, 70% { transform: translateX(var(--bl-ticker-shift, 0px)); }
+  100% { transform: translateX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bl-ticker.is-moving { text-overflow: ellipsis; -webkit-mask-image: none; mask-image: none; }
+  .bl-ticker.is-moving .bl-ticker__text { display: inline; animation: none; }
+}
