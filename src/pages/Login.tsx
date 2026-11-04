@@ -12,7 +12,7 @@ import './Login.css';
 import { transitionClick } from '../lib/viewTransition';
 import { t } from '../i18n';
 import LanguageSelect from '../components/common/LanguageSelect';
-import AppTour from '../components/brand/AppTour';
+import AppTour, { tourPanelStyle } from '../components/brand/AppTour';
 
 interface Errors {
   email?: string;
@@ -158,7 +158,7 @@ export function Login() {
 
       {/* The animated tour, desktop only. Shown on the left, but after the form in
           the page, so screen readers reach the sign-in fields first. */}
-      <aside className="bl-login__aside bl-login__aside--tour" aria-label={t('A quick tour of BantayLedger AI')}>
+      <aside className="bl-login__aside bl-login__aside--tour" style={tourPanelStyle()} aria-label={t('A quick tour of BantayLedger AI')}>
         <div className="bl-login__aside-inner">
           <Logo size="lg" inverse />
 

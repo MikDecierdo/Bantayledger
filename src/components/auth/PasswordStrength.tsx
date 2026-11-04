@@ -19,8 +19,11 @@ function levelName(level: StrengthLevel): string {
   }
 }
 
-/** Live strength meter and rule checklist shown under a "new password" field. */
-export function PasswordStrength({ password }: { password: string }) {
+/**
+ * Live strength meter and rule checklist shown under a "new password" field.
+ * `compact` shows the phone version everywhere: a thin bar and one line of what's missing.
+ */
+export function PasswordStrength({ password, compact = false }: { password: string; compact?: boolean }) {
   const { rules, level } = evaluatePassword(password, {
     length: t('At least 8 characters'),
     upper: t('An uppercase letter (A–Z)'),
@@ -40,7 +43,7 @@ export function PasswordStrength({ password }: { password: string }) {
   const missing = rules.filter((r) => !r.met).map((r) => short[r.id] ?? r.label);
 
   return (
-    <div className={`bl-pw bl-pw--l${level}`}>
+    <div className={`bl-pw bl-pw--l${level}${compact ? ' bl-pw--compact' : ''}`}>
       <div className="bl-pw__meter">
         <div className="bl-pw__bars" aria-hidden="true">
           <span />

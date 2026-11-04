@@ -1,0 +1,15 @@
+{
+  "Check your details, then create your account.": ["Suriin ang mga detalye mo, saka gawin ang account mo.", "Susiha ang imong mga detalye, unya himoa ang imong account."],
+  "Create a BantayLedger account": ["Gumawa ng BantayLedger account", "Paghimo og BantayLedger account"],
+  "Next": ["Susunod", "Sunod"],
+  "Not given": ["Hindi inilagay", "Wala gibutang"],
+  "required": ["kailangan", "kinahanglan"],
+  "Review and agree": ["Suriin at sumang-ayon", "Susiha ug uyon"],
+  "Sign in instead": ["Mag-sign in na lang", "Mag-sign in na lang"],
+  "Sign-up progress": ["Progreso ng pag-sign up", "Pag-uswag sa pag-sign up"],
+  "Tell us about the store you are setting up.": ["Ikuwento ang tindahang ise-set up mo.", "Isulti kanamo ang tindahan nga imong i-set up."],
+  "Use 8 or more characters with a mix of letters, numbers and symbols.": ["Gumamit ng 8 o higit pang character na may halong letra, numero at simbolo.", "Gamita ang 8 o labaw pa nga karakter nga may sagol nga letra, numero ug simbolo."],
+  "Use a stronger password: add the items still missing below.": ["Gumamit ng mas matibay na password: idagdag ang mga kulang pa sa ibaba.", "Gamita ang mas lig-on nga password: idugang ang mga kulang pa sa ubos."],
+  "You will use this email address to sign in.": ["Gagamitin mo ang email na ito sa pag-sign in.", "Gamiton nimo kini nga email sa pag-sign in."],
+  "Your sign-in email": ["Ang email mo sa pag-sign in", "Ang imong email sa pag-sign in"]
+}
