@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toUserMessage } from '../../lib/errors';
 import { alertError, confirmLogout } from '../../lib/swal';
 import { Logo } from '../brand/Logo';
-import { accountNav, intelligenceNav, primaryNav, profileShortcuts, subscriptionNav, type NavItem } from './navItems';
+import { accountNav, intelligenceNav, primaryNav, profileShortcuts, subscriptionNav, visibleNav, type NavItem } from './navItems';
 import './DesktopSidebar.css';
 import { t } from '../../i18n';
 
@@ -154,7 +154,7 @@ export function DesktopSidebar({
           />
           <NavGroup
             title={t('Intelligence')}
-            items={intelligenceNav}
+            items={visibleNav(intelligenceNav, isManager)}
             collapsed={collapsed}
             alertCount={alertCount}
             currentPath={pathname}
