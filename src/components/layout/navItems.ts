@@ -99,8 +99,8 @@ export const quickAddItems: { label: string; href: string; icon: string }[] = [
 
 /** Everything else on phones, grouped like the desktop sidebar. */
 export const moreGroups: { title: string; items: NavItem[] }[] = [
-  { title: t('Business'), items: primaryNav.filter((i) => !bottomNav.some((b) => b.href === i.href)) },
-  { title: t('Intelligence'), items: intelligenceNav },
+  { title: t('Records'), items: primaryNav.filter((i) => !bottomNav.some((b) => b.href === i.href)) },
+  { title: t('Advice and reports'), items: intelligenceNav },
   { title: t('Account'), items: accountNav },
 ];
 

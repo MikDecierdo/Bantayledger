@@ -157,7 +157,7 @@ export function Forecast() {
       )}
 
       {/* ---- Summary --------------------------------------------------------- */}
-      <PinnedSummary>
+      <PinnedSummary compactOnPhone>
         <Section title={t('Forecast summary')} description={t('Across all tracked products')}>
           <div className="bl-grid bl-grid--kpi">
             <Card className="bl-fcast__sum">

@@ -1,8 +1,9 @@
 import { addOutline, searchOutline, walletOutline } from 'ionicons/icons';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import BarChart from '../components/charts/BarChart';
 import BarList from '../components/charts/BarList';
+import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
 import {
   CurrencyField,
@@ -27,7 +28,7 @@ import { alertSuccess } from '../lib/swal';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { expenseService } from '../services/api';
-import { peso, pesoCompact, shortDate } from '../utils/format';
+import { peso, pesoExact, pesoCompact, rowDate, shortDate } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
 import { label } from '../i18n/labels';
@@ -35,6 +36,7 @@ import { label } from '../i18n/labels';
 export function Expenses() {
   const { activeBusiness, user } = useAuth();
   const location = useLocation<{ openAdd?: boolean } | undefined>();
+  const history = useHistory();
 
   const { data, loading, error, reload } = useAsyncData(
     () => Promise.all([dataService.getExpenses(), dataService.getExpensesOverview()]),
@@ -47,7 +49,10 @@ export function Expenses() {
 
   /** Arriving from a Dashboard quick action — open the Add form immediately. */
   useEffect(() => {
-    if (location.state?.openAdd) setAddOpen(true);
+    if (!location.state?.openAdd) return;
+    setAddOpen(true);
+    // Used up, so coming back to this page doesn't open it again.
+    history.replace({ pathname: location.pathname, state: undefined });
   }, [location.state]);
 
   const [form, setForm] = useState({
@@ -173,7 +178,7 @@ export function Expenses() {
     <Workspace>
       {header}
 
-      <PinnedSummary>
+      <PinnedSummary compactOnPhone>
         <Section title={t('Expense summary')}>
           <div className="bl-grid bl-grid--kpi">
             <StatCard
@@ -233,7 +238,7 @@ export function Expenses() {
               onValueChange={setQuery}
             />
           </ToolbarSearch>
-          <ToolbarFilters>
+          <ToolbarFilters active={category !== 'all'}>
             <SelectField
               label={t('Filter by category')}
               hideLabel
@@ -324,18 +329,11 @@ export function Expenses() {
             <ul className="bl-responsive-cards">
               {filtered.map((expense) => (
                 <li key={expense.id}>
-                  <article className="bl-drow">
-                    <div className="bl-drow__top">
-                      <div>
-                        <span className="bl-drow__title">{expense.description}</span>
-                        <span className="bl-drow__meta">
-                          {shortDate(expense.date)} · {expense.paidBy}
-                        </span>
-                      </div>
-                      <span className="bl-tx__amount">{peso(expense.amount)}</span>
-                    </div>
-                    <Badge tone="neutral">{label(expense.category)}</Badge>
-                  </article>
+                  <MobileRow
+                    title={expense.description}
+                    meta={`${rowDate(expense.date)} · ${label(expense.category)} · ${expense.paidBy}`}
+                    value={pesoExact(expense.amount)}
+                  />
                 </li>
               ))}
             </ul>

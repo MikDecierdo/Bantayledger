@@ -353,6 +353,7 @@
   .bl-pos__side--details .bl-pos__cash-chips { gap: 4px; }
   .bl-pos__side--details .bl-pos__chip { min-height: 28px; padding: 2px 4px; white-space: nowrap; }
   .bl-pos__side--details .bl-pos__change { padding: 5px var(--bl-s3); font-size: var(--bl-fs-xs); }
+  .bl-pos__side--details .bl-pos__total strong { font-size: var(--bl-fs-lg); }
 }
 
 /* Short windows, such as the Windows app at its smallest: the payment buttons
@@ -511,6 +512,17 @@
   font-size: var(--bl-fs-lg);
   font-variant-numeric: tabular-nums;
 }
+/* Total, directly above the Change box and in line with it. */
+.bl-cart__total.bl-pos__total {
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  margin: 0;
+  padding: 0 var(--bl-s3);
+}
+.bl-pos__total strong { font-size: var(--bl-fs-xl); }
+
 .bl-pos__change--change { background: var(--bl-green-light); color: var(--bl-green-dark); }
 .bl-pos__change--short { background: var(--bl-danger-bg); color: var(--bl-danger); }
 
@@ -652,4 +664,67 @@
     border-radius: 0;
   }
   .bl-card--fill .bl-tx__totals-value { font-size: var(--bl-fs-lg); }
+}
+
+/* The price line is for phones only (see below). */
+.bl-cart__each { display: none; }
+
+/* ---- Add Sale on phones: two steps ------------------------------------------
+   Step 1 is only the products, with the running total and Next in a bar at the
+   bottom. Step 2 is the cart and payment in one simple scroll, with nothing
+   scrolling inside it. Each cart line has big + and - buttons; the price is shown
+   as text with a "Change price" link, so it can't be changed by accident. */
+@media (max-width: 599px) {
+  .bl-pos__layout[data-step='pick'] .bl-pos__side { display: none; }
+  .bl-pos__layout[data-step='pay'] .bl-pos__main { display: none; }
+  .bl-pos__layout[data-step='pick'] .bl-pos__picker { margin-bottom: 0; }
+
+  .bl-modal .bl-grid--tiles .bl-tile { min-height: 68px; }
+  /* Long names wrap, so the cashier can read which product it is. */
+  .bl-modal .bl-grid--tiles .bl-tile__name { display: block; overflow: visible; white-space: normal; text-overflow: clip; line-height: 1.25; }
+  .bl-modal .bl-grid--tiles .bl-tile__add { min-width: 40px; height: 40px; }
+
+  /* The running total and Next share one row. */
+  .bl-modal__footer > .bl-cart__total--bar { flex: 1 1 40%; margin: 0; justify-content: center; }
+  .bl-modal__footer:has(> .bl-cart__total--bar) { align-items: center; flex-wrap: nowrap; }
+  .bl-modal__footer:has(> .bl-cart__total--bar) .bl-btn { flex: 1 1 60%; }
+  .bl-cart__total strong { font-size: var(--bl-fs-xl); }
+
+  .bl-pos__side { padding: var(--bl-s3); }
+  .bl-pos__side .bl-cart { max-height: none; overflow: visible; padding-bottom: 0; }
+
+  .bl-modal .bl-pos__side .bl-cart__row {
+    grid-template-columns: 40px minmax(0, 1fr) 44px;
+    column-gap: var(--bl-s3);
+    padding: var(--bl-s3) 0;
+  }
+  .bl-modal .bl-pos__side .bl-cart__row > :nth-child(1) { grid-column: 1; grid-row: 1; align-self: start; }
+  .bl-modal .bl-pos__side .bl-cart__row > :nth-child(2) { grid-column: 2; grid-row: 1; }
+  .bl-modal .bl-pos__side .bl-cart__row > :nth-child(6) { grid-column: 3; grid-row: 1; align-self: start; }
+  .bl-modal .bl-pos__side .bl-cart__row > :nth-child(4) { grid-column: 1 / 3; grid-row: 2; justify-self: start; }
+  .bl-modal .bl-pos__side .bl-cart__row > :nth-child(5) { grid-column: 2 / 4; grid-row: 2; justify-self: end; width: auto; }
+  .bl-modal .bl-pos__side .bl-cart__row > :nth-child(3) { display: none; }
+  .bl-modal .bl-pos__side .bl-cart__row > .bl-cart__price.is-editing { display: flex; grid-column: 1 / -1; grid-row: 3; width: 100%; }
+
+  .bl-cart__name { font-size: var(--bl-fs-base); font-weight: var(--bl-fw-semibold); }
+  .bl-cart__unit { display: none; }
+  .bl-cart__each { display: block; margin-top: 2px; color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); }
+  .bl-cart__change {
+    /* Looks like a link; the padding makes it easy to hit. */
+    margin: -12px -6px;
+    padding: 12px 6px;
+    border: 0;
+    background: none;
+    color: var(--bl-green-dark);
+    font: inherit;
+    font-weight: var(--bl-fw-semibold);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .bl-cart__stepper { gap: var(--bl-s2); }
+  .bl-cart__stepper .bl-btn { border: 1px solid var(--bl-border-strong); border-radius: var(--bl-r-md); color: var(--bl-green-dark); }
+  .bl-cart__qty { min-width: 32px; font-size: var(--bl-fs-lg); font-weight: var(--bl-fw-bold); }
+  .bl-cart__subtotal { font-size: var(--bl-fs-md); }
+
+  .bl-pos__chip { min-height: 44px; }
 }

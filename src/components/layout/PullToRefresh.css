@@ -1,0 +1,33 @@
+/* The round marker that follows the finger when pulling a page down to refresh. */
+.bl-ptr {
+  position: fixed;
+  top: calc(var(--bl-header-h) + var(--bl-safe-top));
+  left: 50%;
+  z-index: 24;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bl-surface);
+  box-shadow: var(--bl-shadow-sm);
+  color: var(--bl-text-secondary);
+  font-size: 22px;
+  pointer-events: none;
+}
+.bl-ptr.is-ready { color: var(--bl-green); }
+.bl-ptr.is-spinning {
+  color: var(--bl-green);
+  transform: translate(-50%, 64px);
+  animation: bl-ptr-spin 700ms linear;
+}
+@keyframes bl-ptr-spin {
+  from { transform: translate(-50%, 64px) rotate(0deg); }
+  to { transform: translate(-50%, 64px) rotate(360deg); }
+}
+@media (min-width: 768px) {
+  .bl-ptr { display: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bl-ptr.is-spinning { animation: none; }
+}

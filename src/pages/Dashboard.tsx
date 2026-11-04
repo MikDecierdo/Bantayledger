@@ -336,7 +336,7 @@ export function Dashboard() {
           fill
           padding="none"
           as="h2"
-          className="bl-span-3 bl-dash__capped"
+          className="bl-span-3 bl-dash__capped bl-dash__attention"
           title={t('Needs attention')}
           description={t('Urgent alerts and products below their minimum')}
           action={

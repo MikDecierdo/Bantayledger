@@ -189,3 +189,29 @@
 .bl-insight__stock-qty { grid-column: 1; grid-row: 2; }
 .bl-insight__stock-row > .bl-btn { grid-column: 2; grid-row: 1 / span 2; }
 
+/* The reasons behind an insight: always shown on larger screens, on request on phones. */
+.bl-insight__why { display: none; }
+.bl-insight__details { display: contents; }
+@media (max-width: 767px) {
+  .bl-insight__why {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bl-s2);
+    width: 100%;
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--bl-green-dark);
+    font: inherit;
+    font-size: var(--bl-fs-sm);
+    font-weight: var(--bl-fw-semibold);
+    text-align: left;
+    cursor: pointer;
+  }
+  .bl-insight__why ion-icon { flex-shrink: 0; transition: transform var(--bl-dur-fast) var(--bl-ease); }
+  .bl-insight__why[aria-expanded='true'] ion-icon { transform: rotate(180deg); }
+  .bl-insight__details { display: none; }
+  .bl-insight__details.is-open { display: contents; }
+}

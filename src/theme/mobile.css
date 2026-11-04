@@ -303,3 +303,220 @@
   .bl-mheader__title { font-size: var(--bl-fs-lg); }
   .bl-mheader__icon-btn:hover { background: #F1F4F2; }
 }
+
+/* ---- Phones: comfortable to read and to tap ---------------------------------
+   Nothing to press is shorter than 44px, form fields are 16px, and text fixed in
+   pixels elsewhere comes up to the phone minimum of 12px. */
+@media (max-width: 767px) {
+  .bl-btn,
+  .bl-btn--sm { min-height: 44px; }
+  .bl-btn--icon-only { width: 44px; }
+  .bl-segment__btn,
+  .bl-chip { min-height: 44px; }
+  .bl-check { min-height: 44px; }
+  .bl-input,
+  .bl-select,
+  .bl-textarea,
+  .bl-input-group input { font-size: 16px; }
+  .bl-tile__stock,
+  .bl-cart__unit { font-size: 12px; }
+}
+
+/* ---- Phones: lists made of short rows ----------------------------------------- */
+@media (max-width: 767px) {
+  .bl-shell .bl-responsive-cards li:has(> .bl-mrow-wrap) { padding: 0; }
+  /* The top bar already names the page, so a list's heading only pushes it down. */
+  .bl-shell .bl-card--fill > .bl-card__header:has(.bl-toolbar) > .bl-card__header-text { display: none; }
+}
+
+/* ---- Phones: the answer first, and every control big enough ---------------------- */
+@media (max-width: 767px) {
+  /* No grey band under the top bar when nothing sits above the first section. */
+  .bl-shell .bl-ws:not(:has(> .bl-pin)) > .bl-bento:first-of-type { margin-top: 0; }
+  .bl-shell .bl-ws:not(:has(> .bl-pin)) > .bl-bento:first-of-type > .bl-card:first-child { border-top: 0; }
+
+  /* Dashboard: today's money, what needs attention, then charts. The + already
+     covers most of the shortcuts, so they move to the end of the page. */
+  .bl-shell .bl-dash > .bl-bento { display: flex; flex-direction: column; }
+  .bl-shell .bl-dash > .bl-bento > .bl-dash__attention { order: -1; }
+  .bl-shell .bl-dash > .bl-grid--quickactions { order: 4; margin-top: var(--bl-s4); }
+  .bl-dash__greeting .bl-caption { display: none; }
+  /* A long list reads better as part of the page than in a small scrolling box. */
+  .bl-shell .bl-dash .bl-dash__capped > .bl-card__body { max-height: none; overflow: visible; }
+
+  /* The three smaller figures share one row. */
+  .bl-shell .bl-dash .bl-grid.bl-grid--kpi { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .bl-shell .bl-dash .bl-grid--kpi > :not(:first-child) { padding: var(--bl-s2) var(--bl-s2) var(--bl-s2) 0; border-right: 1px solid var(--bl-border); }
+  .bl-shell .bl-dash .bl-grid--kpi > :nth-child(n + 3) { padding-left: var(--bl-s2); }
+  .bl-shell .bl-dash .bl-grid--kpi > :last-child { border-right: 0; padding-right: 0; }
+  .bl-shell .bl-dash .bl-grid--kpi > :not(:first-child) .bl-stat__foot { display: none; }
+
+  /* AI Insights: the advice first; how it's made goes to the end of the page. */
+  .bl-shell .bl-ws > .bl-bento:has(> .bl-ai__about) { display: flex; flex-direction: column; }
+  .bl-shell .bl-ws > .bl-bento > .bl-ai__about { order: 2; }
+
+  /* Totals of a list, on one line. */
+  .bl-shell .bl-card--flush .bl-tx__totals { align-items: center; flex-wrap: nowrap; padding-block: var(--bl-s1); }
+  .bl-shell .bl-tx__totals > div { display: flex; align-items: baseline; gap: var(--bl-s2); }
+  .bl-shell .bl-tx__totals-value { font-size: var(--bl-fs-base); }
+
+  /* Reports: Filter on the left of the same line as Export. */
+  .bl-rep__phonefilter { position: relative; z-index: 1; display: flex; width: max-content; margin-top: calc(-44px - var(--bl-s4)); margin-bottom: var(--bl-s3); }
+  .bl-rep__phonefilter .bl-toolbar__filterbtn { height: 44px; }
+
+  /* Controls that were smaller than a fingertip. */
+  .bl-shell .bl-pageheader .bl-pageheader__actions > .bl-btn,
+  .bl-shell .bl-drow .bl-btn--secondary,
+  .bl-shell .bl-drow .bl-btn--ghost { min-height: 44px; }
+  .bl-shell .bl-lang__select,
+  .bl-lang .bl-lang__select { min-height: 44px; font-size: 16px; }
+  .bl-shell .bl-insight__action,
+  .bl-shell .bl-fc__link,
+  .bl-shell .bl-alertcard__link,
+  .bl-shell .bl-viewall { display: inline-flex; align-items: center; min-height: 44px; }
+  .bl-shell .bl-chart__data > summary { display: flex; align-items: center; min-height: 44px; }
+}
+
+/* ---- Phones: Dashboard and Alerts as cards ---------------------------------------
+   These two pages are read at a glance, so they get a soft grey page with rounded
+   white cards on it, instead of the plain full-width sections of the list pages. */
+@media (max-width: 767px) {
+  .bl-shell:has(.bl-ws.bl-dash),
+  .bl-shell:has(.bl-ws.bl-dash) .bl-shell__main,
+  .bl-shell:has(.bl-alerts__summary),
+  .bl-shell:has(.bl-alerts__summary) .bl-shell__main { background: var(--bl-bg); }
+
+  /* ---- Dashboard: section cards ---- */
+  .bl-shell .bl-ws.bl-dash > .bl-bento { gap: var(--bl-s3); margin-top: var(--bl-s3); }
+  .bl-shell .bl-ws.bl-dash > .bl-bento > .bl-card {
+    margin-inline: 0;
+    border: 1px solid var(--bl-border);
+    border-radius: var(--bl-r-xl);
+    background: var(--bl-surface);
+    box-shadow: var(--bl-shadow-md);
+    overflow: hidden;
+  }
+  .bl-shell .bl-ws.bl-dash > .bl-bento > .bl-card > .bl-card__header { margin-bottom: var(--bl-s2); }
+
+  /* ---- Dashboard: today's sales, the one figure that stands out ---- */
+  .bl-shell .bl-ws.bl-dash .bl-grid.bl-grid--kpi { gap: var(--bl-s2); }
+  .bl-shell .bl-ws.bl-dash .bl-grid.bl-grid--kpi > .bl-stat--hero {
+    grid-column: 1 / -1;
+    padding: var(--bl-s4);
+    border: 0;
+    border-radius: var(--bl-r-xl);
+    background: linear-gradient(135deg, var(--bl-green) 0%, var(--bl-green-dark) 100%);
+    box-shadow: 0 8px 20px rgba(23, 79, 66, 0.28);
+  }
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-stat__label,
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-caption,
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-stat__chev { color: rgba(255, 255, 255, 0.86); }
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-stat__value,
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-stat__value--hero { color: #fff; font-size: 2.25rem; }
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-delta--up,
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-delta--down,
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-delta--flat { color: #fff; }
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero .bl-spark { display: block; }
+  .bl-shell .bl-ws.bl-dash .bl-stat--hero.bl-stat--link:hover { background: linear-gradient(135deg, var(--bl-green) 0%, var(--bl-green-dark) 100%); }
+
+  /* ---- Dashboard: the three small figures ---- */
+  .bl-shell .bl-ws.bl-dash .bl-grid.bl-grid--kpi > .bl-stat:not(.bl-stat--hero) {
+    padding: var(--bl-s3) var(--bl-s2);
+    border: 1px solid var(--bl-border);
+    border-radius: var(--bl-r-lg);
+    background: var(--bl-surface);
+    box-shadow: var(--bl-shadow-sm);
+  }
+  .bl-shell .bl-ws.bl-dash .bl-stat:not(.bl-stat--hero) .bl-stat__top {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: 6px;
+  }
+  .bl-shell .bl-ws.bl-dash .bl-stat:not(.bl-stat--hero) .bl-stat__icon { display: grid; }
+  .bl-shell .bl-ws.bl-dash .bl-stat:not(.bl-stat--hero) .bl-stat__label { font-size: var(--bl-fs-caption); line-height: 1.2; }
+
+  /* ---- Dashboard: inside the cards ---- */
+  .bl-shell .bl-ws.bl-dash .bl-pin .bl-section,
+  .bl-shell .bl-ws.bl-dash .bl-pin .bl-grid { margin-bottom: 0; }
+  .bl-shell .bl-ws.bl-dash .bl-risklist { display: grid; gap: var(--bl-s2); padding: 0 var(--bl-s3) var(--bl-s3); border-top: 0; }
+  .bl-shell .bl-ws.bl-dash .bl-risklist li { border: 0; }
+  .bl-shell .bl-ws.bl-dash .bl-risklist__row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--bl-s2);
+    padding: var(--bl-s3);
+    border-radius: var(--bl-r-lg);
+    background: var(--bl-bg);
+  }
+  .bl-shell .bl-ws.bl-dash .bl-risklist__row:has(.bl-badge--warning) { background: var(--bl-warning-bg); }
+  .bl-shell .bl-ws.bl-dash .bl-risklist__row:has(.bl-badge--danger) { background: var(--bl-danger-bg); }
+  .bl-shell .bl-ws.bl-dash .bl-risklist__main { min-width: 0; }
+  .bl-shell .bl-ws.bl-dash .bl-risklist__row .bl-badge { flex-shrink: 0; background: var(--bl-surface); }
+  .bl-shell .bl-ws.bl-dash .bl-dash__alerts { display: grid; gap: var(--bl-s2); padding: 0 var(--bl-s3) var(--bl-s2); }
+
+  /* The week's total, then its two facts as small tiles. */
+  .bl-shell .bl-ws.bl-dash .bl-dash__chart-head { display: grid; gap: var(--bl-s3); }
+  .bl-shell .bl-ws.bl-dash .bl-dash__chart-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--bl-s2); margin: 0; }
+  .bl-shell .bl-ws.bl-dash .bl-dash__chart-facts > div { padding: var(--bl-s2) var(--bl-s3); border-radius: var(--bl-r-md); background: var(--bl-bg); text-align: left; }
+
+  /* ---- Alerts: three coloured totals ---- */
+  .bl-shell .bl-alerts__summary { gap: var(--bl-s2); margin-bottom: var(--bl-s3); }
+  .bl-shell .bl-alerts__summary > .bl-card.bl-alerts__sum {
+    display: flex;
+    flex-direction: column;
+    gap: var(--bl-s1);
+    padding: var(--bl-s3);
+    border: 0;
+    border-radius: var(--bl-r-lg);
+    box-shadow: var(--bl-shadow-sm);
+  }
+  .bl-alerts__sum .bl-caption { display: none; }
+  .bl-alerts__sum .bl-label { order: 2; color: inherit; font-size: var(--bl-fs-caption); font-weight: var(--bl-fw-semibold); letter-spacing: 0; line-height: 1.2; text-transform: none; }
+  .bl-shell .bl-alerts__sum-value { order: 1; margin: 0; color: inherit; font-size: var(--bl-fs-2xl); }
+  .bl-shell .bl-alerts__summary > .bl-alerts__sum--critical { background: var(--bl-danger-bg); color: var(--bl-danger); }
+  .bl-shell .bl-alerts__summary > .bl-alerts__sum--warning { background: var(--bl-warning-bg); color: var(--bl-warning); }
+  .bl-shell .bl-alerts__summary > .bl-alerts__sum--info { background: var(--bl-info-bg); color: var(--bl-info); }
+
+  /* The alert cards sit directly on the page. */
+  .bl-shell .bl-ws > .bl-bento > .bl-card.bl-alerts__panel {
+    margin-inline: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    overflow: visible;
+  }
+  .bl-shell .bl-alerts__panel > .bl-card__header { margin-bottom: var(--bl-s2); }
+  .bl-shell .bl-alerts__panel .bl-resultcount { padding: 0; }
+
+  /* ---- Alert cards (Alerts, and Needs attention on the Dashboard) ---- */
+  .bl-shell .bl-alertcard {
+    --bl-alert-tint: var(--bl-bg);
+    position: relative;
+    padding: var(--bl-s3) var(--bl-s4) var(--bl-s4);
+    border: 1px solid var(--bl-border);
+    border-radius: var(--bl-r-xl);
+    background: linear-gradient(180deg, var(--bl-alert-tint) 0, var(--bl-surface) 56px);
+    box-shadow: var(--bl-shadow-md);
+  }
+  .bl-shell .bl-alertcard--critical { --bl-alert-tint: var(--bl-danger-bg); }
+  .bl-shell .bl-alertcard--warning { --bl-alert-tint: var(--bl-warning-bg); }
+  .bl-shell .bl-alertcard--info { --bl-alert-tint: var(--bl-info-bg); }
+  .bl-shell .bl-alertcard__title { font-size: var(--bl-fs-md); font-weight: var(--bl-fw-bold); }
+  .bl-shell .bl-alertcard__link { margin-top: var(--bl-s1); margin-bottom: calc(var(--bl-s2) * -1); font-size: var(--bl-fs-sm); }
+
+  /* Dismiss belongs to its card: on the bottom line, across from View product. */
+  .bl-alerts__list { gap: var(--bl-s3); }
+  .bl-alerts__item .bl-alertcard:not(.bl-alertcard--link) { padding-bottom: 52px; }
+  .bl-alerts__item .bl-alertcard--link { padding-bottom: var(--bl-s2); }
+  .bl-alerts__item .bl-alerts__item-actions {
+    position: absolute;
+    right: var(--bl-s2);
+    bottom: 1px;
+    margin: 0;
+  }
+  .bl-alerts__item-actions .bl-btn { color: var(--bl-text-secondary); font-weight: var(--bl-fw-semibold); }
+}

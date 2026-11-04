@@ -3,6 +3,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import { Suspense, lazy, useEffect } from 'react';
 import { Redirect, Route, Switch, useLocation } from 'react-router-dom';
 import ProtectedRoute, { PublicOnlyRoute } from './components/auth/ProtectedRoute';
+import AndroidBackButton from './components/layout/AndroidBackButton';
 import AppShell from './components/layout/AppShell';
 import ToastProvider from './components/common/ToastProvider';
 import { LoadingState, SkeletonGrid } from './components/common/States';
@@ -194,6 +195,7 @@ export function App() {
           {/* "New version available" — installed apps only. */}
           <UpdatePrompt />
           <IonReactRouter>
+            <AndroidBackButton />
             {/*
               A plain outlet: the app uses its own scroll container and CSS
               transitions rather than Ionic's stack navigation, which keeps the

@@ -10,6 +10,7 @@ import DesktopSidebar from './DesktopSidebar';
 import MobileBottomNav from './MobileBottomNav';
 import MobileHeader from './MobileHeader';
 import OfflineBar from './OfflineBar';
+import PullToRefresh from './PullToRefresh';
 import './AppShell.css';
 import { t } from '../../i18n';
 
@@ -66,6 +67,7 @@ export function AppShell({ children }: AppShellProps) {
         .filter(Boolean)
         .join(' ')}
     >
+      {!showSidebar && <PullToRefresh />}
       <a className="bl-skip-link" href="#bl-main">
         {t('Skip to main content')}
       </a>

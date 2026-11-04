@@ -10,6 +10,7 @@ import {
 } from 'ionicons/icons';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
+import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
 import { CurrencyField, NumberField, SearchInput, SelectField, TextField } from '../components/common/Field';
 import { Modal } from '../components/common/Modal';
@@ -33,7 +34,7 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { categoryService, productService } from '../services/api';
 import type { Product, StockStatus } from '../types';
-import { number, peso } from '../utils/format';
+import { number, peso, pesoExact } from '../utils/format';
 import './Inventory.css';
 import { t } from '../i18n';
 
@@ -655,7 +656,7 @@ export function Inventory() {
           />
         </ToolbarSearch>
 
-        <ToolbarFilters>
+        <ToolbarFilters active={category !== 'all'}>
           <SelectField
             label={t('Filter by category')}
             hideLabel
@@ -842,115 +843,22 @@ export function Inventory() {
 
           {/* Mobile and tablet: cards */}
           <ul className="bl-responsive-cards">
-            {filtered.map((product) => {
-              const pct = Math.min(
-                100,
-                (product.currentStock / Math.max(product.minimumStock, 1)) * 100,
-              );
-              const fill =
-                product.status === 'healthy'
-                  ? ''
-                  : product.status === 'low'
-                    ? 'bl-meter__fill--warning'
-                    : 'bl-meter__fill--danger';
-
-              return (
-                <li key={product.id}>
-                  <article className="bl-drow">
-                    <div className="bl-drow__top">
-                      <div className="bl-inv__row-photo">
-                        <ProductThumbnail src={product.imageUrl} name={product.name} size="sm" />
-                        <a
-                          className="bl-inv__cardlink"
-                          href={`/inventory/${product.id}`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            history.push(`/inventory/${product.id}`);
-                          }}
-                        >
-                          <span className="bl-drow__title">
-                            {product.name}
-                            {extraSizesFor(product) > 0 && (
-                              <Badge tone="neutral">
-                                {extraSizesFor(product) > 1 ? t('+{{count}} sizes', { count: extraSizesFor(product) }) : t('+1 size')}
-                              </Badge>
-                            )}
-                          </span>
-                          <span className="bl-drow__meta">
-                            {product.sku} · {product.category}
-                          </span>
-                        </a>
-                      </div>
-                      <StatusBadge
-                            status={product.status}
-                            className={product.status === 'healthy' ? 'bl-inv__status--plain' : undefined}
-                          />
-                    </div>
-
-                    <div className="bl-inv__stockbar">
-                      <div className="bl-inv__stockbar-head">
-                        <span className="bl-caption">
-                          {t('{{v1}} {{unit}} on hand', { v1: number(product.currentStock), unit: product.unit })}
-                        </span>
-                        <span className="bl-caption">min {number(product.minimumStock)}</span>
-                      </div>
-                      <div
-                        className="bl-meter"
-                        role="meter"
-                        aria-valuenow={product.currentStock}
-                        aria-valuemin={0}
-                        aria-valuemax={product.minimumStock}
-                        aria-label={t('{{name}} stock against minimum', { name: product.name })}
-                      >
-                        <div className={`bl-meter__fill ${fill}`} style={{ width: `${pct}%` }} />
-                      </div>
-                    </div>
-
-                    <dl className="bl-drow__grid">
-                      <div className="bl-drow__cell">
-                        <dt>{t('Price')}</dt>
-                        <dd>{peso(product.sellingPrice)}</dd>
-                      </div>
-                      <div className="bl-drow__cell">
-                        <dt>{t('Supplier')}</dt>
-                        <dd className="bl-inv__supplier-sm">{supplierName(product.supplierId)}</dd>
-                      </div>
-                    </dl>
-
-                    <div className="bl-inv__cardactions">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => history.push(`/inventory/${product.id}`)}
-                      >
-                        {t('View details')}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="bl-inv__action--stock"
-                        size="sm"
-                        icon={swapVerticalOutline}
-                        aria-label={t('Adjust stock for {{name}}', { name: product.name })}
-                        onClick={() => void handleAdjustStock(product)}
-                      >
-                        {t('Stock')}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        className="bl-inv__action--edit"
-                        size="sm"
-                        icon={createOutline}
-                        aria-label={t('Edit {{name}}', { name: product.name })}
-                        disabled={!isManager}
-                        onClick={() => openEditModal(product)}
-                      >
-                        {t('Edit')}
-                      </Button>
-                    </div>
-                  </article>
-                </li>
-              );
-            })}
+            {filtered.map((product) => (
+              <li key={product.id}>
+                <MobileRow
+                  lead={<ProductThumbnail src={product.imageUrl} name={product.name} size="sm" />}
+                  title={product.name}
+                  meta={`${number(product.currentStock)} ${product.unit} · ${pesoExact(product.sellingPrice)}${extraSizesFor(product) > 0 ? ` · ${extraSizesFor(product) > 1 ? t('+{{count}} sizes', { count: extraSizesFor(product) }) : t('+1 size')}` : ''}`}
+                  value={
+                    <StatusBadge
+                      status={product.status}
+                      className={product.status === 'healthy' ? 'bl-inv__status--plain' : undefined}
+                    />
+                  }
+                  onClick={() => history.push(`/inventory/${product.id}`)}
+                />
+              </li>
+            ))}
           </ul>
         </>
       )}
