@@ -466,26 +466,30 @@ export function tourPanelStyle(): CSSProperties {
 const STILL_SECONDS = 9;
 
 /**
- * Which step is playing and since when, kept between pages. Going from sign-in to
- * Create account (or back) then carries on with the same step, so the panel can
- * morph from one page to the other instead of restarting.
+ * Which step is playing and since when (`performance.now()`), kept between pages.
+ * Going from sign-in to Create account (or back) then carries on from the very same
+ * moment, so both pages show the same picture and the panel morphs as one.
  */
 const playing = { step: 0, startedAt: 0 };
 
-/** A step the other page was showing a moment ago: shown finished until it would have ended. */
+/** Where the other page's tour is right now, if it was showing a moment ago. */
 function resumeFromLastPage() {
-  const elapsed = (Date.now() - playing.startedAt) / 1000;
-  if (!playing.startedAt || elapsed > 60) return null;
-  return { step: playing.step, left: Math.max(1.5, SCENES[playing.step].seconds - elapsed) };
+  if (!playing.startedAt) return null;
+  const elapsed = (performance.now() - playing.startedAt) / 1000;
+  if (elapsed > 60) return null;
+  const seconds = SCENES[playing.step].seconds;
+  // Its step has already ended: start the next one from its beginning.
+  if (elapsed >= seconds - 0.05) return { step: (playing.step + 1) % SCENES.length, elapsed: 0 };
+  return { step: playing.step, elapsed };
 }
 
 function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
   const [show, setShow] = useState(() => !desktopOnly || window.matchMedia('(min-width: 1024px)').matches);
   const [reduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
   const [resume] = useState(resumeFromLastPage);
-  const [resumed, setResumed] = useState(resume !== null);
   const [step, setStep] = useState(resume?.step ?? 0);
   const [run, setRun] = useState(0);
+  const tourRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef<HTMLDivElement>(null);
   const ringRef = useRef<HTMLDivElement>(null);
@@ -500,31 +504,37 @@ function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
 
   const scene = SCENES[step];
 
-  // Remember when each step starts, for the next page.
-  useEffect(() => {
-    if (!show || resumed) return;
-    playing.step = step;
-    playing.startedAt = Date.now();
-  }, [show, resumed, step, run]);
+  // Seconds already played of this step: only the first step on a page that picks
+  // up where the other page was. Worked out from the state, so running twice is safe.
+  const offset = run === 0 && resume && step === resume.step ? resume.elapsed : 0;
 
+  // Runs before the first paint, so the page never shows the step from its start.
   useLayoutEffect(() => {
-    if (!show || reduced || resumed) return;
+    if (!show) return;
+    playing.step = step;
+    playing.startedAt = performance.now() - offset * 1000;
+    if (reduced) return;
     const stage = stageRef.current;
     const pointer = pointerRef.current;
     const ring = ringRef.current;
     if (stage && pointer && ring) animatePointer(stage, pointer, ring, scene.path, scene.seconds);
-  }, [show, reduced, resumed, step, run, scene]);
+    // Jump every part of the step (and its caption) to where the other page was.
+    if (offset > 0 && tourRef.current) {
+      for (const animation of tourRef.current.getAnimations({ subtree: true })) {
+        animation.currentTime = offset * 1000;
+      }
+    }
+  }, [show, reduced, step, run, scene, offset]);
 
   useEffect(() => {
     if (!show) return;
-    const seconds = reduced ? STILL_SECONDS : resumed && resume ? resume.left : scene.seconds;
+    const seconds = (reduced ? STILL_SECONDS : scene.seconds) - offset;
     const timer = window.setTimeout(() => {
-      setResumed(false);
       setStep((s) => (s + 1) % SCENES.length);
       setRun((r) => r + 1);
-    }, seconds * 1000);
+    }, Math.max(0, seconds) * 1000);
     return () => window.clearTimeout(timer);
-  }, [show, reduced, resumed, resume, step, run, scene]);
+  }, [show, reduced, step, run, scene, offset]);
 
   // A new width moves the pointer's targets, so the step starts over. Height doesn't
   // count: phone browsers change it whenever the address bar hides during scrolling.
@@ -534,7 +544,6 @@ function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
     const onResize = () => {
       if (window.innerWidth === width) return;
       width = window.innerWidth;
-      setResumed(false);
       setRun((r) => r + 1);
     };
     window.addEventListener('resize', onResize);
@@ -547,7 +556,7 @@ function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
   const Content = scene.Content;
 
   return (
-    <div className={`bl-tour bl-tour--${tone}${reduced || resumed ? ' is-frozen' : ''}`}>
+    <div ref={tourRef} className={`bl-tour bl-tour--${tone}${desktopOnly ? ' bl-tour--desktop' : ''}${reduced ? ' is-frozen' : ''}`}>
       <div className="bl-tour__frame" aria-hidden="true">
         <div ref={stageRef} className="bl-tour__stage" key={`${step}-${run}`}>
           <div className="sc-side">

@@ -429,13 +429,16 @@
   animation-duration: 520ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
+/* Without the clip, the panel's picture spills past its edge while it narrows and
+   then snaps back in the last frame. */
+::view-transition-group(bl-auth-aside) { overflow: clip; }
 ::view-transition-old(bl-auth-aside),
 ::view-transition-new(bl-auth-aside) { height: 100%; object-fit: cover; animation: none; }
 ::view-transition-old(bl-auth-pitch),
 ::view-transition-new(bl-auth-pitch) { height: 100%; object-fit: none; object-position: left top; }
 /* The two headings say different things: the old one leaves before the new one appears, so they never overlap. */
-::view-transition-old(bl-auth-pitch) { animation: bl-morph-out 160ms ease both; }
-::view-transition-new(bl-auth-pitch) { animation: bl-morph-in 300ms ease 160ms both; }
+::view-transition-old(bl-auth-pitch) { animation: bl-morph-out 160ms ease-out both; }
+::view-transition-new(bl-auth-pitch) { animation: bl-morph-in 260ms ease-out 120ms both; }
 
 @media (min-width: 600px) {
   /* The card itself morphs: a white panel changing size, with the old contents
@@ -448,8 +451,9 @@
   }
   ::view-transition-old(bl-auth-card),
   ::view-transition-new(bl-auth-card) { height: 100%; object-fit: none; object-position: left top; }
-  ::view-transition-old(bl-auth-card) { animation: bl-morph-out 160ms ease both; }
-  ::view-transition-new(bl-auth-card) { animation: bl-morph-in 300ms ease 140ms both; }
+  /* The new form starts arriving while the old one is still leaving, so the card is never blank. */
+  ::view-transition-old(bl-auth-card) { animation: bl-morph-out 180ms ease-out both; }
+  ::view-transition-new(bl-auth-card) { animation: bl-morph-in 280ms ease-out 70ms both; }
 }
 @keyframes bl-morph-out { to { opacity: 0; } }
 @keyframes bl-morph-in { from { opacity: 0; } }
