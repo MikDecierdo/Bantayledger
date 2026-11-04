@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLog;
 use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -138,25 +139,35 @@ class ProductController extends Controller
         $name = trim($data['name']);
 
         try {
-            DB::table('products')->insert([
-                'product_id' => $id,
-                'variant_group_product_id' => $data['variantGroupId'] ?? null,
-                'business_id' => $business,
-                'name' => $name,
-                'sku' => isset($data['sku']) ? trim($data['sku']) : null,
-                'category_id' => $data['categoryId'] ?? null,
-                'supplier_id' => $data['supplierId'] ?? null,
-                'unit' => isset($data['unit']) ? trim($data['unit']) : 'pcs',
-                'minimum_stock' => $data['minimumStock'],
-                'maximum_stock' => $data['maximumStock'] ?? null,
-                'reorder_quantity' => $data['reorderQuantity'],
-                'cost_price' => $data['costPrice'],
-                'selling_price' => $data['sellingPrice'],
-                // Stock starts at 0 (the column default) prior to any opening
-                // stock movement below, so compute status the same way any
-                // other stock change does.
-                'status' => InventoryService::computeStatus(0, (float) $data['minimumStock']),
-            ]);
+            DB::transaction(function () use ($id, $data, $business, $name) {
+                DB::table('products')->insert([
+                    'product_id' => $id,
+                    'variant_group_product_id' => $data['variantGroupId'] ?? null,
+                    'business_id' => $business,
+                    'name' => $name,
+                    'sku' => isset($data['sku']) ? trim($data['sku']) : null,
+                    'category_id' => $data['categoryId'] ?? null,
+                    'supplier_id' => $data['supplierId'] ?? null,
+                    'unit' => isset($data['unit']) ? trim($data['unit']) : 'pcs',
+                    'minimum_stock' => $data['minimumStock'],
+                    'maximum_stock' => $data['maximumStock'] ?? null,
+                    'reorder_quantity' => $data['reorderQuantity'],
+                    'cost_price' => $data['costPrice'],
+                    'selling_price' => $data['sellingPrice'],
+                    // Stock starts at 0 (the column default) prior to any opening
+                    // stock movement below, so compute status the same way any
+                    // other stock change does.
+                    'status' => InventoryService::computeStatus(0, (float) $data['minimumStock']),
+                ]);
+
+                foreach (['selling_price_set' => 'sellingPrice', 'cost_price_set' => 'costPrice'] as $action => $field) {
+                    ActivityLog::record($business, ActivityLog::PRICE, $action, [
+                        'subjectId' => $id,
+                        'subject' => $name,
+                        'new' => (float) $data[$field],
+                    ]);
+                }
+            });
         } catch (\Illuminate\Database\QueryException $e) {
             if ($this->isDuplicateNameViolation($e)) {
                 throw ApiException::conflict('A product named ":name" already exists.', ['name' => $name]);
@@ -165,7 +176,7 @@ class ProductController extends Controller
         }
 
         if (! empty($data['openingStock']) && $data['openingStock'] > 0) {
-            InventoryService::adjustStock($business, $id, (float) $data['openingStock'], $request->user()->user_id, 'Opening stock');
+            InventoryService::adjustStock($business, $id, (float) $data['openingStock'], $request->user()->user_id, InventoryService::OPENING_STOCK_NOTE);
         }
 
         return response()->json($this->show($business, $id), 201);
@@ -225,6 +236,16 @@ class ProductController extends Controller
 
         try {
             DB::transaction(function () use ($data, $patch, $business, $id) {
+                // Read the old prices under a lock, so the log has the true "from" value.
+                $before = null;
+                if (array_key_exists('costPrice', $data) || array_key_exists('sellingPrice', $data)) {
+                    $before = DB::table('products')->where('product_id', $id)->where('business_id', $business)
+                        ->lockForUpdate()->first(['name', 'cost_price', 'selling_price']);
+                    if (! $before) {
+                        throw ApiException::notFound('That product could not be found.');
+                    }
+                }
+
                 if (array_key_exists('minimumStock', $data)) {
                     $current = DB::table('products')->where('product_id', $id)->where('business_id', $business)
                         ->lockForUpdate()->first('current_stock');
@@ -238,6 +259,23 @@ class ProductController extends Controller
                 $updated = DB::table('products')->where('business_id', $business)->where('product_id', $id)->update($patch);
                 if (! $updated && ! DB::table('products')->where('business_id', $business)->where('product_id', $id)->exists()) {
                     throw ApiException::notFound('That product could not be found.');
+                }
+
+                if ($before) {
+                    $prices = [
+                        'selling_price_changed' => ['sellingPrice', (float) $before->selling_price],
+                        'cost_price_changed' => ['costPrice', (float) $before->cost_price],
+                    ];
+                    foreach ($prices as $action => [$field, $old]) {
+                        if (array_key_exists($field, $data) && ActivityLog::priceChanged($old, (float) $data[$field])) {
+                            ActivityLog::record($business, ActivityLog::PRICE, $action, [
+                                'subjectId' => $id,
+                                'subject' => $patch['name'] ?? $before->name,
+                                'old' => $old,
+                                'new' => (float) $data[$field],
+                            ]);
+                        }
+                    }
                 }
             });
         } catch (\Illuminate\Database\QueryException $e) {
@@ -259,10 +297,20 @@ class ProductController extends Controller
 
     public function destroy(string $business, string $id)
     {
-        $product = DB::table('products')->where('business_id', $business)->where('product_id', $id)->first('image_path');
+        $product = DB::table('products')->where('business_id', $business)->where('product_id', $id)
+            ->first(['image_path', 'name', 'unit', 'current_stock', 'cost_price', 'selling_price']);
 
         try {
-            DB::table('products')->where('business_id', $business)->where('product_id', $id)->delete();
+            DB::transaction(function () use ($business, $id, $product) {
+                DB::table('products')->where('business_id', $business)->where('product_id', $id)->delete();
+
+                if ($product) {
+                    $entry = ['subjectId' => $id, 'subject' => $product->name];
+                    ActivityLog::record($business, ActivityLog::PRICE, 'selling_price_removed', $entry + ['old' => (float) $product->selling_price]);
+                    ActivityLog::record($business, ActivityLog::PRICE, 'cost_price_removed', $entry + ['old' => (float) $product->cost_price]);
+                    ActivityLog::record($business, ActivityLog::STOCK, 'stock_removed', $entry + ['old' => (float) $product->current_stock, 'unit' => $product->unit]);
+                }
+            });
         } catch (\Illuminate\Database\QueryException $e) {
             throw ApiException::badRequest('This product cannot be deleted because it appears in recorded sales or purchases.');
         }

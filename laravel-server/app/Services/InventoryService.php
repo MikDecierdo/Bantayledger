@@ -21,6 +21,9 @@ use Illuminate\Support\Str;
  */
 class InventoryService
 {
+    /** The note on a new product's first stock, so the activity log can name it. */
+    public const OPENING_STOCK_NOTE = 'Opening stock';
+
     public static function computeStatus(float $currentStock, float $minimumStock): string
     {
         if ($currentStock <= 0) {
@@ -54,7 +57,7 @@ class InventoryService
             ->where('product_id', $productId)
             ->where('business_id', $businessId)
             ->lockForUpdate()
-            ->first(['current_stock', 'cost_price']);
+            ->first(['current_stock', 'cost_price', 'name']);
 
         if (! $product) {
             return; // recordMovement reports the missing product
@@ -67,6 +70,15 @@ class InventoryService
             : $unitCost;
 
         DB::table('products')->where('product_id', $productId)->update(['cost_price' => round($next, 2)]);
+
+        if (ActivityLog::priceChanged($cost, $next)) {
+            ActivityLog::record($businessId, ActivityLog::PRICE, 'cost_price_purchase', [
+                'subjectId' => $productId,
+                'subject' => $product->name,
+                'old' => $cost,
+                'new' => round($next, 2),
+            ]);
+        }
     }
 
     /**
@@ -128,6 +140,22 @@ class InventoryService
             'current_stock' => $nextStock,
             'status' => self::computeStatus($nextStock, (float) $product->minimum_stock),
         ]);
+
+        $action = match ($movementType) {
+            'SALE' => 'stock_sale',
+            'PURCHASE' => 'stock_purchase',
+            'WASTE' => 'stock_waste',
+            default => $notes === self::OPENING_STOCK_NOTE ? 'stock_opening' : 'stock_adjustment',
+        };
+
+        ActivityLog::record($businessId, ActivityLog::STOCK, $action, [
+            'subjectId' => $productId,
+            'subject' => $product->name,
+            'old' => (float) $product->current_stock,
+            'new' => $nextStock,
+            'unit' => $product->unit,
+            'notes' => $notes === self::OPENING_STOCK_NOTE ? null : $notes,
+        ]);
     }
 
     /** Manual correction — member-level, not manager-level (matches Postgres's adjust_stock RPC). */
@@ -168,7 +196,7 @@ class InventoryService
             $product = DB::table('products')
                 ->where('product_id', $movement->product_id)
                 ->lockForUpdate()
-                ->first(['current_stock', 'minimum_stock']);
+                ->first(['current_stock', 'minimum_stock', 'name', 'unit']);
 
             if (! $product) {
                 continue;
@@ -179,6 +207,15 @@ class InventoryService
             DB::table('products')->where('product_id', $movement->product_id)->update([
                 'current_stock' => $restored,
                 'status' => self::computeStatus($restored, (float) $product->minimum_stock),
+            ]);
+
+            // The ledger row goes below; this entry is what keeps the event on record.
+            ActivityLog::record($businessId, ActivityLog::STOCK, "stock_reversal_{$referenceType}", [
+                'subjectId' => $movement->product_id,
+                'subject' => $product->name,
+                'old' => (float) $product->current_stock,
+                'new' => $restored,
+                'unit' => $product->unit,
             ]);
         }
 

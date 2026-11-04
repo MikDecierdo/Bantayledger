@@ -17,6 +17,7 @@ class AccountData
         'categories', 'suppliers', 'products', 'sales', 'purchases', 'expenses', 'waste_records',
         'inventory_movements', 'business_events', 'subscription_payments', 'forecast_runs',
         'demand_forecasts', 'price_forecasts', 'cost_forecasts', 'cost_anomalies', 'alerts', 'recommendations',
+        'activity_logs',
     ];
 
     /** The person's own details, plus every record of the stores they own. */
@@ -83,6 +84,9 @@ class AccountData
             foreach ($owned as $businessId) {
                 $photos = array_merge($photos, self::deleteStore($businessId));
             }
+
+            // Entries in someone else's store stay, without this person's name.
+            DB::table('activity_logs')->where('user_id', $userId)->update(['actor_name' => null]);
 
             self::deleteUser($userId);
 

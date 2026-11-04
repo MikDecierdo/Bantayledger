@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\ActivityController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BusinessController;
 use App\Http\Controllers\Api\CategoryController;
@@ -118,6 +119,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/insights/{id}/explain', [SignalController::class, 'explainInsight'])->middleware('business.member');
 
         Route::get('/reports', [ReportController::class, 'show'])->middleware('business.member');
+
+        // Who changed prices, stock and expenses. The owner's to review, and read only.
+        Route::get('/activity', [ActivityController::class, 'index'])->middleware('business.manager');
 
         Route::get('/forecasts', [SignalController::class, 'forecasts'])->middleware('business.member');
         Route::post('/forecasts/refresh', [SignalController::class, 'refreshForecasts'])->middleware('business.member');

@@ -6,6 +6,7 @@ import {
   cartOutline,
   cubeOutline,
   homeOutline,
+  listOutline,
   logOutOutline,
   notificationsOutline,
   peopleOutline,
@@ -26,7 +27,13 @@ export interface NavItem {
   icon: string;
   /** Renders the unread-alert count. */
   badgeKey?: 'alerts';
+  /** Only the store owner sees this one in the menus. */
+  managerOnly?: boolean;
 }
+
+/** The menu items this person should see. */
+export const visibleNav = (items: NavItem[], isManager: boolean): NavItem[] =>
+  items.filter((item) => isManager || !item.managerOnly);
 
 /**
  * Grouped sidebar navigation for tablet and desktop, in the order the system is
@@ -48,6 +55,7 @@ export const intelligenceNav: NavItem[] = [
   { label: t('Forecast'), href: '/forecast', icon: trendingUpOutline },
   { label: t('AI Insights'), href: '/ai-insights', icon: bulbOutline },
   { label: t('Reports'), href: '/reports', icon: barChartOutline },
+  { label: t('Activity log'), href: '/activity', icon: listOutline, managerOnly: true },
 ];
 
 export const accountNav: NavItem[] = [

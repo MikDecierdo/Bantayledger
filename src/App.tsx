@@ -28,6 +28,7 @@ const Alerts = lazy(() => import('./pages/Alerts'));
 const Reports = lazy(() => import('./pages/Reports'));
 const Subscription = lazy(() => import('./pages/Subscription'));
 const LocalEvents = lazy(() => import('./pages/LocalEvents'));
+const ActivityLog = lazy(() => import('./pages/ActivityLog'));
 const Profile = lazy(() => import('./pages/Profile'));
 const Settings = lazy(() => import('./pages/Settings'));
 const NotFound = lazy(() => import('./pages/NotFound'));
@@ -167,6 +168,9 @@ function Routes() {
           </ProtectedRoute>
           <ProtectedRoute exact path="/local-events">
             <LocalEvents />
+          </ProtectedRoute>
+          <ProtectedRoute exact path="/activity">
+            <ActivityLog />
           </ProtectedRoute>
 
           <Route component={NotFound} />

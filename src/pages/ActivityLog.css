@@ -1,0 +1,45 @@
+/* The activity log page. */
+
+/* Type chips on the left, the date range on the right; they stack on narrow screens. */
+.bl-activity__chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s3);
+  padding: var(--bl-s3) var(--bl-s4) var(--bl-s2);
+  min-width: 0;
+}
+/* Sized to its chips, so the dates move to their own line rather than cutting a chip off. */
+.bl-activity__chips > .bl-chiprow { flex: 1 1 auto; min-width: 0; }
+.bl-activity__dates { display: flex; flex-wrap: wrap; gap: var(--bl-s2); min-width: 0; }
+.bl-activity__dates .bl-input { width: 158px; }
+
+.bl-activity__when { white-space: nowrap; }
+.bl-activity__when .bl-caption { display: block; }
+
+.bl-activity__action { display: block; margin-top: 4px; font-size: var(--bl-fs-sm); }
+
+.bl-activity__change {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.bl-activity__change ion-icon { flex-shrink: 0; color: var(--bl-text-secondary); font-size: 14px; }
+.bl-activity__old { color: var(--bl-text-secondary); }
+
+.bl-activity__details { min-width: 120px; color: var(--bl-text-secondary); font-size: var(--bl-fs-sm); overflow-wrap: anywhere; }
+
+.bl-activity__more { display: flex; justify-content: center; padding: var(--bl-s4); }
+.bl-activity__moreerror { margin: var(--bl-s3) var(--bl-s4) 0; }
+
+/* "From" and "To" sit beside their date, so the toolbar stays one row high. */
+.bl-activity__date { flex-direction: row; align-items: center; gap: 6px; }
+.bl-activity__date .bl-field__label { margin: 0; white-space: nowrap; font-size: var(--bl-fs-sm); }
+
+/* Phone cards: the change and the note each get their own line. */
+.bl-responsive-cards .bl-activity__change { display: flex; margin-top: 2px; }
+.bl-responsive-cards .bl-drow > .bl-caption { display: block; margin-top: 2px; }

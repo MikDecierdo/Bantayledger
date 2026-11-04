@@ -5,7 +5,7 @@ import { Modal } from '../common/Modal';
 import { useAuth } from '../../context/AuthContext';
 import { toUserMessage } from '../../lib/errors';
 import { alertError, confirmLogout } from '../../lib/swal';
-import { moreGroups, profileShortcuts } from './navItems';
+import { moreGroups, profileShortcuts, visibleNav } from './navItems';
 import './MoreSheet.css';
 import { t } from '../../i18n';
 
@@ -60,7 +60,7 @@ export function MoreSheet({ isOpen, onClose, alertCount }: MoreSheetProps) {
           <section key={group.title} className="bl-more__group">
             <h3 className="bl-more__title">{group.title}</h3>
             <ul className="bl-more__list">
-              {group.items.map((item) => {
+              {visibleNav(group.items, isManager).map((item) => {
                 const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
                 const badge = item.badgeKey === 'alerts' ? alertCount : 0;
                 return (

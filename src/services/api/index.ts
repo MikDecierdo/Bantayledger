@@ -19,3 +19,4 @@ export { expenseService, wasteService } from './ledgerService';
 export { profileService, businessService, toBusinessProfile } from './accountService';
 export { alertService, recommendationService, forecastService } from './signalService';
 export { reportService } from './reportService';
+export { activityService } from './activityService';

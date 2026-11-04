@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLog;
 use App\Services\ProfitService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -53,25 +54,51 @@ class ExpenseController extends Controller
             );
         }
 
-        DB::table('expenses')->insert([
-            'expense_id' => (string) Str::uuid(),
-            'business_id' => $business,
-            'user_id' => $request->user()->user_id,
-            'category' => $data['category'],
-            'description' => trim($data['description']),
-            'amount' => $data['amount'],
-            'expense_date' => $expenseDate,
-        ]);
+        DB::transaction(function () use ($request, $business, $data, $expenseDate) {
+            $id = (string) Str::uuid();
+            $description = trim($data['description']);
+
+            DB::table('expenses')->insert([
+                'expense_id' => $id,
+                'business_id' => $business,
+                'user_id' => $request->user()->user_id,
+                'category' => $data['category'],
+                'description' => $description,
+                'amount' => $data['amount'],
+                'expense_date' => $expenseDate,
+            ]);
+
+            ActivityLog::record($business, ActivityLog::EXPENSE, 'expense_added', [
+                'subjectId' => $id,
+                'subject' => $description,
+                'new' => (float) $data['amount'],
+                'notes' => $data['category'],
+                'recordDate' => $expenseDate,
+            ]);
+        });
 
         return response()->noContent(201);
     }
 
     public function destroy(string $business, string $id)
     {
-        $deleted = DB::table('expenses')->where('business_id', $business)->where('expense_id', $id)->delete();
-        if (! $deleted) {
-            throw ApiException::notFound('That expense could not be found.');
-        }
+        DB::transaction(function () use ($business, $id) {
+            $expense = DB::table('expenses')->where('business_id', $business)->where('expense_id', $id)
+                ->lockForUpdate()->first();
+            if (! $expense) {
+                throw ApiException::notFound('That expense could not be found.');
+            }
+
+            DB::table('expenses')->where('expense_id', $id)->delete();
+
+            ActivityLog::record($business, ActivityLog::EXPENSE, 'expense_deleted', [
+                'subjectId' => $id,
+                'subject' => $expense->description,
+                'old' => (float) $expense->amount,
+                'notes' => $expense->category,
+                'recordDate' => substr((string) $expense->expense_date, 0, 10),
+            ]);
+        });
 
         return response()->noContent();
     }

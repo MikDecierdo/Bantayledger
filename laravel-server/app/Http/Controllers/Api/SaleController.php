@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
+use App\Services\ActivityLog;
 use App\Services\InventoryService;
 use App\Services\ProfitService;
 use Carbon\Carbon;
@@ -292,8 +293,19 @@ class SaleController extends Controller
 
             foreach ($data['items'] as $item) {
                 // Lock in the buying price now so later price changes never rewrite past profit.
-                $unitCost = (float) DB::table('products')->where('business_id', $business)
-                    ->where('product_id', $item['productId'])->value('cost_price');
+                $product = DB::table('products')->where('business_id', $business)
+                    ->where('product_id', $item['productId'])->first(['cost_price', 'selling_price', 'name']);
+                $unitCost = (float) ($product->cost_price ?? 0);
+
+                // The cart lets the cashier charge something other than the listed price.
+                if ($product && ActivityLog::priceChanged((float) $product->selling_price, (float) $item['unitPrice'])) {
+                    ActivityLog::record($business, ActivityLog::PRICE, 'price_at_sale', [
+                        'subjectId' => $item['productId'],
+                        'subject' => $product->name,
+                        'old' => (float) $product->selling_price,
+                        'new' => (float) $item['unitPrice'],
+                    ]);
+                }
 
                 DB::table('sale_items')->insert([
                     'sale_item_id' => (string) Str::uuid(),
