@@ -268,14 +268,24 @@
 
 /* ---- Small stages, such as phones --------------------------------------------
    The mini menu goes and the page area fills the stage, so its text stays
-   readable. The caption still says which menu item to use. */
+   readable. The caption still says which menu item to use.
+   The desktop sign-in panel keeps the menu down to 360px: its tour is narrower on
+   Create account than on sign-in, and both must look the same to morph smoothly. */
 @container (max-width: 430px) {
-  .bl-tour__stage {
+  .bl-tour:not(.bl-tour--desktop) .bl-tour__stage {
     font-size: calc(100cqw / 38.6);
     aspect-ratio: 38.6 / 32;
     grid-template-columns: minmax(0, 1fr);
   }
-  .sc-side { display: none; }
+  .bl-tour:not(.bl-tour--desktop) .sc-side { display: none; }
+}
+@container (max-width: 360px) {
+  .bl-tour--desktop .bl-tour__stage {
+    font-size: calc(100cqw / 38.6);
+    aspect-ratio: 38.6 / 32;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .bl-tour--desktop .sc-side { display: none; }
 }
 
 /* ---- Finished state (reduced motion) ------------------------------------------ */
