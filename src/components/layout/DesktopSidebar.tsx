@@ -1,5 +1,6 @@
 import { IonIcon } from '@ionic/react';
 import { logOutOutline, menuOutline } from 'ionicons/icons';
+import { useLayoutEffect, useRef } from 'react';
 import { NavLink, useHistory, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { toUserMessage } from '../../lib/errors';
@@ -84,6 +85,60 @@ function NavGroup({
   );
 }
 
+/**
+ * One highlight per menu area that slides to whichever item is active, so changing
+ * page moves the highlight from the old item to the new one instead of jumping.
+ * It's placed without moving the first time, and when the sidebar itself resizes.
+ */
+function useSlidingHighlight<T extends HTMLElement>(path: string, collapsed: boolean) {
+  const areaRef = useRef<T>(null);
+  const highlightRef = useRef<HTMLSpanElement>(null);
+  const placed = useRef(false);
+
+  useLayoutEffect(() => {
+    const area = areaRef.current;
+    const highlight = highlightRef.current;
+    if (!area || !highlight) return;
+
+    const place = (glide: boolean) => {
+      const active = area.querySelector<HTMLElement>('.bl-sidenav--active');
+      if (!active) {
+        highlight.style.opacity = '0';
+        return;
+      }
+      const box = area.getBoundingClientRect();
+      const item = active.getBoundingClientRect();
+      const still = !glide || !placed.current;
+      if (still) highlight.style.transition = 'none';
+      highlight.style.opacity = '1';
+      highlight.style.width = `${item.width}px`;
+      highlight.style.height = `${item.height}px`;
+      highlight.style.transform = `translate(${item.left - box.left + area.scrollLeft}px, ${item.top - box.top + area.scrollTop}px)`;
+      if (still) {
+        highlight.getBoundingClientRect(); // apply the jump before turning the glide back on
+        highlight.style.transition = '';
+      }
+      placed.current = true;
+    };
+
+    place(true);
+    // A ResizeObserver reports once as soon as it starts; that first report isn't
+    // a resize, and handling it would cancel the glide that just began.
+    let started = false;
+    const resized = new ResizeObserver(() => {
+      if (!started) {
+        started = true;
+        return;
+      }
+      place(false);
+    });
+    resized.observe(area);
+    return () => resized.disconnect();
+  }, [path, collapsed]);
+
+  return { areaRef, highlightRef };
+}
+
 export function DesktopSidebar({
   collapsed,
   onToggleCollapsed,
@@ -94,6 +149,8 @@ export function DesktopSidebar({
   const history = useHistory();
   const { profile, activeBusiness, isManager, signOut } = useAuth();
   const onPlus = activeBusiness?.plan === 'plus';
+  const navHighlight = useSlidingHighlight<HTMLElement>(pathname, collapsed);
+  const footerHighlight = useSlidingHighlight<HTMLDivElement>(pathname, collapsed);
 
   const displayName = profile?.full_name ?? profile?.email ?? t('Signed in');
   const initials = displayName
@@ -144,7 +201,8 @@ export function DesktopSidebar({
           </NavLink>
         </div>
 
-        <nav className="bl-sidebar__nav bl-scroll">
+        <nav className="bl-sidebar__nav bl-scroll" ref={navHighlight.areaRef}>
+          <span className="bl-sidenav-highlight" ref={navHighlight.highlightRef} aria-hidden="true" />
           <NavGroup
             title={t('Business')}
             items={primaryNav}
@@ -161,7 +219,8 @@ export function DesktopSidebar({
           />
         </nav>
 
-        <div className="bl-sidebar__footer">
+        <div className="bl-sidebar__footer" ref={footerHighlight.areaRef}>
+          <span className="bl-sidenav-highlight" ref={footerHighlight.highlightRef} aria-hidden="true" />
           <NavGroup
             // The narrow icon rail has no room beside Profile or for the user card.
             items={collapsed ? [...accountNav, ...profileShortcuts, subscriptionNav] : accountNav}

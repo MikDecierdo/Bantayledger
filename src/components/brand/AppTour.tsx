@@ -453,13 +453,38 @@ export function AppTour(props: AppTourProps) {
   );
 }
 
+/**
+ * Style for the panel around the tour. Its photo zooms slowly in a 56-second
+ * cycle; timing it from when the app opened keeps the zoom continuous when the
+ * page changes between sign-in and Create account, instead of jumping back.
+ */
+export function tourPanelStyle(): CSSProperties {
+  return { '--bl-drift-delay': `-${((performance.now() / 1000) % 56).toFixed(2)}s` } as CSSProperties;
+}
+
 /** With reduced motion, each step shows finished and changes after this many seconds. */
 const STILL_SECONDS = 9;
+
+/**
+ * Which step is playing and since when, kept between pages. Going from sign-in to
+ * Create account (or back) then carries on with the same step, so the panel can
+ * morph from one page to the other instead of restarting.
+ */
+const playing = { step: 0, startedAt: 0 };
+
+/** A step the other page was showing a moment ago: shown finished until it would have ended. */
+function resumeFromLastPage() {
+  const elapsed = (Date.now() - playing.startedAt) / 1000;
+  if (!playing.startedAt || elapsed > 60) return null;
+  return { step: playing.step, left: Math.max(1.5, SCENES[playing.step].seconds - elapsed) };
+}
 
 function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
   const [show, setShow] = useState(() => !desktopOnly || window.matchMedia('(min-width: 1024px)').matches);
   const [reduced] = useState(() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-  const [step, setStep] = useState(0);
+  const [resume] = useState(resumeFromLastPage);
+  const [resumed, setResumed] = useState(resume !== null);
+  const [step, setStep] = useState(resume?.step ?? 0);
   const [run, setRun] = useState(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const pointerRef = useRef<HTMLDivElement>(null);
@@ -475,22 +500,31 @@ function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
 
   const scene = SCENES[step];
 
+  // Remember when each step starts, for the next page.
+  useEffect(() => {
+    if (!show || resumed) return;
+    playing.step = step;
+    playing.startedAt = Date.now();
+  }, [show, resumed, step, run]);
+
   useLayoutEffect(() => {
-    if (!show || reduced) return;
+    if (!show || reduced || resumed) return;
     const stage = stageRef.current;
     const pointer = pointerRef.current;
     const ring = ringRef.current;
     if (stage && pointer && ring) animatePointer(stage, pointer, ring, scene.path, scene.seconds);
-  }, [show, reduced, step, run, scene]);
+  }, [show, reduced, resumed, step, run, scene]);
 
   useEffect(() => {
     if (!show) return;
+    const seconds = reduced ? STILL_SECONDS : resumed && resume ? resume.left : scene.seconds;
     const timer = window.setTimeout(() => {
+      setResumed(false);
       setStep((s) => (s + 1) % SCENES.length);
       setRun((r) => r + 1);
-    }, (reduced ? STILL_SECONDS : scene.seconds) * 1000);
+    }, seconds * 1000);
     return () => window.clearTimeout(timer);
-  }, [show, reduced, step, run, scene]);
+  }, [show, reduced, resumed, resume, step, run, scene]);
 
   // A new width moves the pointer's targets, so the step starts over. Height doesn't
   // count: phone browsers change it whenever the address bar hides during scrolling.
@@ -500,6 +534,7 @@ function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
     const onResize = () => {
       if (window.innerWidth === width) return;
       width = window.innerWidth;
+      setResumed(false);
       setRun((r) => r + 1);
     };
     window.addEventListener('resize', onResize);
@@ -512,7 +547,7 @@ function Tour({ desktopOnly = false, tone = 'dark' }: AppTourProps) {
   const Content = scene.Content;
 
   return (
-    <div className={`bl-tour bl-tour--${tone}${reduced ? ' is-frozen' : ''}`}>
+    <div className={`bl-tour bl-tour--${tone}${reduced || resumed ? ' is-frozen' : ''}`}>
       <div className="bl-tour__frame" aria-hidden="true">
         <div ref={stageRef} className="bl-tour__stage" key={`${step}-${run}`}>
           <div className="sc-side">

@@ -241,6 +241,132 @@
   .bl-login { grid-template-columns: 1.1fr 1fr; }
 }
 
+/* ---- Create account: one step at a time, in the style of Google's sign-up --
+   A card with a thin progress bar, a big heading on the left (on top on
+   narrow screens), the step's few fields on the right, Back and Next under
+   them, and the language and policy links below the card. Every step fits on
+   one screen; only an open phone keyboard can make it scroll. */
+
+.bl-login--register .bl-login__main {
+  gap: var(--bl-s3);
+  padding-top: calc(var(--bl-s4) + var(--bl-safe-top));
+  padding-bottom: calc(var(--bl-s4) + var(--bl-safe-bottom));
+}
+
+.bl-gsu {
+  position: relative;
+  max-width: 820px;
+  padding: 0;
+  overflow: hidden;
+  container-type: inline-size;
+}
+.bl-gsu__progress { height: 4px; background: var(--bl-green-light); }
+.bl-gsu__progress i {
+  display: block;
+  height: 100%;
+  background: var(--bl-green);
+  border-radius: 0 4px 4px 0;
+  transition: width 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.bl-gsu__body { display: grid; gap: var(--bl-s5); padding: var(--bl-s6) var(--bl-s5) var(--bl-s5); }
+/* Wide card: heading on the left, fields on the right. */
+@container (min-width: 640px) {
+  .bl-gsu__body { grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); column-gap: var(--bl-s8); padding: var(--bl-s8) var(--bl-s8) var(--bl-s6); min-height: 380px; }
+}
+
+.bl-gsu__head { min-width: 0; }
+.bl-gsu__title {
+  margin: var(--bl-s4) 0 var(--bl-s2);
+  font-size: clamp(1.5rem, 1.25rem + 0.9vw, 2.1rem);
+  font-weight: var(--bl-fw-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  outline: none;
+}
+.bl-gsu__sub { margin: 0; font-size: var(--bl-fs-md); line-height: var(--bl-lh-normal); color: var(--bl-text-secondary); }
+.bl-gsu__count { margin: var(--bl-s3) 0 0; font-size: var(--bl-fs-xs); color: var(--bl-text-secondary); }
+.bl-gsu__count .bl-login__legend { font-size: inherit; }
+
+.bl-gsu__form { display: flex; flex-direction: column; gap: var(--bl-s4); min-width: 0; }
+.bl-gsu__form.is-stepping { animation: bl-gsu-in 280ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+@keyframes bl-gsu-in { from { opacity: 0; transform: translateX(18px); } to { opacity: 1; transform: none; } }
+.bl-gsu__fields { display: flex; flex-direction: column; gap: var(--bl-s4); }
+/* Wide card: the card keeps one height on every step, and a step's fields sit in
+   the middle of the space above Back and Next, so a single field such as the
+   email is centred rather than stuck at the top. */
+@container (min-width: 640px) {
+  .bl-gsu__fields { flex: 1 1 auto; justify-content: center; }
+}
+.bl-gsu__show { min-height: 0; font-size: var(--bl-fs-sm); }
+
+.bl-gsu__actions { display: flex; align-items: center; justify-content: space-between; gap: var(--bl-s3); margin-top: auto; padding-top: var(--bl-s2); }
+.bl-gsu__actions .bl-btn--primary { min-width: 120px; }
+
+/* Review: what was entered, each with an Edit link. */
+.bl-gsu__review { display: grid; gap: 0; margin: 0; border: 1px solid var(--bl-border); border-radius: var(--bl-r-md); }
+/* One line per item: what it is, what was entered, and Edit. */
+.bl-gsu__review > div {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.5fr) auto;
+  align-items: center;
+  column-gap: var(--bl-s3);
+  padding: 2px var(--bl-s3);
+  border-top: 1px solid var(--bl-border);
+}
+.bl-gsu__review > div:first-child { border-top: 0; }
+.bl-gsu__review dt { font-size: var(--bl-fs-xs); color: var(--bl-text-secondary); }
+.bl-gsu__review dd { margin: 0; font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-semibold); overflow-wrap: anywhere; }
+.bl-gsu__review .bl-login__textlink { min-height: 32px; font-size: var(--bl-fs-sm); }
+.bl-gsu__terms { display: grid; gap: var(--bl-s1); }
+.bl-gsu__terms .bl-login__terms { min-height: 0; font-size: var(--bl-fs-sm); }
+.bl-gsu__terms .bl-login__policies { margin: 0; }
+.bl-gsu__terms .bl-login__textlink { min-height: 30px; font-size: var(--bl-fs-sm); }
+/* A short line under the checkbox, not a big box, so the step stays on one screen. */
+.bl-gsu__terms .bl-form-error { margin: 0; padding: 0; background: none; border: 0; font-size: var(--bl-fs-xs); }
+
+/* Under the card: the language on the left, the policies on the right. */
+.bl-gsu__footer {
+  width: 100%;
+  max-width: 820px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s2) var(--bl-s4);
+}
+.bl-gsu__footer-links { display: flex; gap: var(--bl-s4); }
+.bl-gsu__footer .bl-login__textlink { min-height: 32px; font-size: var(--bl-fs-sm); font-weight: var(--bl-fw-medium); color: var(--bl-text-secondary); }
+
+/* Phones: the page is the card, as on Google's sign-up on a phone. */
+@media (max-width: 599px) {
+  .bl-login--register .bl-login__main { justify-content: flex-start; }
+  .bl-gsu { border: 0; box-shadow: none; background: transparent; overflow: visible; }
+  .bl-gsu__progress { border-radius: 4px; overflow: hidden; }
+  .bl-gsu__body { padding: var(--bl-s4) 0 0; gap: var(--bl-s4); }
+  .bl-gsu__title { margin-top: var(--bl-s3); }
+  .bl-gsu__form { min-height: 0; }
+  .bl-gsu__actions { margin-top: var(--bl-s2); }
+}
+
+@media (min-width: 1024px) {
+  /* The form gets a little more of the width than the tour panel. */
+  .bl-login.bl-login--register { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); }
+  .bl-login--register .bl-login__main { padding: var(--bl-s4) var(--bl-s6); }
+}
+/* Small phones: a slightly smaller heading. */
+@media (max-width: 599px) and (max-height: 700px) {
+  .bl-gsu__title { font-size: 1.35rem; margin: var(--bl-s2) 0 var(--bl-s1); }
+  .bl-gsu__sub { font-size: var(--bl-fs-sm); }
+  .bl-gsu__body { gap: var(--bl-s3); padding-top: var(--bl-s3); }
+}
+/* Short screens: a little tighter. */
+@media (max-height: 700px) {
+  .bl-gsu__body { padding-top: var(--bl-s5); }
+  .bl-gsu__title { margin-top: var(--bl-s3); }
+  .bl-gsu__fields, .bl-gsu__form { gap: var(--bl-s3); }
+}
+
 /* ---- Form-level error ----------------------------------------------------
    Sits above the fields for errors that belong to the whole form — a wrong
    password, an unreachable server — rather than to one input.
@@ -279,12 +405,57 @@
 }
 
 /* ---- Switching between Login and Create account ---------------------------
-   The browser morphs the card (its width changes between the two forms) and
-   cross-fades the contents. Browsers without View Transitions get a short
+   The browser morphs the card (its size changes between the two forms), the
+   tour panel and its parts glide into place, and the tour carries on. Browsers without View Transitions get a short
    enter animation instead. Both are off for people who prefer reduced motion. */
 
+/* Sign-in <-> Create account: the parts both pages share are matched, so they
+   glide to their new place and size instead of fading. The card's contents
+   aren't stretched: each is drawn at its own size inside the morphing card. */
+@media (min-width: 1024px) {
+  .bl-login__aside--tour { view-transition-name: bl-auth-aside; }
+  .bl-login__aside--tour .bl-logo { view-transition-name: bl-auth-logo; }
+  .bl-login__aside--tour .bl-login__pitch h2 { view-transition-name: bl-auth-pitch; }
+  .bl-login__aside--tour .bl-tour__frame { view-transition-name: bl-auth-tour; }
+  .bl-login__aside--tour .bl-tour__captions { view-transition-name: bl-auth-caption; }
+  .bl-login__aside--tour .bl-login__aside-foot { view-transition-name: bl-auth-foot; }
+}
+::view-transition-group(bl-auth-aside),
+::view-transition-group(bl-auth-logo),
+::view-transition-group(bl-auth-pitch),
+::view-transition-group(bl-auth-tour),
+::view-transition-group(bl-auth-caption),
+::view-transition-group(bl-auth-foot) {
+  animation-duration: 520ms;
+  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+::view-transition-old(bl-auth-aside),
+::view-transition-new(bl-auth-aside) { height: 100%; object-fit: cover; animation: none; }
+::view-transition-old(bl-auth-pitch),
+::view-transition-new(bl-auth-pitch) { height: 100%; object-fit: none; object-position: left top; }
+/* The two headings say different things: the old one leaves before the new one appears, so they never overlap. */
+::view-transition-old(bl-auth-pitch) { animation: bl-morph-out 160ms ease both; }
+::view-transition-new(bl-auth-pitch) { animation: bl-morph-in 300ms ease 160ms both; }
+
+@media (min-width: 600px) {
+  /* The card itself morphs: a white panel changing size, with the old contents
+     leaving quickly and the new ones arriving, each at its own size. */
+  ::view-transition-group(bl-auth-card) {
+    overflow: clip;
+    border-radius: var(--bl-r-xl);
+    background: var(--bl-surface);
+    box-shadow: var(--bl-shadow-sm);
+  }
+  ::view-transition-old(bl-auth-card),
+  ::view-transition-new(bl-auth-card) { height: 100%; object-fit: none; object-position: left top; }
+  ::view-transition-old(bl-auth-card) { animation: bl-morph-out 160ms ease both; }
+  ::view-transition-new(bl-auth-card) { animation: bl-morph-in 300ms ease 140ms both; }
+}
+@keyframes bl-morph-out { to { opacity: 0; } }
+@keyframes bl-morph-in { from { opacity: 0; } }
+
 ::view-transition-group(bl-auth-card) {
-  animation-duration: 380ms;
+  animation-duration: 520ms;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
 }
 ::view-transition-old(root),
@@ -301,6 +472,9 @@
 
 @media (prefers-reduced-motion: reduce) {
   .bl-login__card { animation: none; }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*),
   ::view-transition-group(bl-auth-card),
   ::view-transition-old(root),
   ::view-transition-new(root) { animation-duration: 0.01ms; }
@@ -328,6 +502,7 @@
     background-size: cover;
     background-position: 58% 15%;
     animation: bl-tour-drift 28s ease-in-out infinite alternate;
+    animation-delay: var(--bl-drift-delay, 0s);
   }
   .bl-login__aside--tour .bl-login__aside-inner {
     gap: var(--bl-s4);
