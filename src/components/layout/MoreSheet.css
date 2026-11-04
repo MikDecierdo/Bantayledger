@@ -125,3 +125,61 @@
   text-decoration: none;
 }
 .bl-more__upgrade:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+
+/* ---- Tiles: the + menu and the More menu -------------------------------------- */
+.bl-more__tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--bl-s2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.bl-more__tiles--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.bl-more__tilewide { grid-column: 1 / -1; }
+.bl-more__group { min-width: 0; }
+
+.bl-more__tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  height: 100%;
+  min-height: 76px;
+  padding: var(--bl-s2) var(--bl-s1);
+  border: 1px solid var(--bl-border);
+  border-radius: var(--bl-r-lg);
+  background: var(--bl-surface);
+  color: var(--bl-text);
+  font: inherit;
+  font-size: var(--bl-fs-sm);
+  font-weight: var(--bl-fw-medium);
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background var(--bl-dur-fast) var(--bl-ease), transform var(--bl-dur-fast) var(--bl-ease);
+}
+.bl-more__tile ion-icon { flex-shrink: 0; color: var(--bl-green); font-size: 24px; }
+.bl-more__tile:active { background: var(--bl-green-soft); transform: scale(0.98); }
+.bl-more__tile:focus-visible { outline: none; box-shadow: var(--bl-focus-ring); }
+.bl-more__tile--active { border-color: var(--bl-green); background: var(--bl-green-light); color: var(--bl-green-dark); font-weight: var(--bl-fw-semibold); }
+.bl-more__tile--danger,
+.bl-more__tile--danger ion-icon { color: var(--bl-danger); }
+.bl-more__tile--main {
+  flex-direction: row;
+  gap: var(--bl-s3);
+  min-height: 72px;
+  border-color: var(--bl-green);
+  background: var(--bl-green);
+  color: #fff;
+  font-size: var(--bl-fs-md);
+  font-weight: var(--bl-fw-bold);
+}
+.bl-more__tile--main ion-icon { color: #fff; font-size: 26px; }
+.bl-more__tile--main:active { background: var(--bl-green-dark); }
+.bl-more__badge--tile { position: absolute; top: 6px; right: 6px; }

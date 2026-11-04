@@ -31,6 +31,11 @@ export function peso(value: number, withDecimals = false): string {
   return `${value < 0 ? '-' : ''}₱${body}`;
 }
 
+/** ₱75, or ₱78.50 when there are centavos: for amounts that must be exact, like a cart. */
+export function pesoExact(value: number): string {
+  return peso(value, Math.round(Math.abs(value) * 100) % 100 !== 0);
+}
+
 /** ₱4.2k — compact form for tight chart axes. */
 export function pesoCompact(value: number): string {
   const abs = Math.abs(value);
@@ -48,6 +53,14 @@ export function number(value: number, maxDigits = 1): string {
 export function percent(value: number, digits = 1): string {
   const sign = value > 0 ? '+' : '';
   return `${sign}${value.toFixed(digits)}%`;
+}
+
+/** "Sep 3" this year, "Sep 3, 2025" otherwise: for short rows on a phone. */
+export function rowDate(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return shortDate(iso);
+  if (d.getFullYear() !== new Date().getFullYear()) return shortDate(iso);
+  return d.toLocaleDateString(intlLocale(), { month: 'short', day: 'numeric' });
 }
 
 /** "Sep 3, 2026" */

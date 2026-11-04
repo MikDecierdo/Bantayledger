@@ -8,6 +8,7 @@ import {
   searchOutline,
 } from 'ionicons/icons';
 import { useMemo, useState } from 'react';
+import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
 import { AddressPicker } from '../components/common/AddressPicker';
 import { SearchInput, SelectField, TextField } from '../components/common/Field';
@@ -173,7 +174,7 @@ export function Suppliers() {
             onValueChange={setQuery}
           />
         </ToolbarSearch>
-        <ToolbarFilters>
+        <ToolbarFilters active={status !== 'all'}>
           <SelectField
             label={t('Filter by status')}
             hideLabel
@@ -292,43 +293,17 @@ export function Suppliers() {
           <ul className="bl-responsive-cards">
             {filtered.map((supplier) => (
               <li key={supplier.id}>
-                <button type="button" className="bl-drow bl-card--interactive" onClick={() => setDetail(supplier)}>
-                  <div className="bl-drow__top">
-                    <div className="bl-sup__namecell">
-                      <span className="bl-sup__initials" aria-hidden="true">
-                        {initialsOf(supplier.name)}
-                      </span>
-                      <div>
-                        <span className="bl-drow__title">{supplier.name}</span>
-                        <span className="bl-drow__meta">{supplier.contactPerson}</span>
-                      </div>
-                    </div>
-                    <Badge tone={STATUS_META[supplier.status].tone}>
-                      {STATUS_META[supplier.status].label}
-                    </Badge>
-                  </div>
-
-                  <div className="bl-sup__products">
-                    {productNames(supplier).map((name) => (
-                      <Badge tone="neutral" key={name}>
-                        {name}
-                      </Badge>
-                    ))}
-                  </div>
-
-                  <dl className="bl-drow__grid">
-                    <div className="bl-drow__cell">
-                      <dt>{t('Average price')}</dt>
-                      <dd>{peso(supplier.averageUnitPrice)}</dd>
-                    </div>
-                    <div className="bl-drow__cell">
-                      <dt>{t('Price trend')}</dt>
-                      <dd>
-                        <CostDelta pct={supplier.priceChangePct} label={t('in supplier price')} />
-                      </dd>
-                    </div>
-                  </dl>
-                </button>
+                <MobileRow
+                  lead={
+                    <span className="bl-sup__initials" aria-hidden="true">
+                      {initialsOf(supplier.name)}
+                    </span>
+                  }
+                  title={supplier.name}
+                  meta={supplier.contactPerson}
+                  value={<Badge tone={STATUS_META[supplier.status].tone}>{STATUS_META[supplier.status].label}</Badge>}
+                  onClick={() => setDetail(supplier)}
+                />
               </li>
             ))}
           </ul>

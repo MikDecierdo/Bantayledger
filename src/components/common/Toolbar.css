@@ -83,3 +83,34 @@
   .bl-card--fill .bl-toolbar__search { flex: 0 1 300px; }
   .bl-card--fill .bl-toolbar__filters { flex-wrap: nowrap; }
 }
+
+/* ---- Phones: search and one Filter button on a single line --------------------- */
+.bl-toolbar__filterbtn { display: none; }
+@media (max-width: 767px) {
+  .bl-toolbar { display: flex; flex-wrap: nowrap; align-items: stretch; gap: var(--bl-s2); }
+  .bl-toolbar__search { flex: 1 1 auto; min-width: 0; }
+  .bl-toolbar__filters { flex: 0 0 auto; width: auto; }
+  .bl-toolbar__filterwrap { height: 100%; }
+  .bl-toolbar__filterbtn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 100%;
+    min-height: 44px;
+    padding: 0 var(--bl-s3);
+    border: 1px solid var(--bl-border-strong);
+    border-radius: var(--bl-r-pill);
+    background: var(--bl-surface);
+    color: var(--bl-text);
+    font: inherit;
+    font-size: var(--bl-fs-sm);
+    font-weight: var(--bl-fw-semibold);
+    cursor: pointer;
+  }
+  .bl-toolbar__filterbtn.is-on { border-color: var(--bl-green); color: var(--bl-green-dark); background: var(--bl-green-light); }
+  .bl-toolbar__filterdot { width: 8px; height: 8px; border-radius: 50%; background: var(--bl-green); }
+  .bl-toolbar__sheet { display: grid; gap: var(--bl-s3); }
+  /* "Showing 41 of 41" says nothing; it appears once a search narrows the list. */
+  .bl-resultcount--all { display: none; }
+}

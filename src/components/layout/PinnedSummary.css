@@ -73,3 +73,28 @@
 @media print {
   .bl-pin { position: static; }
 }
+
+/* ---- Phones: the main figure, then the list ----------------------------------- */
+.bl-pin__more { display: none; }
+@media (max-width: 767px) {
+  .bl-pin--compact:not(.is-open) .bl-grid--kpi > :nth-child(n + 2) { display: none; }
+  .bl-pin--compact .bl-section { margin-bottom: 0; }
+  .bl-pin--compact:not(.is-open) .bl-grid--kpi { margin-bottom: 0; }
+  .bl-pin__more {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--bl-s1);
+    width: 100%;
+    min-height: 44px;
+    border: 0;
+    background: none;
+    color: var(--bl-green-dark);
+    font: inherit;
+    font-size: var(--bl-fs-sm);
+    font-weight: var(--bl-fw-semibold);
+    cursor: pointer;
+  }
+  .bl-pin__more ion-icon { transition: transform var(--bl-dur-fast) var(--bl-ease); }
+  .bl-pin.is-open .bl-pin__more ion-icon { transform: rotate(180deg); }
+}

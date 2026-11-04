@@ -1,0 +1,15 @@
+{
+  "1 item": ["1 item", "1 ka item"],
+  "Advice and reports": ["Payo at mga ulat", "Tambag ug mga report"],
+  "Change price": ["Palitan ang presyo", "Ilisi ang presyo"],
+  "Filter": ["I-filter", "I-filter"],
+  "Hide the details": ["Itago ang detalye", "Itago ang detalye"],
+  "On": ["Naka-on", "Naka-on"],
+  "Press back again to leave the app": ["Pindutin ulit ang back para umalis sa app", "Pindota pag-usab ang back aron mogawas sa app"],
+  "Records": ["Mga tala", "Mga talaan"],
+  "Review and pay": ["Suriin at magbayad", "Susiha ug bayri"],
+  "See why, and what to do": ["Tingnan kung bakit, at ang dapat gawin", "Tan-awa ngano, ug unsay buhaton"],
+  "Show fewer figures": ["Bawasan ang ipinapakita", "Gamay ra ang ipakita"],
+  "Show more figures": ["Magpakita ng iba pang numero", "Ipakita ang uban pang numero"],
+  "Showing {{shown}} of {{total}}": ["Ipinapakita ang {{shown}} sa {{total}}", "Gipakita ang {{shown}} sa {{total}}"]
+}

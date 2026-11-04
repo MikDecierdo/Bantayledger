@@ -25,14 +25,13 @@ export function QuickAddSheet({ isOpen, onClose }: QuickAddSheetProps) {
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={t('Quick add')} icon="form" size="sm">
-      <ul className="bl-more__list">
-        {quickAddItems.map((item) => (
-          <li key={item.href}>
-            <button type="button" className="bl-more__item" onClick={() => go(item.href)}>
-              <span className="bl-more__icon" aria-hidden="true">
-                <IonIcon icon={item.icon} />
-              </span>
-              <span className="bl-more__label">{item.label}</span>
+      {/* The first one, recording a sale, is what people come here for most. */}
+      <ul className="bl-more__tiles bl-more__tiles--2">
+        {quickAddItems.map((item, index) => (
+          <li key={item.href} className={index === 0 ? 'bl-more__tilewide' : undefined}>
+            <button type="button" className={`bl-more__tile${index === 0 ? ' bl-more__tile--main' : ''}`} onClick={() => go(item.href)}>
+              <IonIcon icon={item.icon} aria-hidden="true" />
+              <span>{item.label}</span>
             </button>
           </li>
         ))}

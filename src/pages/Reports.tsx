@@ -16,7 +16,7 @@ import { DateField, SelectField } from '../components/common/Field';
 import { ErrorState, LoadingState, SkeletonGrid } from '../components/common/States';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { useToast } from '../components/common/ToastProvider';
-import { Segmented } from '../components/common/Toolbar';
+import { Segmented, PhoneFilters } from '../components/common/Toolbar';
 import PageHeader from '../components/layout/PageHeader';
 import { Card, Section } from '../components/layout/Section';
 import { Bento, Workspace } from '../components/layout/Workspace';
@@ -202,7 +202,7 @@ export function Reports() {
           <Button
             variant="secondary"
             icon={printOutline}
-            className="bl-noexport"
+            className="bl-noexport bl-hide-mobile"
             disabled={!report}
             onClick={() => setPrinting(true)}
           >
@@ -298,7 +298,9 @@ export function Reports() {
       <p className="bl-rep__printmeta">
         {activeBusiness?.name} · {periodLabel}
       </p>
-      {filters}
+      <PhoneFilters className="bl-rep__phonefilter" active={period !== '6m' || categoryId !== 'all'}>
+        {filters}
+      </PhoneFilters>
       {body}
     </Workspace>
   );

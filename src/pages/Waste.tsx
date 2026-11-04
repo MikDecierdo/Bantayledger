@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import BarChart from '../components/charts/BarChart';
 import BarList from '../components/charts/BarList';
+import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
 import {
   DateField,
@@ -27,7 +28,7 @@ import { alertSuccess } from '../lib/swal';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { wasteService } from '../services/api';
-import { number, peso, pesoCompact, shortDate, wasteReasonLabel } from '../utils/format';
+import { number, peso, pesoExact, pesoCompact, rowDate, shortDate, wasteReasonLabel } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
 
@@ -178,7 +179,7 @@ export function Waste() {
     <Workspace>
       {header}
 
-      <PinnedSummary>
+      <PinnedSummary compactOnPhone>
         <Section title={t('Spoiled & Damaged summary')}>
           <div className="bl-grid bl-grid--kpi">
             <StatCard
@@ -231,7 +232,7 @@ export function Waste() {
               onValueChange={setQuery}
             />
           </ToolbarSearch>
-          <ToolbarFilters>
+          <ToolbarFilters active={reason !== 'all'}>
             <SelectField
               label={t('Filter by reason')}
               hideLabel
@@ -329,32 +330,12 @@ export function Waste() {
             <ul className="bl-responsive-cards">
               {filtered.map((record) => (
                 <li key={record.id}>
-                  <article className="bl-drow">
-                    <div className="bl-drow__top">
-                      <div>
-                        <span className="bl-drow__title">{record.productName}</span>
-                        <span className="bl-drow__meta">
-                          {shortDate(record.date)} · {record.recordedBy}
-                        </span>
-                      </div>
-                      <span className="bl-tx__amount">{peso(record.estimatedCost)}</span>
-                    </div>
-
-                    <dl className="bl-drow__grid">
-                      <div className="bl-drow__cell">
-                        <dt>{t('Quantity')}</dt>
-                        <dd>
-                          {number(record.quantity)} {record.unit}
-                        </dd>
-                      </div>
-                      <div className="bl-drow__cell">
-                        <dt>{t('Reason')}</dt>
-                        <dd>
-                          <Badge tone={REASON_TONE[record.reason]}>{wasteReasonLabel(record.reason)}</Badge>
-                        </dd>
-                      </div>
-                    </dl>
-                  </article>
+                  <MobileRow
+                    title={record.productName}
+                    meta={`${number(record.quantity)} ${record.unit} · ${wasteReasonLabel(record.reason)} · ${rowDate(record.date)}`}
+                    value={pesoExact(record.estimatedCost)}
+                    valueNote={record.recordedBy}
+                  />
                 </li>
               ))}
             </ul>

@@ -1,5 +1,6 @@
 import {
   addOutline,
+  arrowBackOutline,
   cartOutline,
   removeOutline,
   searchOutline,
@@ -7,8 +8,9 @@ import {
 } from 'ionicons/icons';
 import type { ChangeEvent, ReactNode } from 'react';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import TrendChart from '../components/charts/TrendChart';
+import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
 import Ticker from '../components/common/Ticker';
 import { CurrencyField, DateField, SearchInput, SelectField, TextField } from '../components/common/Field';
@@ -35,7 +37,7 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { salesService } from '../services/api';
 import type { Product, Sale } from '../types';
-import { number, peso, pesoCompact, shortDate } from '../utils/format';
+import { number, peso, pesoCompact, pesoExact, rowDate, shortDate } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
 import { label } from '../i18n/labels';
@@ -68,6 +70,15 @@ function cashChange(received: string, total: number): CashChange {
 }
 
 const CASH_QUICK_AMOUNTS = [50, 100, 200, 500, 1000];
+/** A sale's name in a phone list: the product when there's one, otherwise how many. */
+function saleTitle(sale: Sale): string {
+  if (sale.items.length === 0) return t('Sale');
+  if (sale.items.length === 1) return `${sale.items[0].productName} ×${number(sale.items[0].quantity)}`;
+  return t('{{count}} items', { count: sale.items.length });
+}
+
+/** Where the Add Sale window fills the screen and works in two steps. */
+const PHONE_QUERY = '(max-width: 599px)';
 
 /** How the customer pays: all cash, all GCash, or part of each. */
 type PaymentMode = 'Cash' | 'GCash' | 'Split';
@@ -79,6 +90,7 @@ function todayIso(): string {
 export function Sales() {
   const { activeBusiness, user } = useAuth();
   const location = useLocation<{ openAdd?: boolean } | undefined>();
+  const history = useHistory();
 
   const { data, loading, error, reload } = useAsyncData(
     () => Promise.all([dataService.getSales(), dataService.getSalesOverview()]),
@@ -98,7 +110,11 @@ export function Sales() {
 
   /** Arriving from a Dashboard quick action — open the Add form immediately. */
   useEffect(() => {
-    if (location.state?.openAdd) setAddOpen(true);
+    if (!location.state?.openAdd) return;
+    setAddOpen(true);
+    // Used up, so coming back to this page doesn't open it again.
+    history.replace({ pathname: location.pathname, state: undefined });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.state]);
 
   const [cart, setCart] = useState<CartLine[]>([]);
@@ -111,8 +127,34 @@ export function Sales() {
   const [tileCategory, setTileCategory] = useState('all');
   const [saving, setSaving] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+  // Phones do Add Sale in two steps; larger screens show everything side by side.
+  const [isPhone, setIsPhone] = useState(() => window.matchMedia(PHONE_QUERY).matches);
+  const [posStep, setPosStep] = useState<'pick' | 'pay'>('pick');
+  const [editingPrice, setEditingPrice] = useState<string | null>(null);
+  const reviewing = isPhone && posStep === 'pay';
+
+  useEffect(() => {
+    const query = window.matchMedia(PHONE_QUERY);
+    const onChange = () => setIsPhone(query.matches);
+    query.addEventListener('change', onChange);
+    return () => query.removeEventListener('change', onChange);
+  }, []);
+
+  // Each step opens at its top, and the Android back button returns to the products.
+  useEffect(() => {
+    document.querySelector('ion-modal.bl-modal--xl .bl-modal__body')?.scrollTo(0, 0);
+    if (!reviewing) return;
+    const onBack = (event: Event) => {
+      const { register } = (event as CustomEvent<{ register: (priority: number, handler: () => void) => void }>).detail;
+      register(150, () => setPosStep('pick'));
+    };
+    document.addEventListener('ionBackButton', onBack);
+    return () => document.removeEventListener('ionBackButton', onBack);
+  }, [reviewing]);
 
   const resetCart = () => {
+    setPosStep('pick');
+    setEditingPrice(null);
     setCart([]);
     setTileQuery('');
     setTileCategory('all');
@@ -196,9 +238,20 @@ export function Sales() {
 
   const removeLine = (productId: string) => {
     setCart((lines) => lines.filter((l) => l.productId !== productId));
+    // Nothing left to review: back to the products.
+    if (cart.length === 1) setPosStep('pick');
+  };
+
+  const changePrice = (productId: string) => {
+    setEditingPrice(productId);
+    window.requestAnimationFrame(() => {
+      document.querySelector<HTMLInputElement>(`input[data-price-for="${productId}"]`)?.focus();
+    });
   };
 
   const cartTotal = cart.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
+  const cartCount = cart.reduce((n, l) => n + l.quantity, 0);
+  const cartCountText = cartCount === 1 ? t('1 item') : t('{{count}} items', { count: cartCount });
   // Split payment: the GCash part is typed, the cash part is whatever is left.
   const gcashPart = paymentMode === 'Split' ? Math.round(Number(gcashAmount || 0) * 100) / 100 : 0;
   const cashPart = paymentMode === 'Split' ? Math.round((cartTotal - gcashPart) * 100) / 100 : cartTotal;
@@ -214,6 +267,13 @@ export function Sales() {
     value: paymentReference,
     onChange: (e: ChangeEvent<HTMLInputElement>) => setPaymentReference(e.target.value.replace(/\D/g, '').slice(0, 4)),
   };
+
+  const totalRow = (
+    <div className="bl-cart__total bl-pos__total">
+      <span className="bl-label">{t('Total')}</span>
+      <strong>{pesoExact(cartTotal)}</strong>
+    </div>
+  );
 
   const cartQtyFor = (productId: string) => cart.find((l) => l.productId === productId)?.quantity ?? 0;
 
@@ -279,7 +339,7 @@ export function Sales() {
       });
       const changeNote =
         paymentMode !== 'GCash' && cash.state === 'change' && cash.centavos > 0
-          ? ` ${t('Change to give: {{amount}}.', { amount: peso(cash.centavos / 100) })}`
+          ? ` ${t('Change to give: {{amount}}.', { amount: pesoExact(cash.centavos / 100) })}`
           : '';
       closeAddModal();
       reload();
@@ -362,7 +422,7 @@ export function Sales() {
     <Workspace>
       {header}
 
-      <PinnedSummary>
+      <PinnedSummary compactOnPhone>
         <Section title={t('Sales summary')}>
           <div className="bl-grid bl-grid--kpi">
             <StatCard
@@ -424,7 +484,7 @@ export function Sales() {
               onValueChange={setQuery}
             />
           </ToolbarSearch>
-          <ToolbarFilters>
+          <ToolbarFilters active={payment !== 'all'}>
             <SelectField
               label={t('Filter by payment method')}
               hideLabel
@@ -528,51 +588,14 @@ export function Sales() {
             <ul className="bl-responsive-cards">
               {filtered.map((sale) => (
                 <li key={sale.id}>
-                  <article className="bl-drow">
-                    <div className="bl-drow__top">
-                      <div>
-                        <span className="bl-drow__title">{sale.items[0]?.productName ?? t('Sale')}</span>
-                        <span className="bl-drow__meta">
-                          {sale.reference} · {shortDate(sale.date)} {sale.time}
-                        </span>
-                      </div>
-                      <span className="bl-tx__amount">{peso(sale.total)}</span>
-                    </div>
-
-                    {sale.items.length > 1 && (
-                      <ul className="bl-tx__items">
-                        {sale.items.map((item) => (
-                          <li key={item.productId}>
-                            <span className="bl-truncate">{item.productName}</span>
-                            <span className="bl-num">
-                              {item.quantity} × {peso(item.unitPrice)}
-                            </span>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-
-                    <dl className="bl-drow__grid">
-                      <div className="bl-drow__cell">
-                        <dt>{t('Payment')}</dt>
-                        <dd>
-                          <PaymentBadges payments={sale.payments} />
-                        </dd>
-                      </div>
-                      <div className="bl-drow__cell">
-                        <dt>{t('Cashier')}</dt>
-                        <dd className="bl-tx__soft">{sale.cashier}</dd>
-                      </div>
-                    </dl>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      aria-label={t('View sale {{reference}}', { reference: sale.reference })}
-                      onClick={() => setViewSale(sale)}
-                    >
-                      {t('View')}
-                    </Button>
-                  </article>
+                  <MobileRow
+                    title={saleTitle(sale)}
+                    meta={`${rowDate(sale.date)} · ${sale.time} · ${sale.cashier}`}
+                    value={pesoExact(sale.total)}
+                    valueNote={sale.payments.length > 1 ? t('Cash + GCash') : label(sale.payments[0]?.method ?? 'Cash')}
+                    ariaLabel={t('View sale {{reference}}', { reference: sale.reference })}
+                    onClick={() => setViewSale(sale)}
+                  />
                 </li>
               ))}
             </ul>
@@ -718,37 +741,54 @@ export function Sales() {
       <Modal
         isOpen={addOpen}
         onClose={closeAddModal}
-        title={t('Add Sale')}
+        title={reviewing ? t('Review and pay') : t('Add Sale')}
         icon="cart"
-        description={t('Tap products to add them to the cart, then check out as one sale.')}
+        description={reviewing ? undefined : t('Tap products to add them to the cart, then check out as one sale.')}
         size="xl"
         footer={
           <>
-            <div className="bl-cart__total">
-              <span className="bl-label">{t('Total')}</span>
-              <strong>{peso(cartTotal)}</strong>
-            </div>
+            {/* Picking products on a phone: the payment section isn't on screen yet. */}
+            {isPhone && !reviewing && (
+              <div className="bl-cart__total bl-cart__total--bar">
+                <span className="bl-label">{cartCount > 0 ? cartCountText : t('Total')}</span>
+                <strong>{pesoExact(cartTotal)}</strong>
+              </div>
+            )}
             {/* Beside Checkout, so it's always in view and doesn't squeeze the columns. */}
             {formError && (
               <p className="bl-form-error bl-pos__footer-error" role="alert">
                 {formError}
               </p>
             )}
-            <Button variant="secondary" onClick={closeAddModal} disabled={saving}>
-              {t('Cancel')}
-            </Button>
-            <Button
-              variant="primary"
-              onClick={() => void handleCheckout()}
-              loading={saving}
-              disabled={cart.length === 0}
-            >
-              {saving ? t('Recording') : t('Checkout')}
-            </Button>
+            {isPhone && !reviewing ? (
+              <Button variant="primary" onClick={() => setPosStep('pay')} disabled={cart.length === 0}>
+                {t('Next')}
+              </Button>
+            ) : (
+              <>
+                {reviewing ? (
+                  <Button variant="secondary" icon={arrowBackOutline} onClick={() => setPosStep('pick')} disabled={saving}>
+                    {t('Back')}
+                  </Button>
+                ) : (
+                  <Button variant="secondary" onClick={closeAddModal} disabled={saving}>
+                    {t('Cancel')}
+                  </Button>
+                )}
+                <Button
+                  variant="primary"
+                  onClick={() => void handleCheckout()}
+                  loading={saving}
+                  disabled={cart.length === 0}
+                >
+                  {saving ? t('Recording') : t('Checkout')}
+                </Button>
+              </>
+            )}
           </>
         }
       >
-        <div className="bl-pos__layout">
+        <div className="bl-pos__layout" data-step={posStep}>
           <div className="bl-pos__main">
             <div className="bl-pos__picker">
               {/* Pinned at the top on phones, so the results stay in view under it. */}
@@ -796,7 +836,7 @@ export function Sales() {
                       >
                         <ProductThumbnail src={product.imageUrl} name={product.name} size="md" />
                         <span className="bl-tile__name">{product.name}</span>
-                        <span className="bl-tile__price">{peso(product.sellingPrice)}</span>
+                        <span className="bl-tile__price">{pesoExact(product.sellingPrice)}</span>
                         <span className={`bl-tile__stock ${outOfStock ? 'bl-tile__stock--out' : ''}`}>
                           {outOfStock
                             ? t('Out of stock')
@@ -821,7 +861,7 @@ export function Sales() {
               {t('Cart')}
               {cart.length > 0 && (
                 <span className="bl-pos__side-count">
-                  {` · ${t('{{count}} items', { count: cart.reduce((n, l) => n + l.quantity, 0) })}`}
+                  {` · ${cartCountText}`}
                 </span>
               )}
             </h3>
@@ -835,11 +875,20 @@ export function Sales() {
                     <div className="bl-cart__info">
                       <Ticker text={line.name} className="bl-cart__name" />
                       <span className="bl-cart__unit">{line.unit}</span>
+                      {/* Phones keep the price out of the way until it's needed. */}
+                      <span className="bl-cart__each">
+                        {t('{{cost}} each', { cost: pesoExact(line.unitPrice) })}
+                        {' · '}
+                        <button type="button" className="bl-cart__change" onClick={() => changePrice(line.productId)}>
+                          {t('Change price')}
+                        </button>
+                      </span>
                     </div>
                     <CurrencyField
                       label={t('Price for {{name}}', { name: line.name })}
                       hideLabel
-                      className="bl-cart__price"
+                      data-price-for={line.productId}
+                      className={`bl-cart__price${editingPrice === line.productId ? ' is-editing' : ''}`}
                       value={String(line.unitPrice)}
                       onChange={(e) => setLinePrice(line.productId, e.target.value)}
                     />
@@ -861,7 +910,7 @@ export function Sales() {
                         onClick={() => incrementLine(line.productId)}
                       />
                     </div>
-                    <span className="bl-cart__subtotal">{peso(line.unitPrice * line.quantity)}</span>
+                    <span className="bl-cart__subtotal">{pesoExact(line.unitPrice * line.quantity)}</span>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -942,16 +991,19 @@ export function Sales() {
                       ? splitAmountError
                       : splitValid
                         ? t('Total {{total}} = {{cash}} cash + {{gcash}} GCash', {
-                            total: peso(cartTotal),
-                            cash: peso(cashPart),
-                            gcash: peso(gcashPart),
+                            total: pesoExact(cartTotal),
+                            cash: pesoExact(cashPart),
+                            gcash: pesoExact(gcashPart),
                           })
-                        : t('Total {{total}}. Type the GCash part; the rest is paid in cash.', { total: peso(cartTotal) })}
+                        : t('Total {{total}}. Type the GCash part; the rest is paid in cash.', { total: pesoExact(cartTotal) })}
                   </p>
                 </div>
               )}
               {paymentMode === 'GCash' && (
-                <TextField label={t('GCash reference (last 4 digits)')} {...referenceFieldProps} />
+                <>
+                  <TextField label={t('GCash reference (last 4 digits)')} {...referenceFieldProps} />
+                  {totalRow}
+                </>
               )}
               {paymentMode !== 'GCash' && (
                 <div className="bl-pos__cash">
@@ -981,6 +1033,7 @@ export function Sales() {
                       </button>
                     ))}
                   </div>
+                  {totalRow}
                   {/* No change to work out until the GCash amount makes sense. */}
                   {!splitAmountError && (
                     <div
@@ -994,13 +1047,13 @@ export function Sales() {
                       {cash.state === 'change' && (
                         <>
                           <span>{t('Change')}</span>
-                          <strong>{peso(cash.centavos / 100)}</strong>
+                          <strong>{pesoExact(cash.centavos / 100)}</strong>
                         </>
                       )}
                       {cash.state === 'short' && (
                         <>
                           <span>{t('Still short')}</span>
-                          <strong>{peso(cash.centavos / 100)}</strong>
+                          <strong>{pesoExact(cash.centavos / 100)}</strong>
                         </>
                       )}
                     </div>

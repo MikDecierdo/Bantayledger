@@ -1,5 +1,8 @@
-import { useEffect, useRef, type ReactNode } from 'react';
+import { IonIcon } from '@ionic/react';
+import { chevronDownOutline } from 'ionicons/icons';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { useBreakpoint, useFitMode } from '../../hooks/useBreakpoint';
+import { t } from '../../i18n';
 import './PinnedSummary.css';
 
 /**
@@ -16,8 +19,12 @@ import './PinnedSummary.css';
  * filter bar or table heading further down stacks directly beneath it.
  * Below 1024px it renders its children plainly, and so it does in desktop
  * fit mode, where the page does not scroll at all.
+ *
+ * With `compactOnPhone`, phones show only the first figure, with a button for the
+ * rest, so a list below it starts near the top of the screen.
  */
-export function PinnedSummary({ children }: { children: ReactNode }) {
+export function PinnedSummary({ children, compactOnPhone = false }: { children: ReactNode; compactOnPhone?: boolean }) {
+  const [open, setOpen] = useState(false);
   const { isDesktop } = useBreakpoint();
   const fit = useFitMode();
   const anchorRef = useRef<HTMLDivElement>(null);
@@ -79,8 +86,14 @@ export function PinnedSummary({ children }: { children: ReactNode }) {
   return (
     <>
       <div ref={anchorRef} aria-hidden="true" style={{ height: 0 }} />
-      <div ref={pinRef} className="bl-pin">
+      <div ref={pinRef} className={`bl-pin${compactOnPhone ? ' bl-pin--compact' : ''}${open ? ' is-open' : ''}`}>
         {children}
+        {compactOnPhone && (
+          <button type="button" className="bl-pin__more" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+            <span>{open ? t('Show fewer figures') : t('Show more figures')}</span>
+            <IonIcon icon={chevronDownOutline} aria-hidden="true" />
+          </button>
+        )}
       </div>
     </>
   );

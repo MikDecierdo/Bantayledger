@@ -1,7 +1,8 @@
 import { addOutline, bagOutline, checkmarkOutline, createOutline, searchOutline } from 'ionicons/icons';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import BarChart from '../components/charts/BarChart';
+import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
 import {
   CurrencyField,
@@ -26,7 +27,7 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { businessService, purchaseService } from '../services/api';
 import type { Purchase } from '../types';
-import { number, peso, pesoCompact, shortDate } from '../utils/format';
+import { number, peso, pesoExact, pesoCompact, rowDate, shortDate } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
 
@@ -35,6 +36,7 @@ const STATUS_TONE = { received: 'success', pending: 'warning', cancelled: 'neutr
 export function Purchases() {
   const { activeBusiness, user, refresh } = useAuth();
   const location = useLocation<{ openAdd?: boolean; presetProductId?: string; presetQuantity?: number } | undefined>();
+  const history = useHistory();
 
   const { data, loading, error, reload } = useAsyncData(
     () => Promise.all([dataService.getPurchases(), dataService.getPurchasesOverview()]),
@@ -121,6 +123,10 @@ export function Purchases() {
     if (!location.state?.openAdd) return;
 
     setAddOpen(true);
+    // Used up (once any preset is applied), so coming back doesn't open it again.
+    if (!location.state.presetProductId || products) {
+      history.replace({ pathname: location.pathname, state: undefined });
+    }
     if (location.state.presetProductId && products) {
       chooseProduct(location.state.presetProductId);
       // From an event stock-up list: the suggested amount.
@@ -264,7 +270,7 @@ export function Purchases() {
     <Workspace>
       {header}
 
-      <PinnedSummary>
+      <PinnedSummary compactOnPhone>
         <Section title={t('Purchase summary')}>
           <div className="bl-grid bl-grid--kpi">
             <StatCard
@@ -315,7 +321,7 @@ export function Purchases() {
               onValueChange={setQuery}
             />
           </ToolbarSearch>
-          <ToolbarFilters>
+          <ToolbarFilters active={supplier !== 'all'}>
             <SelectField
               label={t('Filter by supplier')}
               hideLabel
@@ -439,52 +445,31 @@ export function Purchases() {
             <ul className="bl-responsive-cards">
               {filtered.map((purchase) => (
                 <li key={purchase.id}>
-                  <article className="bl-drow">
-                    <div className="bl-drow__top">
-                      <div>
-                        <span className="bl-drow__title">{purchase.productName}</span>
-                        <span className="bl-drow__meta">
-                          {purchase.reference} · {purchase.supplierName}
-                        </span>
-                      </div>
+                  <MobileRow
+                    title={purchase.productName}
+                    meta={`${number(purchase.quantity)} ${purchase.unit} · ${purchase.supplierName} · ${rowDate(purchase.date)}`}
+                    value={pesoExact(purchase.totalCost)}
+                    valueNote={
                       <Badge tone={STATUS_TONE[purchase.status]}>
                         {purchase.status === 'received'
                           ? t('Received')
                           : purchase.status === 'pending'
                             ? t('Pending') : t('Cancelled')}
                       </Badge>
-                    </div>
-
-                    <dl className="bl-drow__grid bl-drow__grid--3">
-                      <div className="bl-drow__cell">
-                        <dt>{t('Quantity')}</dt>
-                        <dd>
-                          {number(purchase.quantity)} {purchase.unit}
-                        </dd>
-                      </div>
-                      <div className="bl-drow__cell">
-                        <dt>{t('Price per piece')}</dt>
-                        <dd>{peso(purchase.unitCost)}</dd>
-                      </div>
-                      <div className="bl-drow__cell">
-                        <dt>{t('Total')}</dt>
-                        <dd>{peso(purchase.totalCost)}</dd>
-                      </div>
-                    </dl>
-
-                    <p className="bl-caption bl-tx__date">{shortDate(purchase.date)}</p>
-
-                    {purchase.status === 'pending' && (
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        icon={checkmarkOutline}
-                        onClick={() => void handleMarkReceived(purchase)}
-                      >
-                        {t('Mark Received')}
-                      </Button>
-                    )}
-                  </article>
+                    }
+                    action={
+                      purchase.status === 'pending' ? (
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          icon={checkmarkOutline}
+                          onClick={() => void handleMarkReceived(purchase)}
+                        >
+                          {t('Mark Received')}
+                        </Button>
+                      ) : undefined
+                    }
+                  />
                 </li>
               ))}
             </ul>

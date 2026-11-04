@@ -1,5 +1,5 @@
 import { IonIcon } from '@ionic/react';
-import { arrowForwardOutline, bagAddOutline, sparklesOutline } from 'ionicons/icons';
+import { arrowForwardOutline, bagAddOutline, chevronDownOutline, sparklesOutline } from 'ionicons/icons';
 import { useState } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { toUserMessage } from '../../lib/errors';
@@ -52,6 +52,8 @@ export function AIInsightCard({ insight, compact = false }: AIInsightCardProps) 
     }
   };
 
+  const [showWhy, setShowWhy] = useState(false);
+
   return (
     <article className={`bl-card bl-insight ${compact ? 'bl-insight--compact' : ''}`}>
       <div className="bl-insight__top">
@@ -69,7 +71,14 @@ export function AIInsightCard({ insight, compact = false }: AIInsightCardProps) 
       <p className="bl-insight__summary">{insight.summary}</p>
 
       {!compact && (
-        <>
+        <button type="button" className="bl-insight__why" aria-expanded={showWhy} onClick={() => setShowWhy((v) => !v)}>
+          <span>{showWhy ? t('Hide the details') : t('See why, and what to do')}</span>
+          <IonIcon icon={chevronDownOutline} aria-hidden="true" />
+        </button>
+      )}
+
+      {!compact && (
+        <div className={`bl-insight__details${showWhy ? ' is-open' : ''}`}>
           <dl className="bl-insight__reasoning">
             <dt>{t('Why this matters')}</dt>
             <dd>{insight.whyItMatters}</dd>
@@ -138,7 +147,7 @@ export function AIInsightCard({ insight, compact = false }: AIInsightCardProps) 
               )}
             </div>
           )}
-        </>
+        </div>
       )}
 
       <footer className="bl-insight__foot">
