@@ -299,7 +299,7 @@ export function Expenses() {
                       <tr>
                         <th scope="col">{t('Date')}</th>
                         <th scope="col">{t('Category')}</th>
-                        <th scope="col">{t('Description')}</th>
+                        <th scope="col" className="bl-td-text">{t('Description')}</th>
                         <th scope="col" className="bl-tx__col-secondary">
                           {t('Paid by')}
                         </th>
@@ -311,11 +311,11 @@ export function Expenses() {
                     <tbody>
                       {filtered.map((expense) => (
                         <tr key={expense.id}>
-                          <td>{shortDate(expense.date)}</td>
+                          <td className="bl-td-date">{shortDate(expense.date)}</td>
                           <td>
                             <Badge tone="neutral">{label(expense.category)}</Badge>
                           </td>
-                          <td className="bl-table__primary">{expense.description}</td>
+                          <td className="bl-table__primary bl-td-text">{expense.description}</td>
                           <td className="bl-tx__col-secondary">{expense.paidBy}</td>
                           <td className="bl-td-num bl-table__primary">{peso(expense.amount)}</td>
                         </tr>

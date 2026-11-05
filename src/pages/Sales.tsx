@@ -532,7 +532,7 @@ export function Sales() {
                       <tr>
                         <th scope="col">{t('Reference')}</th>
                         <th scope="col">{t('Date')}</th>
-                        <th scope="col">{t('Items')}</th>
+                        <th scope="col" className="bl-td-text">{t('Items')}</th>
                         <th scope="col" className="bl-tx__col-cashier">
                           {t('Cashier')}
                         </th>
@@ -549,11 +549,11 @@ export function Sales() {
                       {filtered.map((sale) => (
                         <tr key={sale.id}>
                           <td className="bl-table__primary">{sale.reference}</td>
-                          <td>
+                          <td className="bl-td-date">
                             {shortDate(sale.date)}
                             <div className="bl-table__sub">{sale.time}</div>
                           </td>
-                          <td>
+                          <td className="bl-td-text">
                             {sale.items[0]?.productName ?? t('Sale')}
                             {sale.items.length > 1 && (
                               <div className="bl-table__sub">

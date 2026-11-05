@@ -381,8 +381,8 @@ export function Purchases() {
                     <thead>
                       <tr>
                         <th scope="col">{t('Reference')}</th>
-                        <th scope="col">{t('Supplier')}</th>
-                        <th scope="col">{t('Product')}</th>
+                        <th scope="col" className="bl-td-text">{t('Supplier')}</th>
+                        <th scope="col" className="bl-td-text">{t('Product')}</th>
                         <th scope="col" className="bl-td-num">
                           {t('Quantity')}
                         </th>
@@ -407,14 +407,14 @@ export function Purchases() {
                       {filtered.map((purchase) => (
                         <tr key={purchase.id}>
                           <td className="bl-table__primary">{purchase.reference}</td>
-                          <td>{purchase.supplierName}</td>
-                          <td>{purchase.productName}</td>
+                          <td className="bl-td-text">{purchase.supplierName}</td>
+                          <td className="bl-td-text">{purchase.productName}</td>
                           <td className="bl-td-num">
                             {number(purchase.quantity)} {purchase.unit}
                           </td>
                           <td className="bl-td-num">{peso(purchase.unitCost)}</td>
                           <td className="bl-td-num bl-table__primary">{peso(purchase.totalCost)}</td>
-                          <td className="bl-tx__col-secondary">{shortDate(purchase.date)}</td>
+                          <td className="bl-tx__col-secondary bl-td-date">{shortDate(purchase.date)}</td>
                           <td className="bl-tx__col-status">
                             <Badge tone={STATUS_TONE[purchase.status]}>
                               {purchase.status === 'received'

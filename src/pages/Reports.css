@@ -33,10 +33,11 @@
   padding: var(--bl-s3) var(--bl-s4);
   border-top: 2px solid var(--bl-border-strong);
   font-weight: var(--bl-fw-semibold);
-  text-align: left;
+  text-align: center;
   background: var(--bl-surface-muted);
 }
-.bl-table tfoot td.bl-td-num { text-align: right; font-variant-numeric: tabular-nums; }
+.bl-table tfoot td.bl-td-num { text-align: center; font-variant-numeric: tabular-nums; }
+.bl-table tfoot .bl-td-text { text-align: left; }
 
 .bl-rep__filters-error { margin-top: var(--bl-s3); }
 

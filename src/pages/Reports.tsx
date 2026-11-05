@@ -404,7 +404,7 @@ function ReportBody({
               <caption className="bl-sr-only">{t('Stock position and value for every tracked product')}</caption>
               <thead>
                 <tr>
-                  <th scope="col">{t('Product')}</th>
+                  <th scope="col" className="bl-td-text">{t('Product')}</th>
                   <th scope="col">{t('Category')}</th>
                   <th scope="col" className="bl-td-num">
                     {t('On hand')}
@@ -428,7 +428,7 @@ function ReportBody({
                 ) : (
                   inventory.products.map((product) => (
                     <tr key={product.id}>
-                      <td className="bl-table__primary">{product.name}</td>
+                      <td className="bl-table__primary bl-td-text">{product.name}</td>
                       <td>{product.category}</td>
                       <td className="bl-td-num">
                         {number(product.currentStock)} {product.unit}
@@ -444,7 +444,7 @@ function ReportBody({
               </tbody>
               <tfoot>
                 <tr>
-                  <th scope="row" colSpan={4}>
+                  <th scope="row" colSpan={4} className="bl-td-text">
                     {t('Total stock value')}
                   </th>
                   <td className="bl-td-num bl-table__primary">{peso(inventory.totalValue)}</td>

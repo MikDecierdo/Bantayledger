@@ -667,8 +667,10 @@
 
 .bl-table caption { text-align: left; }
 
+/* Every column is centred, so each heading sits over its values; name columns
+   (bl-td-text) read from the left, and row buttons stay on the right. */
 .bl-table thead th {
-  text-align: left;
+  text-align: center;
   font-size: var(--bl-fs-xs);
   font-weight: var(--bl-fw-semibold);
   letter-spacing: 0.04em;
@@ -680,18 +682,35 @@
   white-space: nowrap;
 }
 
-.bl-table tbody td {
+.bl-table tbody td,
+.bl-table tbody th {
+  text-align: center;
   padding: var(--bl-s3) var(--bl-s4);
   border-bottom: 1px solid var(--bl-border);
   vertical-align: middle;
   color: var(--bl-text);
 }
 
+/* A little less space between columns, so more tables fit their card; the outer
+   edges keep the card's 16px so the first column lines up with the text above it. */
+.bl-table thead th,
+.bl-table tbody td,
+.bl-table tbody th { padding-left: var(--bl-s3); padding-right: var(--bl-s3); }
+.bl-table thead th:first-child,
+.bl-table tbody td:first-child,
+.bl-table tbody th:first-child { padding-left: var(--bl-s4); }
+.bl-table thead th:last-child,
+.bl-table tbody td:last-child,
+.bl-table tbody th:last-child { padding-right: var(--bl-s4); }
+
 .bl-table tbody tr:last-child td { border-bottom: 0; }
 .bl-table tbody tr { transition: background var(--bl-dur-fast) var(--bl-ease); }
 .bl-table tbody tr:hover { background: var(--bl-green-soft); }
 
-.bl-table .bl-td-num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bl-table .bl-td-num { text-align: center; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bl-table .bl-td-text { text-align: left; }
+/* Dates stay on one line instead of stacking "Nov / 5, / 2026". */
+.bl-table .bl-td-date { white-space: nowrap; }
 .bl-table .bl-td-actions { text-align: right; white-space: nowrap; width: 1%; }
 
 .bl-table__primary { font-weight: var(--bl-fw-semibold); }

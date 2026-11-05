@@ -223,11 +223,11 @@ export function Suppliers() {
                   </caption>
                   <thead>
                     <tr>
-                      <th scope="col">{t('Supplier')}</th>
+                      <th scope="col" className="bl-td-text">{t('Supplier')}</th>
                       <th scope="col" className="bl-tx__col-secondary">
                         {t('Contact')}
                       </th>
-                      <th scope="col">{t('Products supplied')}</th>
+                      <th scope="col" className="bl-td-text">{t('Products supplied')}</th>
                       <th scope="col" className="bl-td-num">
                         {t('Average price')}
                       </th>
@@ -238,7 +238,7 @@ export function Suppliers() {
                   <tbody>
                     {filtered.map((supplier) => (
                       <tr key={supplier.id} onClick={() => setDetail(supplier)}>
-                        <td>
+                        <td className="bl-td-text">
                           <div className="bl-sup__namecell">
                             <span className="bl-sup__initials" aria-hidden="true">
                               {initialsOf(supplier.name)}
@@ -264,7 +264,7 @@ export function Suppliers() {
                             <span className="bl-table__sub">{supplier.phone}</span>
                           </div>
                         </td>
-                        <td>
+                        <td className="bl-td-text">
                           <div className="bl-sup__products">
                             {productNames(supplier).map((name) => (
                               <Badge tone="neutral" key={name}>
