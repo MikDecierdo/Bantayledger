@@ -471,7 +471,7 @@
 
 /* Status and the row action keep fixed columns so rows with and without the
    "mark received" button line up. */
-.bl-table .bl-tx__col-status { width: 1%; white-space: nowrap; text-align: left; }
+.bl-table .bl-tx__col-status { width: 1%; white-space: nowrap; text-align: center; }
 .bl-table .bl-tx__col-action { width: 56px; min-width: 56px; text-align: right; }
 
 /* ---- Add Sale: cash-change calculator ------------------------------------ */

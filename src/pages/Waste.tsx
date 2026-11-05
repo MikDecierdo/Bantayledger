@@ -290,7 +290,7 @@ export function Waste() {
                     <thead>
                       <tr>
                         <th scope="col">{t('Date')}</th>
-                        <th scope="col">{t('Product')}</th>
+                        <th scope="col" className="bl-td-text">{t('Product')}</th>
                         <th scope="col" className="bl-td-num">
                           {t('Quantity')}
                         </th>
@@ -306,8 +306,8 @@ export function Waste() {
                     <tbody>
                       {filtered.map((record) => (
                         <tr key={record.id}>
-                          <td>{shortDate(record.date)}</td>
-                          <td className="bl-table__primary">{record.productName}</td>
+                          <td className="bl-td-date">{shortDate(record.date)}</td>
+                          <td className="bl-table__primary bl-td-text">{record.productName}</td>
                           <td className="bl-td-num">
                             {number(record.quantity)}
                             <div className="bl-table__sub">{record.unit}</div>

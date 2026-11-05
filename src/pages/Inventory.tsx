@@ -718,7 +718,7 @@ export function Inventory() {
                   </caption>
                   <thead>
                     <tr>
-                      <th scope="col">{t('Product')}</th>
+                      <th scope="col" className="bl-td-text">{t('Product')}</th>
                       <th scope="col">{t('Category')}</th>
                       <th scope="col" className="bl-td-num">
                         {t('Stock')}
@@ -745,7 +745,7 @@ export function Inventory() {
                         className={product.isActive ? undefined : 'bl-inv__row--disabled'}
                         onClick={() => history.push(`/inventory/${product.id}`)}
                       >
-                        <td>
+                        <td className="bl-td-text">
                           <div className="bl-inv__row-photo">
                             <ProductThumbnail src={product.imageUrl} name={product.name} size="sm" />
                             <div>

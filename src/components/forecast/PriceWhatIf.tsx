@@ -118,7 +118,7 @@ export function PriceWhatIf({ demand }: { demand: DemandForecast[] }) {
               <caption className="bl-sr-only">{t('Effect of a supplier price change on each product')}</caption>
               <thead>
                 <tr>
-                  <th scope="col">{t('Product')}</th>
+                  <th scope="col" className="bl-td-text">{t('Product')}</th>
                   <th scope="col" className="bl-td-num">{t('Buying price')}</th>
                   <th scope="col" className="bl-td-num">{t('Selling price')}</th>
                   <th scope="col" className="bl-td-num">{t('Profit')}</th>
@@ -129,7 +129,7 @@ export function PriceWhatIf({ demand }: { demand: DemandForecast[] }) {
               <tbody>
                 {rows.map((r) => (
                   <tr key={r.product.id}>
-                    <td className="bl-table__primary">{r.product.name}</td>
+                    <td className="bl-table__primary bl-td-text">{r.product.name}</td>
                     <td className="bl-td-num">
                       {peso(r.product.costPrice)} → {peso(r.newCost)}
                     </td>

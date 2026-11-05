@@ -401,9 +401,9 @@ export function ActivityLog() {
                         <th scope="col">{t('When')}</th>
                         <th scope="col">{t('Who')}</th>
                         <th scope="col">{t('What happened')}</th>
-                        <th scope="col">{t('Item')}</th>
+                        <th scope="col" className="bl-td-text">{t('Item')}</th>
                         <th scope="col">{t('Change')}</th>
-                        <th scope="col">{t('Details')}</th>
+                        <th scope="col" className="bl-td-text">{t('Details')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -418,9 +418,9 @@ export function ActivityLog() {
                             <Badge tone={CATEGORY_TONES[entry.category]}>{CATEGORY_LABELS[entry.category]}</Badge>
                             <span className="bl-activity__action">{ACTION_LABELS[entry.action] ?? entry.action}</span>
                           </td>
-                          <td className="bl-table__primary">{entry.subject}</td>
+                          <td className="bl-table__primary bl-td-text">{entry.subject}</td>
                           <td><Change entry={entry} /></td>
-                          <td className="bl-activity__details">{reasonOf(entry)}</td>
+                          <td className="bl-activity__details bl-td-text">{reasonOf(entry)}</td>
                         </tr>
                       ))}
                     </tbody>

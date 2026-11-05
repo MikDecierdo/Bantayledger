@@ -71,7 +71,7 @@ export function ChartTable({
       <thead>
         <tr>
           {headers.map((h, i) => (
-            <th key={h} scope="col" className={i === 0 ? '' : 'bl-td-num'}>
+            <th key={h} scope="col" className={i === 0 ? 'bl-td-text' : 'bl-td-num'}>
               {h}
             </th>
           ))}
@@ -82,7 +82,7 @@ export function ChartTable({
           <tr key={ri}>
             {row.map((cell, ci) =>
               ci === 0 ? (
-                <th key={ci} scope="row" className="bl-table__primary">
+                <th key={ci} scope="row" className="bl-table__primary bl-td-text">
                   {cell}
                 </th>
               ) : (
