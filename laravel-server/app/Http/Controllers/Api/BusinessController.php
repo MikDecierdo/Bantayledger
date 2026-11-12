@@ -17,9 +17,9 @@ class BusinessController extends Controller
     public function updateProfile(Request $request)
     {
         $data = $request->validate([
-            'fullName' => 'sometimes|string',
-            'phone' => 'sometimes|nullable|string',
-            'avatarUrl' => 'sometimes|nullable|string',
+            'fullName' => 'sometimes|string|max:160',
+            'phone' => 'sometimes|nullable|string|max:50',
+            'avatarUrl' => 'sometimes|nullable|string|max:255',
             'language' => 'sometimes|in:en,tl,ceb',
         ]);
 
@@ -70,11 +70,11 @@ class BusinessController extends Controller
     public function update(Request $request, string $business)
     {
         $data = $request->validate([
-            'name' => 'sometimes|string',
-            'businessType' => 'sometimes|nullable|string',
-            'address' => 'sometimes|nullable|string',
-            'phone' => 'sometimes|nullable|string',
-            'email' => 'sometimes|nullable|string',
+            'name' => 'sometimes|string|max:160',
+            'businessType' => 'sometimes|nullable|string|max:100',
+            'address' => 'sometimes|nullable|string|max:500',
+            'phone' => 'sometimes|nullable|string|max:50',
+            'email' => 'sometimes|nullable|string|max:255',
             'monthlyPurchaseBudget' => 'sometimes|nullable|numeric|min:0',
         ]);
 
@@ -158,7 +158,7 @@ class BusinessController extends Controller
         ])->values();
     }
 
-    private const PASSWORD_RULES = ['required', 'string', 'min:8', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/\d/', 'regex:/[^A-Za-z0-9]/'];
+    private const PASSWORD_RULES = ['required', 'string', 'min:8', 'max:72', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/\d/', 'regex:/[^A-Za-z0-9]/'];
 
     /** The owner creates a login for a helper. There is no email service, so the owner sets the first password. */
     public function addMember(Request $request, string $business)

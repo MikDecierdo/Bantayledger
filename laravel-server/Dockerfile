@@ -23,6 +23,15 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-av
  && sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf \
  && sed -ri -e 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
 
+# Don't tell visitors which Apache and PHP versions run here, and send the same
+# safety headers on files Apache serves itself (uploaded product photos).
+RUN printf '%s\n' 'ServerTokens Prod' 'ServerSignature Off' 'TraceEnable Off' \
+      'Header always set X-Content-Type-Options "nosniff"' \
+      'Header always set Referrer-Policy "no-referrer"' \
+      'Header always set X-Frame-Options "DENY"' > /etc/apache2/conf-available/zz-bantayledger-security.conf \
+ && a2enconf zz-bantayledger-security \
+ && printf '%s\n' 'expose_php = Off' 'display_errors = Off' > /usr/local/etc/php/conf.d/zz-security.ini
+
 WORKDIR /var/www/html
 
 # Dependencies first, so code changes don't reinstall them.

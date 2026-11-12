@@ -1,0 +1,14 @@
+{
+  "Cash part": ["Bahaging cash", "Bahin nga cash"],
+  "CHANGE": ["SUKLI", "SUKLI"],
+  "GCash ref.": ["GCash ref.", "GCash ref."],
+  "Receipt": ["Resibo", "Resibo"],
+  "Receipt No.": ["Resibo Blg.", "Resibo Num."],
+  "SALES RECEIPT": ["RESIBO NG BENTA", "RESIBO SA HALIN"],
+  "Save image": ["I-save ang larawan", "I-save ang hulagway"],
+  "Saved on this phone. It will be sent when you are back online.": ["Naka-save sa phone na ito. Ipapadala ito kapag may internet na ulit.", "Na-save niini nga phone. Ipadala kini kung naa nay internet."],
+  "Stock has been updated to match.": ["Na-update na ang stock.", "Na-update na ang stock."],
+  "Thank you, come again!": ["Salamat po, balik po kayo!", "Salamat, balik mo!"],
+  "This is not an official receipt.": ["Hindi ito opisyal na resibo.", "Dili kini opisyal nga resibo."],
+  "TOTAL": ["KABUUAN", "KINATIBUK-AN"]
+}

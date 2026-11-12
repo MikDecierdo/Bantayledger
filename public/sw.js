@@ -15,7 +15,7 @@
  */
 const CACHE = 'bantayledger-app-v1';
 const SHELL = '/index.html';
-const CORE = ['/', '/manifest.webmanifest', '/brand-logo.png', '/apple-touch-icon.png'];
+const CORE = ['/', '/splash.js', '/manifest.webmanifest', '/brand-logo.png', '/apple-touch-icon.png'];
 
 /** The current build's files (written by vite.config.ts), or [] if unavailable. */
 function buildFiles() {

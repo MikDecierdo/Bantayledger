@@ -494,7 +494,7 @@
   align-items: center;
 }
 .bl-input-group__affix ion-icon { font-size: 17px; }
-.bl-input-group .bl-input { padding-left: 36px; }
+.bl-input-group--prefix .bl-input { padding-left: 36px; }
 .bl-input-group--suffix .bl-input { padding-right: 40px; }
 .bl-input-group__suffix {
   position: absolute;

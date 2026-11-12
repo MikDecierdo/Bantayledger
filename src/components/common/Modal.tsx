@@ -1,4 +1,4 @@
-import { IonIcon, IonModal } from '@ionic/react';
+import { IonIcon, IonModal, type AnimationBuilder } from '@ionic/react';
 import {
   bagOutline,
   cartOutline,
@@ -48,14 +48,20 @@ interface ModalProps {
   onClose: () => void;
   title: string;
   description?: string;
-  /** `sm` hugs its content, `md`/`lg` use a scrollable body. */
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** `sm` hugs its content, `md`/`lg` use a scrollable body; `side` is a panel beside another window. */
+  size?: 'sm' | 'md' | 'lg' | 'xl' | 'side';
   /** Header picture; defaults to a generic form icon (warning for the danger tone). */
   icon?: ModalIconName;
   /** `danger` tints the window red, for confirmations that delete or sign out. */
   tone?: 'brand' | 'danger';
   children: ReactNode;
   footer?: ReactNode;
+  /** Extra classes on the window (e.g. to make room for a side panel). */
+  className?: string;
+  /** False for a panel opened on top of another window, which keeps that window's dimming. */
+  showBackdrop?: boolean;
+  enterAnimation?: AnimationBuilder;
+  leaveAnimation?: AnimationBuilder;
 }
 
 export function Modal({
@@ -68,6 +74,10 @@ export function Modal({
   tone = 'brand',
   children,
   footer,
+  className,
+  showBackdrop,
+  enterAnimation,
+  leaveAnimation,
 }: ModalProps) {
   const titleId = useId();
   const descId = useId();
@@ -76,7 +86,10 @@ export function Modal({
     <IonModal
       isOpen={isOpen}
       onDidDismiss={onClose}
-      className={`bl-modal bl-modal--${size} bl-modal--${tone}`}
+      className={`bl-modal bl-modal--${size} bl-modal--${tone}${className ? ` ${className}` : ''}`}
+      showBackdrop={showBackdrop}
+      enterAnimation={enterAnimation}
+      leaveAnimation={leaveAnimation}
       aria-labelledby={titleId}
       aria-describedby={description ? descId : undefined}
     >

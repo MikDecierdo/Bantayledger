@@ -1,0 +1,77 @@
+/* A thermal-paper receipt, like the ones from a mall cashier. */
+.bl-receipt-wrap {
+  display: flex;
+  justify-content: center;
+  padding: var(--bl-s2) 0 var(--bl-s4);
+}
+.bl-receipt {
+  --paper: #fffef9;
+  --ink: #1d1d1b;
+  position: relative;
+  width: min(100%, 340px);
+  padding: 22px 20px 30px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  line-height: 1.45;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+  /* Torn bottom edge. */
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 10px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 10px) no-repeat,
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 14px 10px repeat-x;
+}
+.bl-receipt p { margin: 0; }
+.bl-receipt hr {
+  margin: 10px 0;
+  border: 0;
+  border-top: 1.5px dashed #9a9a94;
+}
+.bl-receipt hr.bl-receipt__double { border-top: 3px double #6f6f69; }
+.bl-receipt__head { text-align: center; }
+.bl-receipt__store { font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.bl-receipt__kind { margin-top: 8px !important; font-weight: 700; letter-spacing: 0.18em; }
+.bl-receipt__meta { margin: 0; display: grid; gap: 2px; }
+.bl-receipt__meta > div,
+.bl-receipt__row { display: flex; justify-content: space-between; gap: 12px; }
+.bl-receipt__meta dt { margin: 0; }
+.bl-receipt__meta dd { margin: 0; text-align: right; }
+.bl-receipt__items { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.bl-receipt__name { display: block; font-weight: 700; text-transform: uppercase; overflow-wrap: anywhere; }
+.bl-receipt__items .bl-receipt__row { padding-left: 12px; }
+.bl-receipt__row > span:last-child { white-space: nowrap; }
+.bl-receipt__total { font-size: 15px; font-weight: 700; }
+.bl-receipt__sub { padding-left: 12px; font-size: 12px; }
+.bl-receipt__note { text-align: center; font-size: 12px; margin-bottom: 8px !important; }
+.bl-receipt__foot { text-align: center; display: grid; gap: 4px; justify-items: center; }
+.bl-receipt__thanks { font-weight: 700; margin-bottom: 6px !important; }
+.bl-receipt__barcode { width: 80%; height: 38px; fill: var(--ink); }
+.bl-receipt__no { letter-spacing: 0.3em; font-size: 12px; }
+.bl-receipt__brand { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #6f6f69; }
+.bl-receipt__actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--bl-s2); width: 100%; }
+
+/* Print only the receipt. */
+@media print {
+  body * { visibility: hidden !important; }
+  .bl-receipt, .bl-receipt * { visibility: visible !important; }
+  .bl-receipt {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 80mm;
+    box-shadow: none;
+    -webkit-mask: none;
+    mask: none;
+  }
+}
+
+/* Phones: Done fills the width under Print and Save image, nothing squeezed. */
+@media (max-width: 599px) {
+  .bl-receipt__actions { display: grid; grid-template-columns: 1fr 1fr; }
+  .bl-receipt__actions > .bl-btn { width: 100%; min-height: 44px; }
+  .bl-receipt__actions > .bl-btn:last-child { grid-column: 1 / -1; }
+  /* In the app there is no Print: Save image and Done share one row. */
+  .bl-receipt__actions > .bl-btn:first-child:nth-last-child(2) ~ .bl-btn { grid-column: auto; }
+  .bl-receipt { font-size: 12.5px; padding: 18px 16px 26px; }
+}

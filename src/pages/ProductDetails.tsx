@@ -29,7 +29,7 @@ import { alertError, alertSuccess, confirmAction } from '../lib/swal';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { productService } from '../services/api';
-import { number, peso, shortDate } from '../utils/format';
+import { looseLeft, number, peso, shortDate, stockNumber } from '../utils/format';
 import './ProductDetails.css';
 import { t } from '../i18n';
 
@@ -219,8 +219,11 @@ export function ProductDetails() {
             <Card className="bl-pd__stat">
               <ForecastStat
                 label={t('Current stock')}
-                value={`${number(product.currentStock)} ${product.unit}`}
-                sub={t('Low-stock level {{v1}} {{unit}}', { v1: number(product.minimumStock), unit: product.unit })}
+                value={`${stockNumber(product)} ${product.unit}`}
+                sub={[
+                  product.loose ? looseLeft(product) : '',
+                  t('Low-stock level {{v1}} {{unit}}', { v1: number(product.minimumStock), unit: product.unit }),
+                ].filter(Boolean).join(' · ')}
               />
             </Card>
             <Card className="bl-pd__stat">

@@ -1,0 +1,21 @@
+{
+  "{{cost}} per {{unit}}": ["{{cost}} bawat {{unit}}", "{{cost}} matag {{unit}}"],
+  "{{price}}/{{unit}}": ["{{price}}/{{unit}}", "{{price}}/{{unit}}"],
+  "Also sell this product loose": ["Ibenta rin nang tingi", "Ibaligya usab nga tingi"],
+  "Amount in {{unit}}": ["Dami sa {{unit}}", "Gidaghanon sa {{unit}}"],
+  "By {{unit}}": ["Per {{unit}}", "Por {{unit}}"],
+  "Choose how this product is sold loose, for example kg or sticks.": ["Piliin kung paano ito ibinebenta nang tingi, halimbawa kg o stick.", "Pilia kung giunsa kini pagbaligya nga tingi, pananglitan kg o stick."],
+  "e.g. 50 kg in one sack, 20 sticks in one pack": ["hal. 50 kg sa isang sako, 20 stick sa isang pakete", "pananglitan 50 kg sa usa ka sako, 20 ka stick sa usa ka pakete"],
+  "Enter how many {{loose}} are in one {{unit}}.": ["Ilagay kung ilang {{loose}} ang nasa isang {{unit}}.", "Ibutang kung pila ka {{loose}} ang naa sa usa ka {{unit}}."],
+  "Enter the price per {{loose}}.": ["Ilagay ang presyo bawat {{loose}}.", "Ibutang ang presyo matag {{loose}}."],
+  "For example a sack of rice sold by the kilo, cigarettes by the stick, or eggs by the piece.": ["Halimbawa, isang sako ng bigas na ibinebenta nang per kilo, sigarilyo nang per stick, o itlog nang per piraso.", "Pananglitan, usa ka sako nga bugas nga gibaligya por kilo, sigarilyo por stick, o itlog por piraso."],
+  "How many in one {{unit}}": ["Ilan sa isang {{unit}}", "Pila sa usa ka {{unit}}"],
+  "How much {{unit}}": ["Ilang {{unit}}", "Pila ka {{unit}}"],
+  "loose unit": ["unit ng tingi", "unit sa tingi"],
+  "Price per {{unit}}": ["Presyo bawat {{unit}}", "Presyo matag {{unit}}"],
+  "Sell {{name}} by": ["Ibenta ang {{name}} nang", "Ibaligya ang {{name}} por"],
+  "Sell loose (tingi)": ["Tingi", "Tingi"],
+  "Selling the whole {{unit}} works out to {{price}} each.": ["Kung buo ang {{unit}}, lumalabas na {{price}} bawat isa.", "Kung tibuok ang {{unit}}, mogawas nga {{price}} matag usa."],
+  "Sold loose by": ["Tingi nang", "Tingi por"],
+  "Whole {{unit}}": ["Buong {{unit}}", "Tibuok nga {{unit}}"]
+}

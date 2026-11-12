@@ -32,8 +32,12 @@ export interface SalesOverview {
 
 export interface SaleItemInput {
   productId: string;
+  /** For a loose line, in loose units (0.5 kg) at the price per loose unit. */
   quantity: number;
   unitPrice: number;
+  loose?: boolean;
+  /** How much stock the line takes (0.01 sack for ½ kg); used for offline stock only. */
+  stockQuantity?: number;
 }
 
 export interface SalePaymentInput {
@@ -61,6 +65,11 @@ export const salesService = {
     return api.get<Sale[]>(`/businesses/${businessId}/sales`, { limit });
   },
 
+  /** One sale, for its receipt. */
+  async get(businessId: string, saleId: string): Promise<Sale> {
+    return api.get<Sale>(`/businesses/${businessId}/sales/${saleId}`);
+  },
+
   /** Sends the sale, or saves it on the phone when offline (`queued`). */
   async create(businessId: string, _userId: string | null, input: SaleInput): Promise<SaveResult<Sale>> {
     // userId is inferred server-side from the bearer token, not passed
@@ -71,7 +80,7 @@ export const salesService = {
       kind: 'sale',
       businessId,
       summary: `${t('Sale')} · ${peso(total, total % 1 !== 0)}`,
-      stockOut: input.items.map((i) => ({ productId: i.productId, quantity: i.quantity })),
+      stockOut: input.items.map((i) => ({ productId: i.productId, quantity: i.stockQuantity ?? i.quantity })),
     });
   },
 

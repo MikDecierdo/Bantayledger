@@ -27,7 +27,7 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { businessService, purchaseService } from '../services/api';
 import type { Purchase } from '../types';
-import { number, peso, pesoExact, pesoCompact, rowDate, shortDate } from '../utils/format';
+import { localTodayIso, number, peso, pesoExact, pesoCompact, rowDate, shortDate } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
 
@@ -98,7 +98,7 @@ export function Purchases() {
     productId: '',
     quantity: '',
     unitCost: '',
-    date: new Date().toISOString().slice(0, 10),
+    date: localTodayIso(),
     status: 'received',
   });
   const [saving, setSaving] = useState(false);

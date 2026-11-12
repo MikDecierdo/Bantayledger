@@ -9,6 +9,7 @@ use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 /** Ported from server/src/services/purchaseService.ts. */
 class PurchaseController extends Controller
@@ -58,15 +59,15 @@ class PurchaseController extends Controller
     public function store(Request $request, string $business)
     {
         $data = $request->validate([
-            'supplierId' => 'nullable|string',
+            'supplierId' => ['nullable', 'string', Rule::exists('suppliers', 'supplier_id')->where('business_id', $business)],
             'items' => 'required|array|min:1',
-            'items.*.productId' => 'required|string',
+            'items.*.productId' => ['required', 'string', Rule::exists('products', 'product_id')->where('business_id', $business)],
             'items.*.quantity' => 'required|numeric|gt:0',
             'items.*.unitCost' => 'required|numeric',
             'status' => 'nullable|in:received,pending,cancelled',
             'purchaseDate' => 'nullable|date',
-            'notes' => 'nullable|string',
-            'reference' => 'nullable|string',
+            'notes' => 'nullable|string|max:1000',
+            'reference' => 'nullable|string|max:100',
         ]);
 
         $purchaseId = (string) Str::uuid();

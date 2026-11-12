@@ -18,7 +18,7 @@ class AccountController extends Controller
 
     public function destroy(Request $request)
     {
-        $data = $request->validate(['password' => 'required|string']);
+        $data = $request->validate(['password' => 'required|string|max:255']);
         $user = $request->user();
 
         if (! Hash::check($data['password'], $user->password)) {

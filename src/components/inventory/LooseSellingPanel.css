@@ -1,0 +1,47 @@
+/* The tingi panel: its own window, sitting to the right of Add Product. */
+ion-modal.bl-modal--side {
+  --width: min(380px, calc(100vw - 32px));
+  --height: auto;
+  --box-shadow: 0 24px 60px rgba(23, 34, 30, 0.28);
+}
+
+/* Wide screens: Add Product moves left and the panel sits beside it. Both stay
+   centred as a pair (880 + 16 + 380). */
+@media (min-width: 1324px) {
+  ion-modal.bl-modal--lg::part(content) { transition: margin 320ms cubic-bezier(0.22, 1, 0.36, 1); }
+  ion-modal.bl-modal--lg.bl-modal--beside-panel::part(content) { margin-right: 396px; }
+  ion-modal.bl-modal--side::part(content) { margin-left: calc(min(880px, 100vw - 48px) + 16px); }
+}
+
+/* Narrower screens: the panel sits over the right edge of Add Product. */
+@media (min-width: 600px) and (max-width: 1323px) {
+  ion-modal.bl-modal--side::part(content) { margin-left: calc(100vw - min(380px, 100vw - 32px) - 48px); }
+}
+
+.bl-loose-panel { display: grid; gap: var(--bl-s4); }
+.bl-loose-panel__preview {
+  padding: var(--bl-s3) var(--bl-s4);
+  border-radius: 12px;
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+}
+.bl-loose-panel__preview-title { display: block; font-size: var(--bl-fs-sm); font-weight: 700; margin-bottom: 6px; }
+.bl-loose-panel__preview ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.bl-loose-panel__preview li { display: flex; justify-content: space-between; gap: var(--bl-s3); }
+.bl-loose-panel__preview-whole { margin-top: 4px; padding-top: 6px; border-top: 1px dashed rgba(23, 79, 66, 0.3); font-size: var(--bl-fs-sm); }
+
+/* In the Add Product form: the switch row and, once set, a one-line summary. */
+.bl-inv__loose-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--bl-s2);
+  margin-top: var(--bl-s3);
+  padding: var(--bl-s2) var(--bl-s3);
+  border-radius: 10px;
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  font-size: var(--bl-fs-sm);
+  font-weight: 600;
+}

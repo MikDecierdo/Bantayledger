@@ -11,6 +11,8 @@ export interface ActivityEntry {
   category: ActivityCategory;
   action: string;
   subject: string;
+  /** The record the entry is about; a sale's id opens its receipt. */
+  subjectId: string | null;
   oldValue: number | null;
   newValue: number | null;
   unit: string | null;

@@ -29,11 +29,11 @@ class AuthController extends Controller
     public function signup(Request $request)
     {
         $data = $request->validate([
-            'email' => 'required|email',
-            'password' => ['required', 'string', 'min:8', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/\d/', 'regex:/[^A-Za-z0-9]/'],
-            'fullName' => 'required|string',
+            'email' => 'required|email|max:255',
+            'password' => ['required', 'string', 'min:8', 'max:72', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/\d/', 'regex:/[^A-Za-z0-9]/'],
+            'fullName' => 'required|string|max:160',
             'phone' => ['nullable', 'string', 'regex:/^\+639\d{9}$/'],
-            'businessName' => 'required|string',
+            'businessName' => 'required|string|max:160',
             'acceptTerms' => 'accepted',
         ], [
             'password.regex' => __('Use a stronger password: at least 8 characters with an uppercase letter, a lowercase letter, a number and a symbol.'),
@@ -87,7 +87,7 @@ class AuthController extends Controller
     {
         $data = $request->validate([
             'email' => 'required|email',
-            'password' => 'required|string',
+            'password' => 'required|string|max:255',
         ]);
 
         $user = User::where('email', strtolower(trim($data['email'])))->first();
@@ -125,9 +125,9 @@ class AuthController extends Controller
     public function resetPassword(Request $request)
     {
         $data = $request->validate([
-            'token' => 'required|string',
-            'email' => 'required|email',
-            'password' => ['required', 'string', 'min:8', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/\d/', 'regex:/[^A-Za-z0-9]/'],
+            'token' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'password' => ['required', 'string', 'min:8', 'max:72', 'regex:/[a-z]/', 'regex:/[A-Z]/', 'regex:/\d/', 'regex:/[^A-Za-z0-9]/'],
         ], [
             'password.regex' => __('Use a stronger password: at least 8 characters with an uppercase letter, a lowercase letter, a number and a symbol.'),
         ]);
@@ -137,6 +137,8 @@ class AuthController extends Controller
             ['email' => strtolower(trim($data['email'])), 'token' => $data['token'], 'password' => $data['password']],
             function (User $user, string $password) use (&$resetUser) {
                 $user->forceFill(['password' => Hash::make($password), 'remember_token' => Str::random(60)])->save();
+                // Sign out every device that used the old password.
+                $user->tokens()->delete();
                 $resetUser = $user;
             },
         );
@@ -185,7 +187,7 @@ class AuthController extends Controller
 
     public function createBusiness(Request $request)
     {
-        $data = $request->validate(['name' => 'required|string']);
+        $data = $request->validate(['name' => 'required|string|max:160']);
         $user = $request->user();
 
         $businessId = DB::transaction(function () use ($data, $user) {

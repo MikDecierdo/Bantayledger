@@ -34,11 +34,20 @@ export interface Product {
   supplierId: string;
   costPrice: number;
   sellingPrice: number;
+  /** Also sold loose ("tingi"): e.g. a sack (unit) sold by the kilo. Null when not. */
+  loose?: LooseSelling | null;
   status: StockStatus;
   imageUrl: string | null;
   averageDailyDemand: number;
   lastRestockedAt: string;
   updatedAt: string;
+}
+
+/** How a product is sold loose: 50 kg (perUnit) in a sack, at ₱56 (price) per kg (unit). */
+export interface LooseSelling {
+  unit: string;
+  perUnit: number;
+  price: number;
 }
 
 export interface StockMovement {
@@ -74,6 +83,11 @@ export interface SaleItem {
   unitPrice: number;
   /** Buying price locked in when the sale was made. */
   unitCost: number;
+  subtotal?: number;
+  /** Sold loose: what the customer bought (0.5 kg) and the price per loose unit. */
+  looseQuantity?: number | null;
+  looseUnit?: string | null;
+  loosePrice?: number | null;
 }
 
 /** One part of what a customer paid: a sale can be part Cash, part GCash. */
@@ -100,6 +114,8 @@ export interface Sale {
   /** Last 4 digits of the GCash reference number; null for other payment methods and older sales. */
   paymentReference: string | null;
   cashier: string;
+  /** When it was recorded (ISO), for its receipt. */
+  createdAt?: string;
 }
 
 export interface Purchase {

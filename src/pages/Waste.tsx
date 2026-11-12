@@ -28,7 +28,7 @@ import { alertSuccess } from '../lib/swal';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { wasteService } from '../services/api';
-import { number, peso, pesoExact, pesoCompact, rowDate, shortDate, wasteReasonLabel } from '../utils/format';
+import { localTodayIso, number, peso, pesoExact, pesoCompact, rowDate, shortDate, wasteReasonLabel } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
 
@@ -70,7 +70,7 @@ export function Waste() {
     productId: '',
     quantity: '',
     reason: '',
-    date: new Date().toISOString().slice(0, 10),
+    date: localTodayIso(),
     notes: '',
   });
   const [saving, setSaving] = useState(false);

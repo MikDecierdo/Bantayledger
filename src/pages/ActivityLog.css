@@ -43,3 +43,4 @@
 /* Phone cards: the change and the note each get their own line. */
 .bl-responsive-cards .bl-activity__change { display: flex; margin-top: 2px; }
 .bl-responsive-cards .bl-drow > .bl-caption { display: block; margin-top: 2px; }
+.bl-activity__receipt { margin-top: var(--bl-s2); }

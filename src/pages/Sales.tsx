@@ -1,20 +1,24 @@
 import {
   addOutline,
   arrowBackOutline,
+  calendarOutline,
   cartOutline,
   removeOutline,
   searchOutline,
   trashOutline,
 } from 'ionicons/icons';
+import { IonIcon } from '@ionic/react';
 import type { ChangeEvent, ReactNode } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import TrendChart from '../components/charts/TrendChart';
 import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
 import Ticker from '../components/common/Ticker';
-import { CurrencyField, DateField, SearchInput, SelectField, TextField } from '../components/common/Field';
+import { singularUnit } from '../components/common/UnitField';
+import { CurrencyField, SearchInput, SelectField, TextField } from '../components/common/Field';
 import { Modal } from '../components/common/Modal';
+import SaleReceipt, { type ReceiptData } from '../components/sales/SaleReceipt';
 import { GCashLogo, PaymentBadges, PesoCashLogo } from '../components/common/PaymentLogos';
 import ProductThumbnail from '../components/common/ProductThumbnail';
 import { EmptyState, ErrorState, LoadingState, SkeletonRows } from '../components/common/States';
@@ -32,12 +36,11 @@ import { Card, Section } from '../components/layout/Section';
 import { Bento, MiniStats, Rail, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { toUserMessage } from '../lib/errors';
-import { alertSuccess } from '../lib/swal';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { salesService } from '../services/api';
-import type { Product, Sale } from '../types';
-import { number, peso, pesoCompact, pesoExact, rowDate, shortDate } from '../utils/format';
+import type { LooseSelling, Product, Sale } from '../types';
+import { fractionQty, localTodayIso, looseLeft, number, peso, pesoCompact, pesoExact, rowDate, shortDate, stockNumber } from '../utils/format';
 import './Transactions.css';
 import { t } from '../i18n';
 import { label } from '../i18n/labels';
@@ -50,9 +53,26 @@ interface CartLine {
   unit: string;
   stock: number;
   unitPrice: number;
+  /** Whole stock units, or loose units (kg) when `mode` is 'loose'. */
   quantity: number;
   imageUrl: string | null;
+  /** Sold whole (a sack) or loose (by the kilo); only products set up for it can go loose. */
+  mode: 'whole' | 'loose';
+  loose: LooseSelling | null;
+  /** The listed price of a whole unit, restored when switching back from loose. */
+  wholePrice: number;
 }
+
+/** Quick amounts for a loose line. */
+const LOOSE_AMOUNTS = [0.25, 0.5, 0.75, 1];
+/** How much a tap on + or − changes a line. */
+const lineStep = (l: CartLine) => (l.mode === 'loose' ? 0.25 : 1);
+/** The most the line can take: the stock, counted in the line's own unit. */
+const lineMax = (l: CartLine) => (l.mode === 'loose' && l.loose ? Math.round(l.stock * l.loose.perUnit * 1000) / 1000 : l.stock);
+/** The stock the line uses up (½ kg of a 50 kg sack is 0.01 sack). */
+const lineStock = (l: CartLine) => (l.mode === 'loose' && l.loose ? l.quantity / l.loose.perUnit : l.quantity);
+const lineUnit = (l: CartLine) => (l.mode === 'loose' && l.loose ? l.loose.unit : l.unit);
+const round3 = (v: number) => Math.round(v * 1000) / 1000;
 
 type CashChange =
   | { state: 'blank' }
@@ -73,7 +93,12 @@ const CASH_QUICK_AMOUNTS = [50, 100, 200, 500, 1000];
 /** A sale's name in a phone list: the product when there's one, otherwise how many. */
 function saleTitle(sale: Sale): string {
   if (sale.items.length === 0) return t('Sale');
-  if (sale.items.length === 1) return `${sale.items[0].productName} ×${number(sale.items[0].quantity)}`;
+  if (sale.items.length === 1) {
+    const item = sale.items[0];
+    return item.looseQuantity
+      ? `${item.productName} ${fractionQty(item.looseQuantity)} ${item.looseUnit ?? ''}`.trim()
+      : `${item.productName} ×${number(item.quantity)}`;
+  }
   return t('{{count}} items', { count: sale.items.length });
 }
 
@@ -83,16 +108,16 @@ const PHONE_QUERY = '(max-width: 599px)';
 /** How the customer pays: all cash, all GCash, or part of each. */
 type PaymentMode = 'Cash' | 'GCash' | 'Split';
 
-function todayIso(): string {
-  return new Date().toISOString().slice(0, 10);
-}
-
 export function Sales() {
-  const { activeBusiness, user } = useAuth();
+  const { activeBusiness, user, profile } = useAuth();
+  const [receipt, setReceipt] = useState<ReceiptData | null>(null);
+  // Shown once the Add Sale window has finished closing: opening a second window
+  // while the first is still animating away makes Ionic dismiss the new one.
+  const pendingReceipt = useRef<ReceiptData | null>(null);
   const location = useLocation<{ openAdd?: boolean } | undefined>();
   const history = useHistory();
 
-  const { data, loading, error, reload } = useAsyncData(
+  const { data, loading, error, reload, refresh } = useAsyncData(
     () => Promise.all([dataService.getSales(), dataService.getSalesOverview()]),
     [activeBusiness?.id],
   );
@@ -118,7 +143,6 @@ export function Sales() {
   }, [location.state]);
 
   const [cart, setCart] = useState<CartLine[]>([]);
-  const [saleDate, setSaleDate] = useState(todayIso());
   const [paymentMode, setPaymentMode] = useState<PaymentMode>('Cash');
   const [paymentReference, setPaymentReference] = useState('');
   const [gcashAmount, setGcashAmount] = useState('');
@@ -158,7 +182,6 @@ export function Sales() {
     setCart([]);
     setTileQuery('');
     setTileCategory('all');
-    setSaleDate(todayIso());
     setPaymentMode('Cash');
     setPaymentReference('');
     setGcashAmount('');
@@ -184,6 +207,15 @@ export function Sales() {
     resetCart();
   };
 
+  /** The Add Sale window has fully closed: show the receipt of the sale just saved, if any. */
+  const afterAddModalClosed = () => {
+    closeAddModal();
+    if (pendingReceipt.current) {
+      setReceipt(pendingReceipt.current);
+      pendingReceipt.current = null;
+    }
+  };
+
   /** Taps a tile: adds the product or increments its existing line. Stock
    *  is soft-capped here for UX — the backend still rejects an actual
    *  oversell, this just stops staff from tapping past it in the first place. */
@@ -193,9 +225,9 @@ export function Sales() {
     setCart((lines) => {
       const existing = lines.find((l) => l.productId === product.id);
       if (existing) {
-        if (existing.quantity >= product.currentStock) return lines;
+        if (existing.quantity >= lineMax(existing)) return lines;
         return lines.map((l) =>
-          l.productId === product.id ? { ...l, quantity: l.quantity + 1 } : l,
+          l.productId === product.id ? { ...l, quantity: Math.min(lineMax(l), round3(l.quantity + 1)) } : l,
         );
       }
       if (product.currentStock <= 0) return lines;
@@ -209,6 +241,9 @@ export function Sales() {
           unitPrice: product.sellingPrice,
           quantity: 1,
           imageUrl: product.imageUrl,
+          mode: 'whole' as const,
+          loose: product.loose ?? null,
+          wholePrice: product.sellingPrice,
         },
       ];
     });
@@ -217,7 +252,9 @@ export function Sales() {
   const incrementLine = (productId: string) => {
     setCart((lines) =>
       lines.map((l) =>
-        l.productId === productId && l.quantity < l.stock ? { ...l, quantity: l.quantity + 1 } : l,
+        l.productId === productId && l.quantity < lineMax(l)
+          ? { ...l, quantity: Math.min(lineMax(l), round3(l.quantity + lineStep(l))) }
+          : l,
       ),
     );
   };
@@ -225,8 +262,30 @@ export function Sales() {
   const decrementLine = (productId: string) => {
     setCart((lines) =>
       lines.map((l) =>
-        l.productId === productId ? { ...l, quantity: Math.max(1, l.quantity - 1) } : l,
+        l.productId === productId ? { ...l, quantity: Math.max(lineStep(l), round3(l.quantity - lineStep(l))) } : l,
       ),
+    );
+  };
+
+  /** A loose line takes any amount (½, ¼, 1.5 kg…) up to what is in stock. */
+  const setLineQuantity = (productId: string, quantity: number) => {
+    setCart((lines) =>
+      lines.map((l) =>
+        l.productId === productId && quantity > 0 ? { ...l, quantity: Math.min(lineMax(l), round3(quantity)) } : l,
+      ),
+    );
+  };
+
+  /** Switches a line between the whole unit (sack) and loose (kg), with that unit's price. */
+  const setLineMode = (productId: string, mode: CartLine['mode']) => {
+    setCart((lines) =>
+      lines.map((l) => {
+        if (l.productId !== productId || l.mode === mode || (mode === 'loose' && !l.loose)) return l;
+        const next = { ...l, mode };
+        return mode === 'loose' && l.loose
+          ? { ...next, unitPrice: l.loose.price, quantity: Math.min(1, lineMax(next)) }
+          : { ...next, unitPrice: l.wholePrice, quantity: 1 };
+      }),
     );
   };
 
@@ -250,7 +309,8 @@ export function Sales() {
   };
 
   const cartTotal = cart.reduce((sum, l) => sum + l.unitPrice * l.quantity, 0);
-  const cartCount = cart.reduce((n, l) => n + l.quantity, 0);
+  // A loose line (½ kg) counts as one item.
+  const cartCount = cart.reduce((n, l) => n + (l.mode === 'loose' ? 1 : l.quantity), 0);
   const cartCountText = cartCount === 1 ? t('1 item') : t('{{count}} items', { count: cartCount });
   // Split payment: the GCash part is typed, the cash part is whatever is left.
   const gcashPart = paymentMode === 'Split' ? Math.round(Number(gcashAmount || 0) * 100) / 100 : 0;
@@ -275,7 +335,7 @@ export function Sales() {
     </div>
   );
 
-  const cartQtyFor = (productId: string) => cart.find((l) => l.productId === productId)?.quantity ?? 0;
+  const cartLineFor = (productId: string) => cart.find((l) => l.productId === productId);
 
   const tileCategories = useMemo(
     () => Array.from(new Set((products ?? []).filter((p) => p.isActive).map((p) => p.category))),
@@ -323,6 +383,7 @@ export function Sales() {
           productId: l.productId,
           quantity: l.quantity,
           unitPrice: l.unitPrice,
+          ...(l.mode === 'loose' && l.loose ? { loose: true, stockQuantity: lineStock(l) } : {}),
         })),
         ...(paymentMode === 'Split'
           ? {
@@ -335,21 +396,34 @@ export function Sales() {
               paymentMethod: paymentMode,
               paymentReference: paymentMode === 'GCash' ? paymentReference : undefined,
             }),
-        saleDate,
+        saleDate: localTodayIso(),
       });
-      const changeNote =
-        paymentMode !== 'GCash' && cash.state === 'change' && cash.centavos > 0
-          ? ` ${t('Change to give: {{amount}}.', { amount: pesoExact(cash.centavos / 100) })}`
-          : '';
+      // A snapshot for the receipt, taken before the cart is cleared.
+      const received = paymentMode !== 'GCash' && cash.state === 'change' ? Number(cashReceived) : null;
+      const saleId = result.queued ? null : result.data.id;
+      const receiptData: ReceiptData = {
+        receiptNo: (saleId ?? `OFF-${Date.now().toString(36)}`).replace(/-/g, '').slice(0, 10).toUpperCase(),
+        queued: result.queued,
+        store: { name: activeBusiness.name, address: activeBusiness.address, phone: activeBusiness.phone },
+        cashier: profile?.full_name?.trim() || user?.email || t('Staff'),
+        at: new Date(),
+        lines: cart.map((l) => ({ name: l.name, quantity: l.quantity, unit: lineUnit(l), unitPrice: l.unitPrice, loose: l.mode === 'loose' })),
+        total: cartTotal,
+        payment: {
+          mode: paymentMode,
+          cashPart,
+          gcashPart,
+          cashReceived: received,
+          change: received !== null && cash.state === 'change' ? cash.centavos / 100 : null,
+          reference: paymentMode !== 'Cash' ? paymentReference : undefined,
+        },
+      };
+      pendingReceipt.current = receiptData;
       closeAddModal();
-      reload();
+      // Quiet refresh: the loading view would unmount the windows, receipt included.
+      void refresh();
       // Stock changed (on the server, or on this phone's saved copy when offline).
       reloadProducts();
-      if (result.queued) {
-        await alertSuccess(t('Saved on this phone'), t('There is no internet right now. It will be sent automatically when you are back online.'));
-      } else {
-        await alertSuccess(t('Sale recorded'), t('Stock has been updated to match.{{changeNote}}', { changeNote }));
-      }
     } catch (err) {
       // Keep the cart intact — staff shouldn't have to re-build it — but
       // refresh stock numbers in case the failure was an oversell caused by
@@ -714,7 +788,9 @@ export function Sales() {
                       <div>
                         <dt>{t('Qty')} × {t('Price')}</dt>
                         <dd>
-                          {number(item.quantity)} × {peso(item.unitPrice)}
+                          {item.looseQuantity
+                            ? `${fractionQty(item.looseQuantity)} ${item.looseUnit ?? ''} × ${pesoExact(item.loosePrice ?? 0)}`
+                            : `${number(item.quantity)} × ${peso(item.unitPrice)}`}
                         </dd>
                       </div>
                       <div>
@@ -740,7 +816,7 @@ export function Sales() {
 
       <Modal
         isOpen={addOpen}
-        onClose={closeAddModal}
+        onClose={afterAddModalClosed}
         title={reviewing ? t('Review and pay') : t('Add Sale')}
         icon="cart"
         description={reviewing ? undefined : t('Tap products to add them to the cart, then check out as one sale.')}
@@ -822,9 +898,10 @@ export function Sales() {
               ) : (
                 <div className="bl-grid--tiles bl-scroll">
                   {tiles.map((product) => {
-                    const inCart = cartQtyFor(product.id);
+                    const line = cartLineFor(product.id);
+                    const inCart = line ? line.quantity : 0;
                     const outOfStock = product.currentStock <= 0;
-                    const atLimit = inCart > 0 && inCart >= product.currentStock;
+                    const atLimit = !!line && line.quantity >= lineMax(line);
 
                     return (
                       <button
@@ -836,17 +913,22 @@ export function Sales() {
                       >
                         <ProductThumbnail src={product.imageUrl} name={product.name} size="md" />
                         <span className="bl-tile__name">{product.name}</span>
-                        <span className="bl-tile__price">{pesoExact(product.sellingPrice)}</span>
+                        <span className="bl-tile__price">
+                          {pesoExact(product.sellingPrice)}
+                          {product.loose && (
+                            <span className="bl-tile__loose">{t('{{price}}/{{unit}}', { price: pesoExact(product.loose.price), unit: product.loose.unit })}</span>
+                          )}
+                        </span>
                         <span className={`bl-tile__stock ${outOfStock ? 'bl-tile__stock--out' : ''}`}>
                           {outOfStock
                             ? t('Out of stock')
                             : atLimit
                               ? t('No more stock')
-                              : `${number(product.currentStock)} ${product.unit}`}
+                              : `${stockNumber(product)} ${product.unit}${product.loose ? ` · ${looseLeft(product)}` : ''}`}
                         </span>
                         {/* Phones show products as a list: "+" or how many are in the cart. */}
                         <span className="bl-tile__add" aria-hidden="true">
-                          {inCart > 0 ? inCart : '+'}
+                          {line ? fractionQty(inCart) : '+'}
                         </span>
                       </button>
                     );
@@ -874,10 +956,52 @@ export function Sales() {
                     <ProductThumbnail src={line.imageUrl} name={line.name} size="sm" />
                     <div className="bl-cart__info">
                       <Ticker text={line.name} className="bl-cart__name" />
-                      <span className="bl-cart__unit">{line.unit}</span>
+                      <span className="bl-cart__unit">{lineUnit(line)}</span>
+                      {line.loose && (
+                        <div className="bl-cart__modes" role="group" aria-label={t('Sell {{name}} by', { name: line.name })}>
+                          {(['whole', 'loose'] as const).map((mode) => (
+                            <button
+                              key={mode}
+                              type="button"
+                              className={`bl-cart__mode${line.mode === mode ? ' is-on' : ''}`}
+                              aria-pressed={line.mode === mode}
+                              onClick={() => setLineMode(line.productId, mode)}
+                            >
+                              {mode === 'whole' ? t('Whole {{unit}}', { unit: singularUnit(line.unit) }) : t('By {{unit}}', { unit: line.loose!.unit })}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                      {line.mode === 'loose' && line.loose && (
+                        <div className="bl-cart__amounts" role="group" aria-label={t('How much {{unit}}', { unit: line.loose.unit })}>
+                          {LOOSE_AMOUNTS.map((q) => (
+                            <button
+                              key={q}
+                              type="button"
+                              className={`bl-cart__amount${line.quantity === q ? ' is-on' : ''}`}
+                              disabled={q > lineMax(line)}
+                              onClick={() => setLineQuantity(line.productId, q)}
+                            >
+                              {fractionQty(q)}
+                            </button>
+                          ))}
+                          <input
+                            className="bl-input bl-cart__amount-input"
+                            type="number"
+                            inputMode="decimal"
+                            min={0.001}
+                            step="any"
+                            aria-label={t('Amount in {{unit}}', { unit: line.loose.unit })}
+                            value={line.quantity}
+                            onChange={(e) => setLineQuantity(line.productId, Number(e.target.value))}
+                          />
+                        </div>
+                      )}
                       {/* Phones keep the price out of the way until it's needed. */}
                       <span className="bl-cart__each">
-                        {t('{{cost}} each', { cost: pesoExact(line.unitPrice) })}
+                        {line.mode === 'loose'
+                          ? t('{{cost}} per {{unit}}', { cost: pesoExact(line.unitPrice), unit: lineUnit(line) })
+                          : t('{{cost}} each', { cost: pesoExact(line.unitPrice) })}
                         {' · '}
                         <button type="button" className="bl-cart__change" onClick={() => changePrice(line.productId)}>
                           {t('Change price')}
@@ -900,13 +1024,13 @@ export function Sales() {
                         aria-label={t('Decrease quantity of {{name}}', { name: line.name })}
                         onClick={() => decrementLine(line.productId)}
                       />
-                      <span className="bl-cart__qty">{line.quantity}</span>
+                      <span className="bl-cart__qty">{fractionQty(line.quantity)}</span>
                       <Button
                         variant="ghost"
                         size="sm"
                         icon={addOutline}
                         aria-label={t('Increase quantity of {{name}}', { name: line.name })}
-                        disabled={line.quantity >= line.stock}
+                        disabled={line.quantity >= lineMax(line)}
                         onClick={() => incrementLine(line.productId)}
                       />
                     </div>
@@ -926,14 +1050,11 @@ export function Sales() {
           <aside className="bl-pos__side bl-pos__side--details bl-scroll" aria-label={t('Sale details')}>
             <div className="bl-pos__details-head">
               <h3 className="bl-pos__side-title">{t('Sale details')}</h3>
-              <DateField
-                label={t('Date')}
-                hideLabel
-                required
-                className="bl-pos__details-date"
-                value={saleDate}
-                onChange={(e) => setSaleDate(e.target.value)}
-              />
+              {/* Always today: a sale is dated the day it is recorded, and cannot be changed. */}
+              <span className="bl-pos__details-date" aria-label={t('Sale date: {{date}}', { date: shortDate(localTodayIso()) })}>
+                <IonIcon icon={calendarOutline} aria-hidden="true" />
+                {shortDate(localTodayIso())}
+              </span>
             </div>
             <div className="bl-pos__side-fields">
               <div className="bl-paychoice" role="radiogroup" aria-label={t('How did the customer pay?')}>
@@ -1064,6 +1185,8 @@ export function Sales() {
           </aside>
         </div>
       </Modal>
+
+      <SaleReceipt data={receipt} onClose={() => setReceipt(null)} />
     </Workspace>
   );
 }

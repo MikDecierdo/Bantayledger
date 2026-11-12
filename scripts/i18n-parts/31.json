@@ -1,0 +1,8 @@
+{
+  "{{count}} products use \"{{unit}}\". Change their unit before deleting this one.": ["{{count}} produkto ang gumagamit ng \"{{unit}}\". Palitan muna ang unit nila bago ito burahin.", "{{count}} ka produkto ang naggamit sa \"{{unit}}\". Ilisi una ang ilang unit sa dili pa kini papason."],
+  "1 product uses \"{{unit}}\". Change its unit before deleting this one.": ["1 produkto ang gumagamit ng \"{{unit}}\". Palitan muna ang unit nito bago ito burahin.", "1 ka produkto ang naggamit sa \"{{unit}}\". Ilisi una ang unit niini sa dili pa kini papason."],
+  "Delete this unit": ["Burahin ang unit na ito", "Papasa kini nga unit"],
+  "Only an owner or admin can delete units": ["Ang may-ari o admin lang ang puwedeng magbura ng unit", "Ang tag-iya o admin ra ang makapapas og unit"],
+  "This unit is in use": ["Ginagamit ang unit na ito", "Gigamit kini nga unit"],
+  "This unit is not used by any product.": ["Walang produktong gumagamit ng unit na ito.", "Walay produkto nga naggamit niini nga unit."]
+}

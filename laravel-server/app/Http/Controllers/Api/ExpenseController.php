@@ -39,7 +39,7 @@ class ExpenseController extends Controller
     {
         $data = $request->validate([
             'category' => 'required|in:Utilities,Rent,Salaries,Transport,Supplies,Permits,Maintenance',
-            'description' => 'required|string',
+            'description' => 'required|string|max:300',
             'amount' => 'required|numeric|gte:0',
             'expenseDate' => 'nullable|date',
         ]);

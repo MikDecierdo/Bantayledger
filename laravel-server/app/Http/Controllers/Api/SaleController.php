@@ -27,7 +27,7 @@ class SaleController extends Controller
         $items = DB::table('sale_items')
             ->join('products', 'products.product_id', '=', 'sale_items.product_id')
             ->where('sale_items.sale_id', $saleId)
-            ->select('sale_items.product_id', 'sale_items.quantity', 'sale_items.unit_price', 'sale_items.unit_cost', 'products.name as product_name')
+            ->select('sale_items.product_id', 'sale_items.quantity', 'sale_items.unit_price', 'sale_items.unit_cost', 'sale_items.subtotal', 'sale_items.loose_quantity', 'sale_items.loose_unit', 'products.name as product_name')
             ->get();
 
         $capital = round((float) $items->sum(fn ($i) => (float) $i->quantity * (float) $i->unit_cost), 2);
@@ -45,12 +45,18 @@ class SaleController extends Controller
             'reference' => $header->reference ?? strtoupper(substr($header->sale_id, 0, 8)),
             'date' => substr((string) $header->sale_date, 0, 10),
             'time' => date('g:i A', strtotime((string) $header->created_at)),
+            'createdAt' => Carbon::parse((string) $header->created_at, config('app.timezone'))->toIso8601String(),
             'items' => $items->map(fn ($i) => [
                 'productId' => $i->product_id,
                 'productName' => $i->product_name,
                 'quantity' => (float) $i->quantity,
                 'unitPrice' => (float) $i->unit_price,
                 'unitCost' => (float) $i->unit_cost,
+                'subtotal' => (float) $i->subtotal,
+                // Sold loose: what the customer bought (½ kg) and its price per kg.
+                'looseQuantity' => $i->loose_quantity === null ? null : (float) $i->loose_quantity,
+                'looseUnit' => $i->loose_unit,
+                'loosePrice' => $i->loose_quantity ? round((float) $i->subtotal / (float) $i->loose_quantity, 2) : null,
             ])->values(),
             'total' => (float) $header->total_amount,
             'capital' => $capital,
@@ -60,6 +66,17 @@ class SaleController extends Controller
             'paymentReference' => $header->payment_reference,
             'cashier' => $header->cashier_name ?? '—',
         ];
+    }
+
+    /** One sale, for its receipt (Activity log). Only within this business. */
+    public function show(string $business, string $id)
+    {
+        $exists = DB::table('sales')->where('business_id', $business)->where('sale_id', $id)->exists();
+        if (! $exists) {
+            throw ApiException::notFound('This sale was deleted, so its receipt is no longer available.');
+        }
+
+        return response()->json($this->toSale($id));
     }
 
     public function index(Request $request, string $business)
@@ -193,6 +210,8 @@ class SaleController extends Controller
             'items.*.productId' => 'required|string',
             'items.*.quantity' => 'required|numeric|gt:0',
             'items.*.unitPrice' => 'required|numeric',
+            // Sold loose (tingi): quantity and price are per loose unit (½ kg at the price per kg).
+            'items.*.loose' => 'sometimes|boolean',
             // Either one method for the whole sale, or `payments` (a cash part and a GCash part).
             'paymentMethod' => 'nullable|in:Cash,GCash,Card,Other',
             'paymentReference' => ['nullable', 'string', 'regex:/^\d{4}$/'],
@@ -203,8 +222,8 @@ class SaleController extends Controller
             'saleDate' => 'nullable|date',
             // When the sale actually happened, for sales recorded offline and synced later.
             'recordedAt' => 'nullable|date',
-            'notes' => 'nullable|string',
-            'reference' => 'nullable|string',
+            'notes' => 'nullable|string|max:1000',
+            'reference' => 'nullable|string|max:100',
         ], [
             'paymentReference.required' => __('Enter the last 4 digits of the GCash reference number.'),
             'paymentReference.regex' => __('The GCash reference must be exactly 4 digits.'),
@@ -247,8 +266,6 @@ class SaleController extends Controller
 
         $saleId = (string) Str::uuid();
         $userId = $request->user()->user_id;
-        $saleDate = $data['saleDate'] ?? now()->format('Y-m-d');
-
         // Keep an offline sale's real time, but only within the last week and never in the future.
         $recordedAt = null;
         if (! empty($data['recordedAt'])) {
@@ -257,6 +274,11 @@ class SaleController extends Controller
                 $recordedAt = $at->format('Y-m-d H:i:s');
             }
         }
+
+        // A sale is dated the day it happened and cannot be back-dated: the day an
+        // offline sale was recorded, otherwise today. Any saleDate sent is ignored
+        // (older app versions still send one).
+        $saleDate = $recordedAt ? substr($recordedAt, 0, 10) : now()->format('Y-m-d');
 
         DB::transaction(function () use ($data, $saleId, $userId, $business, $saleDate, $paymentReference, $parts, $summaryMethod, $recordedAt) {
             if ($paymentReference !== null) {
@@ -294,15 +316,34 @@ class SaleController extends Controller
             foreach ($data['items'] as $item) {
                 // Lock in the buying price now so later price changes never rewrite past profit.
                 $product = DB::table('products')->where('business_id', $business)
-                    ->where('product_id', $item['productId'])->first(['cost_price', 'selling_price', 'name']);
+                    ->where('product_id', $item['productId'])
+                    ->first(['cost_price', 'selling_price', 'name', 'current_stock', 'loose_unit', 'loose_per_unit', 'loose_price']);
                 $unitCost = (float) ($product->cost_price ?? 0);
 
+                // Sold loose: ½ kg out of a 50 kg sack is 0.01 sack of stock. The line
+                // is kept in stock units (so stock, forecasts and reports add up) with
+                // the loose amount alongside it for the receipt.
+                $loose = ! empty($item['loose']);
+                if ($loose && ($product === null || $product->loose_unit === null)) {
+                    throw ApiException::unprocessable(':name is not sold loose.', ['name' => $product->name ?? '']);
+                }
+                $perUnit = $loose ? (float) $product->loose_per_unit : 1.0;
+                $stockQuantity = $loose ? round((float) $item['quantity'] / $perUnit, 6) : (float) $item['quantity'];
+                if ($loose && (float) $product->current_stock * $perUnit + 0.005 < (float) $item['quantity']) {
+                    throw ApiException::badRequest('Not enough stock for :name. Only :available :unit available.', [
+                        'name' => $product->name,
+                        'available' => rtrim(rtrim(number_format((float) $product->current_stock * $perUnit, 3, '.', ''), '0'), '.'),
+                        'unit' => $product->loose_unit,
+                    ]);
+                }
+
                 // The cart lets the cashier charge something other than the listed price.
-                if ($product && ActivityLog::priceChanged((float) $product->selling_price, (float) $item['unitPrice'])) {
+                $listedPrice = $loose ? (float) $product->loose_price : (float) ($product->selling_price ?? 0);
+                if ($product && ActivityLog::priceChanged($listedPrice, (float) $item['unitPrice'])) {
                     ActivityLog::record($business, ActivityLog::PRICE, 'price_at_sale', [
                         'subjectId' => $item['productId'],
-                        'subject' => $product->name,
-                        'old' => (float) $product->selling_price,
+                        'subject' => $loose ? $product->name.' ('.$product->loose_unit.')' : $product->name,
+                        'old' => $listedPrice,
                         'new' => (float) $item['unitPrice'],
                     ]);
                 }
@@ -311,15 +352,17 @@ class SaleController extends Controller
                     'sale_item_id' => (string) Str::uuid(),
                     'sale_id' => $saleId,
                     'product_id' => $item['productId'],
-                    'quantity' => $item['quantity'],
-                    'unit_price' => $item['unitPrice'],
+                    'quantity' => $stockQuantity,
+                    'unit_price' => $loose ? round((float) $item['unitPrice'] * $perUnit, 2) : $item['unitPrice'],
                     'unit_cost' => $unitCost,
+                    'loose_quantity' => $loose ? round((float) $item['quantity'], 3) : null,
+                    'loose_unit' => $loose ? $product->loose_unit : null,
                 ]);
 
                 // Ported from handle_sale_item: a sale removes stock;
                 // recordMovement throws (rolling back the whole
                 // transaction) if that would take the product below zero.
-                InventoryService::recordMovement($business, $item['productId'], 'SALE', -$item['quantity'], 'sale', $saleId, null, $userId);
+                InventoryService::recordMovement($business, $item['productId'], 'SALE', -$stockQuantity, 'sale', $saleId, null, $userId);
             }
 
             $total = DB::table('sale_items')->where('sale_id', $saleId)->sum('subtotal');

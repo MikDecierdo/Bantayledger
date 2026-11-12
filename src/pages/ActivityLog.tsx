@@ -1,10 +1,11 @@
 import { IonIcon } from '@ionic/react';
-import { arrowForwardOutline, listOutline, lockClosedOutline, searchOutline } from 'ionicons/icons';
+import { arrowForwardOutline, listOutline, lockClosedOutline, receiptOutline, searchOutline } from 'ionicons/icons';
 import { useEffect, useState } from 'react';
 import Button from '../components/common/Button';
 import { DateField, SearchInput } from '../components/common/Field';
 import { EmptyState, ErrorState, LoadingState, SkeletonRows } from '../components/common/States';
 import { Badge } from '../components/common/StatusBadge';
+import SaleReceipt, { receiptFromSale, type ReceiptData } from '../components/sales/SaleReceipt';
 import Toolbar, { ChipFilter, ToolbarSearch } from '../components/common/Toolbar';
 import PageHeader from '../components/layout/PageHeader';
 import { Card } from '../components/layout/Section';
@@ -12,9 +13,11 @@ import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
 import { toUserMessage } from '../lib/errors';
+import { alertError } from '../lib/swal';
 import { intlLocale, t } from '../i18n';
 import { label } from '../i18n/labels';
 import { activityService, type ActivityCategory, type ActivityEntry, type ActivityPage } from '../services/api/activityService';
+import { salesService } from '../services/api';
 import { number, peso, shortDate, wasteReasonLabel } from '../utils/format';
 import './ActivityLog.css';
 
@@ -214,6 +217,36 @@ function reasonOf(entry: ActivityEntry): string {
 
 export function ActivityLog() {
   const { activeBusiness, isManager } = useAuth();
+  const [receipt, setReceipt] = useState<ReceiptData | null>(null);
+  const [openingReceipt, setOpeningReceipt] = useState<number | null>(null);
+
+  /** A recorded sale can be reopened as its receipt. */
+  const hasReceipt = (entry: ActivityEntry) => entry.action === 'sale_recorded' && Boolean(entry.subjectId);
+  const viewReceipt = async (entry: ActivityEntry) => {
+    if (!activeBusiness || !entry.subjectId) return;
+    setOpeningReceipt(entry.id);
+    try {
+      const sale = await salesService.get(activeBusiness.id, entry.subjectId);
+      setReceipt(receiptFromSale(sale, { name: activeBusiness.name, address: activeBusiness.address, phone: activeBusiness.phone }));
+    } catch (err) {
+      await alertError(t('Receipt not available'), toUserMessage(err));
+    } finally {
+      setOpeningReceipt(null);
+    }
+  };
+  const receiptButton = (entry: ActivityEntry) =>
+    hasReceipt(entry) ? (
+      <Button
+        variant="secondary"
+        size="sm"
+        icon={receiptOutline}
+        loading={openingReceipt === entry.id}
+        onClick={() => void viewReceipt(entry)}
+        aria-label={t('View receipt for {{item}}', { item: entry.subject })}
+      >
+        {t('View')}
+      </Button>
+    ) : null;
   const [category, setCategory] = useState<'all' | ActivityCategory>('all');
   const [typed, setTyped] = useState('');
   const [query, setQuery] = useState('');
@@ -404,6 +437,7 @@ export function ActivityLog() {
                         <th scope="col" className="bl-td-text">{t('Item')}</th>
                         <th scope="col">{t('Change')}</th>
                         <th scope="col" className="bl-td-text">{t('Details')}</th>
+                        <th scope="col" className="bl-td-actions">{t('Receipt')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -421,6 +455,7 @@ export function ActivityLog() {
                           <td className="bl-table__primary bl-td-text">{entry.subject}</td>
                           <td><Change entry={entry} /></td>
                           <td className="bl-activity__details bl-td-text">{reasonOf(entry)}</td>
+                          <td className="bl-td-actions">{receiptButton(entry)}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -444,6 +479,7 @@ export function ActivityLog() {
                       <span className="bl-activity__action">{ACTION_LABELS[entry.action] ?? entry.action}</span>
                       <Change entry={entry} />
                       {reasonOf(entry) && <span className="bl-caption">{reasonOf(entry)}</span>}
+                      {hasReceipt(entry) && <div className="bl-activity__receipt">{receiptButton(entry)}</div>}
                     </article>
                   </li>
                 ))}
@@ -465,6 +501,8 @@ export function ActivityLog() {
           )}
         </Card>
       </Bento>
+
+      <SaleReceipt data={receipt} onClose={() => setReceipt(null)} copy />
     </Workspace>
   );
 }

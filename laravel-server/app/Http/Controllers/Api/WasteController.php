@@ -8,6 +8,7 @@ use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 /** Ported from server/src/services/wasteService.ts. */
 class WasteController extends Controller
@@ -41,12 +42,12 @@ class WasteController extends Controller
     public function store(Request $request, string $business)
     {
         $data = $request->validate([
-            'productId' => 'required|string',
+            'productId' => ['required', 'string', Rule::exists('products', 'product_id')->where('business_id', $business)],
             'quantity' => 'required|numeric|gt:0',
             'reason' => 'required|in:Expired,Damaged,Spoiled,Spillage,Customer Return',
             'estimatedCost' => 'nullable|numeric',
             'wasteDate' => 'nullable|date',
-            'notes' => 'nullable|string',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         $id = (string) Str::uuid();
@@ -55,7 +56,7 @@ class WasteController extends Controller
         DB::transaction(function () use ($data, $id, $userId, $business) {
             $estimatedCost = $data['estimatedCost'] ?? null;
             if ($estimatedCost === null) {
-                $product = DB::table('products')->where('product_id', $data['productId'])->first('cost_price');
+                $product = DB::table('products')->where('business_id', $business)->where('product_id', $data['productId'])->first('cost_price');
                 $estimatedCost = (float) ($product->cost_price ?? 0) * $data['quantity'];
             }
 

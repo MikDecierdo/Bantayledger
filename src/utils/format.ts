@@ -22,6 +22,16 @@ function numberFormat(options: Intl.NumberFormatOptions): Intl.NumberFormat {
 const pesoFormatter = { format: (v: number) => numberFormat({ minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v) };
 const pesoDecimalFormatter = { format: (v: number) => numberFormat({ minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v) };
 
+/**
+ * Today as YYYY-MM-DD on the device's own calendar. Not toISOString(), which
+ * gives the UTC date: yesterday in the Philippines until 8 in the morning.
+ */
+export function localTodayIso(): string {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
 /** ₱4,250 — the default money format across the app. */
 export function peso(value: number, withDecimals = false): string {
   const abs = Math.abs(value);
@@ -145,3 +155,26 @@ export const wasteReasonLabel = (reason: string): string => WASTE_REASON_LABELS[
 /** Insight categories as people read them; the stored value stays "Waste". */
 export const insightCategoryLabel = (category: string): string =>
   INSIGHT_CATEGORY_LABELS[category] ?? category;
+
+/** A quantity as people say it at the counter: 0.5 → "½", 1.25 → "1¼", 0.3 → "0.3". */
+export function fractionQty(value: number): string {
+  const whole = Math.floor(value + 1e-9);
+  const rest = Math.round((value - whole) * 1000) / 1000;
+  const symbol = rest === 0.25 ? '¼' : rest === 0.5 ? '½' : rest === 0.75 ? '¾' : null;
+  if (rest === 0) return String(whole);
+  if (symbol) return whole > 0 ? `${whole}${symbol}` : symbol;
+  return String(Math.round(value * 1000) / 1000);
+}
+
+type StockLike = { currentStock: number; loose?: { unit: string; perUnit: number } | null };
+
+/** Stock on hand as a number; products sold loose keep 3 decimals (2.99 sacks, not 3). */
+export function stockNumber(p: StockLike): string {
+  return number(p.currentStock, p.loose ? 3 : 1);
+}
+
+/** For a product sold loose, what is left in loose units: "149.5 kg left". Empty otherwise. */
+export function looseLeft(p: StockLike): string {
+  if (!p.loose) return '';
+  return t('{{qty}} {{unit}} left', { qty: number(p.currentStock * p.loose.perUnit, 2), unit: p.loose.unit });
+}

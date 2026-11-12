@@ -6,6 +6,7 @@ use App\Http\Middleware\EnsureBusinessMember;
 use App\Http\Middleware\ForceJsonResponse;
 use App\Http\Middleware\Idempotent;
 use App\Http\Middleware\SetLocale;
+use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -19,6 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Render (like most hosts) puts a proxy in front of the API. Take the
+        // visitor's address from it, so per-device limits count each device.
+        $middleware->trustProxies(at: '*');
+
         $middleware->alias([
             'business.member' => EnsureBusinessMember::class,
             'business.manager' => EnsureBusinessManager::class,
@@ -29,6 +34,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // its Accept header — see ForceJsonResponse's docblock for why this
         // is necessary, not just a nicety.
         $middleware->api(prepend: [ForceJsonResponse::class, SetLocale::class]);
+
+        // Safety headers on every answer (see SecurityHeaders).
+        $middleware->append(SecurityHeaders::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (ApiException $e, Request $request) {

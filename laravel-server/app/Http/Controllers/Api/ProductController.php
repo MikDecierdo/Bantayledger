@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 /** Ported from server/src/services/productService.ts. */
 class ProductController extends Controller
@@ -30,11 +31,31 @@ class ProductController extends Controller
             'supplierId' => $row->supplier_id ?? '',
             'costPrice' => (float) $row->cost_price,
             'sellingPrice' => (float) $row->selling_price,
+            // Also sold loose (tingi): e.g. a sack sold by the kilo.
+            'loose' => $row->loose_unit === null ? null : [
+                'unit' => $row->loose_unit,
+                'perUnit' => (float) $row->loose_per_unit,
+                'price' => (float) $row->loose_price,
+            ],
             'status' => $row->status,
             'imageUrl' => $row->image_path ? Storage::disk('public')->url($row->image_path) : null,
             'averageDailyDemand' => $derived['averageDailyDemand'] ?? 0,
             'lastRestockedAt' => $derived['lastRestockedAt'] ?? substr((string) $row->created_at, 0, 10),
             'updatedAt' => substr((string) $row->updated_at, 0, 10),
+        ];
+    }
+
+    /** The three loose-selling columns from the request (all null turns it off). */
+    private static function looseColumns(?array $loose): array
+    {
+        if (! $loose) {
+            return ['loose_unit' => null, 'loose_per_unit' => null, 'loose_price' => null];
+        }
+
+        return [
+            'loose_unit' => trim((string) $loose['unit']),
+            'loose_per_unit' => round((float) $loose['perUnit'], 3),
+            'loose_price' => round((float) $loose['price'], 2),
         ];
     }
 
@@ -113,16 +134,20 @@ class ProductController extends Controller
     public function store(Request $request, string $business)
     {
         $data = $request->validate([
-            'name' => 'required|string',
-            'sku' => 'nullable|string',
-            'categoryId' => 'nullable|string',
-            'supplierId' => 'nullable|string',
-            'unit' => 'nullable|string',
+            'name' => 'required|string|max:255',
+            'sku' => 'nullable|string|max:100',
+            'categoryId' => ['nullable', 'string', Rule::exists('categories', 'category_id')->where('business_id', $business)],
+            'supplierId' => ['nullable', 'string', Rule::exists('suppliers', 'supplier_id')->where('business_id', $business)],
+            'unit' => 'nullable|string|max:20',
             'minimumStock' => 'required|numeric',
             'maximumStock' => 'nullable|numeric',
             'reorderQuantity' => 'required|numeric',
             'costPrice' => 'required|numeric',
             'sellingPrice' => 'required|numeric',
+            'loose' => 'sometimes|nullable|array',
+            'loose.unit' => 'required_with:loose|string|max:20',
+            'loose.perUnit' => 'required_with:loose|numeric|gt:0|max:100000',
+            'loose.price' => 'required_with:loose|numeric|min:0|max:10000000',
             'openingStock' => 'nullable|numeric',
             'variantGroupId' => 'nullable|string',
         ]);
@@ -154,6 +179,7 @@ class ProductController extends Controller
                     'reorder_quantity' => $data['reorderQuantity'],
                     'cost_price' => $data['costPrice'],
                     'selling_price' => $data['sellingPrice'],
+                    ...self::looseColumns($data['loose'] ?? null),
                     // Stock starts at 0 (the column default) prior to any opening
                     // stock movement below, so compute status the same way any
                     // other stock change does.
@@ -187,16 +213,20 @@ class ProductController extends Controller
     public function update(Request $request, string $business, string $id)
     {
         $data = $request->validate([
-            'name' => 'sometimes|string',
-            'sku' => 'sometimes|nullable|string',
-            'categoryId' => 'sometimes|nullable|string',
-            'supplierId' => 'sometimes|nullable|string',
-            'unit' => 'sometimes|string',
+            'name' => 'sometimes|string|max:255',
+            'sku' => 'sometimes|nullable|string|max:100',
+            'categoryId' => ['sometimes', 'nullable', 'string', Rule::exists('categories', 'category_id')->where('business_id', $business)],
+            'supplierId' => ['sometimes', 'nullable', 'string', Rule::exists('suppliers', 'supplier_id')->where('business_id', $business)],
+            'unit' => 'sometimes|string|max:20',
             'minimumStock' => 'sometimes|numeric',
             'maximumStock' => 'sometimes|nullable|numeric',
             'reorderQuantity' => 'sometimes|numeric',
             'costPrice' => 'sometimes|numeric',
             'sellingPrice' => 'sometimes|numeric',
+            'loose' => 'sometimes|nullable|array',
+            'loose.unit' => 'required_with:loose|string|max:20',
+            'loose.perUnit' => 'required_with:loose|numeric|gt:0|max:100000',
+            'loose.price' => 'required_with:loose|numeric|min:0|max:10000000',
             'variantGroupId' => 'sometimes|nullable|string',
             'isActive' => 'sometimes|boolean',
         ]);
@@ -234,6 +264,9 @@ class ProductController extends Controller
         }
         if (array_key_exists('sellingPrice', $data)) {
             $patch['selling_price'] = $data['sellingPrice'];
+        }
+        if (array_key_exists('loose', $data)) {
+            $patch += self::looseColumns($data['loose']);
         }
 
         try {
@@ -403,7 +436,7 @@ class ProductController extends Controller
 
     public function adjustStock(Request $request, string $business, string $id)
     {
-        $data = $request->validate(['quantity' => 'required|numeric', 'notes' => 'nullable|string']);
+        $data = $request->validate(['quantity' => 'required|numeric', 'notes' => 'nullable|string|max:1000']);
 
         InventoryService::adjustStock($business, $id, (float) $data['quantity'], $request->user()->user_id, $data['notes'] ?? null);
 

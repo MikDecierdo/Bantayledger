@@ -1,4 +1,4 @@
-import type { Product, SeriesPoint, StockMovement } from '../../types';
+import type { LooseSelling, Product, SeriesPoint, StockMovement } from '../../types';
 import { api } from './client';
 
 export interface ProductInput {
@@ -13,6 +13,8 @@ export interface ProductInput {
   reorderQuantity: number;
   costPrice: number;
   sellingPrice: number;
+  /** Sold loose too; null turns it off. */
+  loose?: LooseSelling | null;
   openingStock?: number;
 }
 

@@ -1,0 +1,7 @@
+{
+  "A copy of the receipt for this sale.": ["Kopya ng resibo ng bentang ito.", "Kopya sa resibo niini nga halin."],
+  "Generate": ["Gumawa", "Paghimo"],
+  "Receipt not available": ["Walang resibo", "Walay resibo"],
+  "Type your own, or tap Generate.": ["I-type ang sarili mo, o pindutin ang Gumawa.", "I-type ang imoha, o pindota ang Paghimo."],
+  "View receipt for {{item}}": ["Tingnan ang resibo para sa {{item}}", "Tan-awa ang resibo para sa {{item}}"]
+}

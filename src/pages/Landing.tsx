@@ -53,7 +53,7 @@ export function Landing() {
     {
       icon: cartOutline,
       title: t('Record a sale in seconds'),
-      text: t('Tap the products, take Cash, GCash or both, and stock updates by itself.'),
+      text: t('Tap the products, sell whole or tingi (½ kilo, per stick), take Cash, GCash or both, and show a receipt. Stock updates by itself.'),
     },
     {
       icon: cubeOutline,

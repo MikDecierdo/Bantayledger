@@ -16,8 +16,39 @@
   display: flex;
   align-items: flex-end;
   gap: var(--bl-s2);
+  /* Sit at the top of the grid row, like Product name and Product code beside it
+     (their hint text makes the row taller, which used to push the select down). */
+  align-self: start;
 }
 .bl-inv__category-row .bl-inv__category-select { flex: 1; min-width: 0; }
+
+/* Product code with a small "Generate" button inside the input, on the right. */
+.bl-inv__code-field { align-self: start; }
+.bl-inv__code-field .bl-input { padding-right: 116px; }
+.bl-inv__code-gen {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  font: inherit;
+  font-size: var(--bl-fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.bl-inv__code-gen:hover { background: var(--bl-green); color: #fff; }
+.bl-inv__code-gen:focus-visible { outline: 2px solid var(--bl-green); outline-offset: 2px; }
+
+/* Unit dropdown; "Other" opens a text box right under it. */
+.bl-unit-field { display: grid; gap: var(--bl-s2); align-self: start; }
+.bl-unit-field__row { display: flex; align-items: flex-end; gap: var(--bl-s2); }
+.bl-unit-field__row .bl-unit-field__select { flex: 1; min-width: 0; }
+.bl-unit-field__row > .bl-btn { flex-shrink: 0; }
 .bl-inv__category-row > .bl-btn { flex-shrink: 0; }
 
 /* Supplier select with "Add another size" beside it, bottom-aligned so the
@@ -136,4 +167,41 @@
     padding: var(--bl-s2) var(--bl-s4);
     border-bottom: 1px solid var(--bl-border);
   }
+}
+
+/* Sell loose (tingi): the switch with its explanation, then the three settings. */
+.bl-inv__loose-toggle { display: flex; align-items: center; justify-content: space-between; gap: var(--bl-s4); }
+.bl-inv__loose-toggle > div { display: grid; gap: 2px; }
+.bl-inv__loose-title { font-weight: var(--bl-fw-semibold); }
+.bl-inv__loose-fields { margin-top: var(--bl-s4); }
+
+/* A product just added glows green on the list for a few seconds. */
+@keyframes bl-new-glow {
+  0%, 100% { background-color: var(--bl-green-light); }
+  50% { background-color: #cfe9dc; }
+}
+@keyframes bl-new-ring {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(38, 165, 84, 0); }
+  50% { box-shadow: 0 0 0 4px rgba(38, 165, 84, 0.35), 0 0 18px rgba(38, 165, 84, 0.35); }
+}
+.bl-table tr.bl-inv__new > td {
+  background-color: var(--bl-green-light);
+  animation: bl-new-glow 1.4s ease-in-out 3;
+}
+.bl-table tr.bl-inv__new { outline: 2px solid var(--bl-green); outline-offset: -2px; }
+li.bl-inv__new .bl-mrow {
+  background-color: var(--bl-green-light);
+  border-radius: 12px;
+  animation: bl-new-ring 1.4s ease-in-out 3;
+}
+.bl-inv__loose-left { color: var(--bl-green-dark); font-weight: 600; }
+@media (prefers-reduced-motion: reduce) {
+  .bl-table tr.bl-inv__new > td,
+  li.bl-inv__new .bl-mrow { animation: none; }
+}
+
+/* Phones: a thumb-sized Generate button inside the code box. */
+@media (max-width: 599px) {
+  .bl-inv__code-gen { height: 38px; padding: 0 12px; }
+  .bl-inv__code-field .bl-input { padding-right: 124px; }
 }

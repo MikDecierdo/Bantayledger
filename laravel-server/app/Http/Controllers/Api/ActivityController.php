@@ -58,6 +58,8 @@ class ActivityController extends Controller
                 'category' => $row->category,
                 'action' => $row->action,
                 'subject' => $row->subject_name,
+                // The record the entry is about (a sale's id opens its receipt).
+                'subjectId' => $row->subject_id,
                 'oldValue' => $row->old_value === null ? null : (float) $row->old_value,
                 'newValue' => $row->new_value === null ? null : (float) $row->new_value,
                 'unit' => $row->unit,

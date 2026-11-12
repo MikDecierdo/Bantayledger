@@ -26,8 +26,9 @@ use Illuminate\Support\Facades\Route;
 // Used by the app to wake the server (Render free sleeps) and to check it's reachable.
 Route::get('/health', fn () => response()->json(['ok' => true]));
 
-Route::post('/auth/signup', [AuthController::class, 'signup']);
-Route::post('/auth/login', [AuthController::class, 'login']);
+// Limits on tries per minute, so passwords can't be guessed by brute force.
+Route::post('/auth/signup', [AuthController::class, 'signup'])->middleware('throttle:signup');
+Route::post('/auth/login', [AuthController::class, 'login'])->middleware('throttle:login');
 Route::post('/auth/forgot-password', [AuthController::class, 'forgotPassword'])->middleware('throttle:5,1');
 Route::post('/auth/reset-password', [AuthController::class, 'resetPassword'])->middleware('throttle:10,1');
 
@@ -86,6 +87,7 @@ Route::middleware('auth:sanctum')->group(function () {
         // Sales: insert_member, delete_manager
         Route::get('/sales', [SaleController::class, 'index'])->middleware('business.member');
         Route::get('/sales/overview', [SaleController::class, 'overview'])->middleware('business.member');
+        Route::get('/sales/{id}', [SaleController::class, 'show'])->middleware('business.member');
         Route::post('/sales', [SaleController::class, 'store'])->middleware(['business.member', 'idempotent']);
         Route::delete('/sales/{id}', [SaleController::class, 'destroy'])->middleware('business.manager');
 

@@ -19,7 +19,7 @@ class CategoryController extends Controller
 
     public function store(Request $request, string $business)
     {
-        $data = $request->validate(['name' => 'required|string', 'description' => 'nullable|string']);
+        $data = $request->validate(['name' => 'required|string|max:80', 'description' => 'nullable|string|max:500']);
 
         $id = (string) Str::uuid();
         DB::transaction(function () use ($id, $business, $data) {

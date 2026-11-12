@@ -69,6 +69,8 @@ type TextFieldProps = BaseFieldProps &
   Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'className'> & {
     /** Leading affix, e.g. "₱" for money inputs. */
     prefix?: string;
+    /** Something inside the input on the right, e.g. a small "Generate" button. */
+    suffix?: ReactNode;
     /** When true, only letters and spaces are allowed — digits are blocked. */
     textOnly?: boolean;
   };
@@ -82,6 +84,7 @@ export function TextField({
   hideLabel,
   className,
   prefix,
+  suffix,
   textOnly,
   onKeyDown,
   onPaste,
@@ -140,12 +143,15 @@ export function TextField({
       className={className}
       id={id}
     >
-      {prefix ? (
-        <span className="bl-input-group">
-          <span className="bl-input-group__affix" aria-hidden="true">
-            {prefix}
-          </span>
+      {prefix || suffix ? (
+        <span className={['bl-input-group', prefix ? 'bl-input-group--prefix' : '', suffix ? 'bl-input-group--suffix' : ''].filter(Boolean).join(' ')}>
+          {prefix && (
+            <span className="bl-input-group__affix" aria-hidden="true">
+              {prefix}
+            </span>
+          )}
           {input}
+          {suffix && <span className="bl-input-group__suffix">{suffix}</span>}
         </span>
       ) : (
         input
@@ -328,7 +334,7 @@ export function SearchInput({
       <label className="bl-sr-only" htmlFor={id}>
         {label}
       </label>
-      <span className="bl-input-group">
+      <span className="bl-input-group bl-input-group--prefix">
         <span className="bl-input-group__affix" aria-hidden="true">
           <IonIcon icon={searchOutline} />
         </span>

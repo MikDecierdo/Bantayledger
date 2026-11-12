@@ -240,5 +240,8 @@
   "Enter the full 13-digit GCash reference number.": "Ilagay ang buong 13-digit na GCash reference number.",
   "That reference number was already used.": "Nagamit na ang reference number na iyan.",
   "That password is not correct.": "Hindi tama ang password na iyon.",
-  "To create an account, confirm you are 18 or older and agree to the Terms. If you do not see that checkbox, please update the app.": "Para gumawa ng account, kumpirmahin na 18 taong gulang pataas ka at sumang-ayon sa Mga Tuntunin. Kung hindi mo makita ang checkbox, paki-update ang app."
+  "To create an account, confirm you are 18 or older and agree to the Terms. If you do not see that checkbox, please update the app.": "Para gumawa ng account, kumpirmahin na 18 taong gulang pataas ka at sumang-ayon sa Mga Tuntunin. Kung hindi mo makita ang checkbox, paki-update ang app.",
+  "Too many tries. Please wait a minute, then try again.": "Masyadong maraming subok. Maghintay ng isang minuto, saka subukang muli.",
+  "This sale was deleted, so its receipt is no longer available.": "Nabura na ang bentang ito, kaya wala na ang resibo nito.",
+  ":name is not sold loose.": "Hindi ibinebenta nang tingi ang :name."
 }

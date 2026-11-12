@@ -104,11 +104,11 @@ class SupplierController extends Controller
     public function store(Request $request, string $business)
     {
         $data = $request->validate([
-            'name' => 'required|string',
-            'contactPerson' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'email' => 'nullable|string',
-            'address' => 'nullable|string',
+            'name' => 'required|string|max:160',
+            'contactPerson' => 'nullable|string|max:160',
+            'phone' => 'nullable|string|max:50',
+            'email' => 'nullable|string|max:255',
+            'address' => 'nullable|string|max:500',
             'latitude' => 'nullable|numeric|between:-90,90|required_with:longitude',
             'longitude' => 'nullable|numeric|between:-180,180|required_with:latitude',
             'status' => 'nullable|in:active,review,inactive',
@@ -137,11 +137,11 @@ class SupplierController extends Controller
     public function update(Request $request, string $business, string $id)
     {
         $data = $request->validate([
-            'name' => 'sometimes|string',
-            'contactPerson' => 'sometimes|nullable|string',
-            'phone' => 'sometimes|nullable|string',
-            'email' => 'sometimes|nullable|string',
-            'address' => 'sometimes|nullable|string',
+            'name' => 'sometimes|string|max:160',
+            'contactPerson' => 'sometimes|nullable|string|max:160',
+            'phone' => 'sometimes|nullable|string|max:50',
+            'email' => 'sometimes|nullable|string|max:255',
+            'address' => 'sometimes|nullable|string|max:500',
             'latitude' => 'sometimes|nullable|numeric|between:-90,90|required_with:longitude',
             'longitude' => 'sometimes|nullable|numeric|between:-180,180|required_with:latitude',
             'status' => 'sometimes|in:active,review,inactive',

@@ -1,9 +1,11 @@
+import { IonIcon } from '@ionic/react';
 import {
   addOutline,
   cameraOutline,
   createOutline,
   cubeOutline,
   searchOutline,
+  sparklesOutline,
   swapVerticalOutline,
   powerOutline,
   trashOutline,
@@ -12,9 +14,12 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import MobileRow from '../components/common/MobileRow';
 import Button from '../components/common/Button';
-import { CurrencyField, NumberField, SearchInput, SelectField, TextField } from '../components/common/Field';
+import { CurrencyField, NumberField, SearchInput, SelectField, Switch, TextField } from '../components/common/Field';
 import { Modal } from '../components/common/Modal';
 import ProductThumbnail from '../components/common/ProductThumbnail';
+import LooseSellingPanel, { looseComplete } from '../components/inventory/LooseSellingPanel';
+import UnitField, { customUnitList, isStoreUnit, loadSavedUnits, saveSavedUnits, singularUnit } from '../components/common/UnitField';
+import { categoryOptions, isPresetCategory, PRESET_CATEGORY_PREFIX } from '../utils/storeCategories';
 import { EmptyState, ErrorState, LoadingState, SkeletonRows } from '../components/common/States';
 import { Badge, StatusBadge } from '../components/common/StatusBadge';
 import { useToast } from '../components/common/ToastProvider';
@@ -34,7 +39,7 @@ import { useAsyncData } from '../hooks/useAsyncData';
 import { dataService, usesLiveData } from '../services/dataService';
 import { categoryService, productService } from '../services/api';
 import type { Product, StockStatus } from '../types';
-import { number, peso, pesoExact } from '../utils/format';
+import { fractionQty, looseLeft, number, peso, pesoExact, stockNumber } from '../utils/format';
 import './Inventory.css';
 import { t } from '../i18n';
 
@@ -51,6 +56,22 @@ const STATUS_FILTERS: { value: StatusFilter; label: string }[] = [
 /** Sentinel value for the category dropdown's inline "add new" row. */
 const NEW_CATEGORY_OPTION = '__new_category__';
 
+/**
+ * A product code like "CO-1001": the first letters of the product name's first
+ * two words, then the next number not used by any other product with that prefix.
+ */
+export function generateProductCode(name: string, taken: string[]): string {
+  const words = name.toUpperCase().replace(/[^A-Z0-9 ]/g, ' ').split(/\s+/).filter((w) => /[A-Z]/.test(w));
+  let prefix = words.slice(0, 2).map((w) => w.replace(/[^A-Z]/g, '')[0]).join('');
+  if (prefix.length < 2) prefix = ((words[0] ?? '').replace(/[^A-Z]/g, '') + 'PR').slice(0, 2);
+  const used = new Set(taken.filter(Boolean).map((c) => c.toUpperCase()));
+  const pattern = new RegExp(`^${prefix}-([0-9]+)$`);
+  const numbers = [...used].map((c) => c.match(pattern)).filter((m): m is RegExpMatchArray => m !== null).map((m) => Number(m[1]));
+  let n = Math.max(1000, ...numbers) + 1;
+  while (used.has(`${prefix}-${n}`)) n += 1;
+  return `${prefix}-${n}`;
+}
+
 /** Empty state for the Add Product form. */
 const BLANK_FORM = {
   name: '',
@@ -63,6 +84,11 @@ const BLANK_FORM = {
   reorderQuantity: '',
   costPrice: '',
   sellingPrice: '',
+  /** Sold loose (tingi): '1' when on; the loose unit, how many make one stock unit, and the price per loose unit. */
+  looseOn: '',
+  looseUnit: '',
+  loosePerUnit: '',
+  loosePrice: '',
 };
 
 /**
@@ -117,7 +143,7 @@ export function Inventory() {
 
   // Reference data for the form's dropdowns. Only meaningful when connected.
   const { data: suppliers } = useAsyncData(() => dataService.getSuppliers(), [activeBusiness?.id]);
-  const { data: dbCategories, reload: reloadCategories } = useAsyncData(
+  const { data: dbCategories, reload: reloadCategories, refresh: refreshCategories } = useAsyncData(
     () => (usesLiveData() && activeBusiness ? categoryService.list(activeBusiness.id) : Promise.resolve([])),
     [activeBusiness?.id],
   );
@@ -153,6 +179,29 @@ export function Inventory() {
   // this same modal visit — each is a full, independent product saved right
   // after the main one, linked only by variantGroupId.
   const [subUnits, setSubUnits] = useState<SubUnitForm[]>([]);
+  // Products just added glow green on the list for a few seconds.
+  const [justAdded, setJustAdded] = useState<string[]>([]);
+  // The "Sell loose (tingi)" panel beside the Add Product window.
+  const [looseOpen, setLooseOpen] = useState(false);
+  useEffect(() => {
+    if (justAdded.length === 0) return undefined;
+    // The table on desktop and the list on phones both carry the id; scroll to the one shown.
+    const shown = [...document.querySelectorAll<HTMLElement>(`[data-product-id="${justAdded[0]}"]`)].find(
+      (el) => el.offsetParent !== null,
+    );
+    shown?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    const timer = window.setTimeout(() => setJustAdded([]), 8000);
+    return () => window.clearTimeout(timer);
+  }, [justAdded, data]);
+  // Units the store typed with "Other": from its products, plus ones remembered on this device.
+  const [savedUnits, setSavedUnits] = useState<string[]>([]);
+  useEffect(() => {
+    setSavedUnits(activeBusiness ? loadSavedUnits(activeBusiness.id) : []);
+  }, [activeBusiness]);
+  const customUnits = useMemo(
+    () => customUnitList([...(data ?? []).map((p) => p.unit), ...savedUnits]),
+    [data, savedUnits],
+  );
 
   const setField = (key: keyof typeof BLANK_FORM) => (value: string) =>
     setForm((f) => ({ ...f, [key]: value }));
@@ -197,6 +246,7 @@ export function Inventory() {
     );
 
   const closeModal = () => {
+    setLooseOpen(false);
     setAddOpen(false);
     setEditingProductId(null);
     setEditingVariantGroupId(null);
@@ -225,6 +275,10 @@ export function Inventory() {
       reorderQuantity: String(product.reorderQuantity),
       costPrice: String(product.costPrice),
       sellingPrice: String(product.sellingPrice),
+      looseOn: product.loose ? '1' : '',
+      looseUnit: product.loose?.unit ?? '',
+      loosePerUnit: product.loose ? String(product.loose.perUnit) : '',
+      loosePrice: product.loose ? String(product.loose.price) : '',
     });
     setFormError(null);
     resetImageState();
@@ -399,6 +453,30 @@ export function Inventory() {
    * of actually selecting it. `previous` is restored on every exit path but
    * success, so the <select> never visibly gets stuck on that sentinel row.
    */
+  /**
+   * A ready-made category is saved for the store the first time it is picked.
+   * Returns the id to keep selected (the previous one if saving failed).
+   */
+  const resolveCategory = async (value: string, previous: string): Promise<string> => {
+    if (!value.startsWith(PRESET_CATEGORY_PREFIX)) return value;
+    if (!usesLiveData() || !activeBusiness) {
+      setFormError(t('Adding a category needs an active business. Please sign in again.'));
+      return previous;
+    }
+    if (!isManager) {
+      await alertError(t('Only an owner or admin can add categories'));
+      return previous;
+    }
+    try {
+      const created = await categoryService.create(activeBusiness.id, value.slice(PRESET_CATEGORY_PREFIX.length));
+      await refreshCategories();
+      return created.id;
+    } catch (err) {
+      await alertError(t('Could not add this category'), toUserMessage(err));
+      return previous;
+    }
+  };
+
   const handleAddCategory = async () => {
     const previous = form.categoryId;
 
@@ -440,9 +518,42 @@ export function Inventory() {
    * that silent fallback isn't what we want here, so it's blocked outright
    * with a clear reason instead.
    */
+  /**
+   * Deletes a unit the store typed itself (built-in units have no delete button).
+   * Like a category, a unit still used by a product cannot be deleted.
+   */
+  const handleDeleteUnit = async (unit: string, clear: () => void) => {
+    if (!activeBusiness || isStoreUnit(unit)) return;
+    if (!isManager) {
+      await alertError(t('Only an owner or admin can delete units'));
+      return;
+    }
+    const inUse = (data ?? []).filter((p) => p.unit.trim().toLowerCase() === unit.trim().toLowerCase()).length;
+    if (inUse > 0) {
+      await alertError(
+        t('This unit is in use'),
+        inUse === 1
+          ? t('1 product uses "{{unit}}". Change its unit before deleting this one.', { unit })
+          : t('{{count}} products use "{{unit}}". Change their unit before deleting this one.', { count: inUse, unit }),
+      );
+      return;
+    }
+    const confirmed = await confirmAction({
+      title: t('Delete {{name}}?', { name: unit }),
+      text: t('This unit is not used by any product.'),
+      confirmLabel: t('Delete'),
+    });
+    if (!confirmed) return;
+    const next = savedUnits.filter((u) => u.toLowerCase() !== unit.trim().toLowerCase());
+    setSavedUnits(next);
+    saveSavedUnits(activeBusiness.id, next);
+    clear();
+    showToast(t('{{name}} was deleted.', { name: unit }));
+  };
+
   const handleDeleteCategory = async () => {
     const cat = (dbCategories ?? []).find((c) => c.id === form.categoryId);
-    if (!cat || !activeBusiness) return;
+    if (!cat || !activeBusiness || isPresetCategory(cat.name)) return;
 
     if (!isManager) {
       await alertError(t('Only an owner or admin can delete categories'));
@@ -498,9 +609,31 @@ export function Inventory() {
       }
     }
 
+    if (form.looseOn) {
+      if (!form.looseUnit.trim()) {
+        setFormError(t('Choose how this product is sold loose, for example kg or sticks.'));
+        return;
+      }
+      if (!(Number(form.loosePerUnit) > 0)) {
+        setFormError(t('Enter how many {{loose}} are in one {{unit}}.', { loose: form.looseUnit, unit: singularUnit(form.unit) || t('unit') }));
+        return;
+      }
+      if (form.loosePrice === '' || Number(form.loosePrice) < 0) {
+        setFormError(t('Enter the price per {{loose}}.', { loose: form.looseUnit }));
+        return;
+      }
+    }
+
     if (!usesLiveData() || !activeBusiness) {
       setFormError(t('Saving needs an active business. Please sign in again.'));
       return;
+    }
+
+    const typedUnits = [form.unit, ...subUnits.map((u) => u.unit)].filter((u) => u.trim() && !isStoreUnit(u));
+    if (typedUnits.length > 0) {
+      const next = customUnitList([...savedUnits, ...typedUnits]);
+      setSavedUnits(next);
+      saveSavedUnits(activeBusiness.id, next);
     }
 
     setSaving(true);
@@ -515,6 +648,9 @@ export function Inventory() {
         reorderQuantity: Number(form.reorderQuantity) || 0,
         costPrice: Number(form.costPrice) || 0,
         sellingPrice: Number(form.sellingPrice) || 0,
+        loose: form.looseOn
+          ? { unit: form.looseUnit.trim(), perUnit: Number(form.loosePerUnit), price: Number(form.loosePrice) || 0 }
+          : null,
       };
       const name = form.name.trim();
       const wasAdding = !editingProductId;
@@ -543,6 +679,7 @@ export function Inventory() {
       const stillPending: SubUnitForm[] = [];
       const failedNames: string[] = [];
 
+      const addedIds: string[] = wasAdding && primaryId ? [primaryId] : [];
       for (const unit of subUnits) {
         try {
           const createdUnit = await productService.create(activeBusiness.id, {
@@ -558,6 +695,7 @@ export function Inventory() {
             openingStock: Number(unit.openingStock) || 0,
             variantGroupId: anchorId,
           });
+          addedIds.push(createdUnit.id);
           if (unit.imageFile) {
             try {
               await productService.uploadImage(activeBusiness.id, createdUnit.id, unit.imageFile);
@@ -592,6 +730,7 @@ export function Inventory() {
         wasAdding ? t('Product added') : t('Product updated'),
         wasAdding ? t('{{name}} is now in your inventory.', { name }) : t('{{name}} has been updated.', { name }),
       );
+      if (addedIds.length > 0) setJustAdded(addedIds);
     } catch (err) {
       setFormError(toUserMessage(err));
     } finally {
@@ -742,7 +881,8 @@ export function Inventory() {
                     {filtered.map((product) => (
                       <tr
                         key={product.id}
-                        className={product.isActive ? undefined : 'bl-inv__row--disabled'}
+                        data-product-id={product.id}
+                        className={[product.isActive ? '' : 'bl-inv__row--disabled', justAdded.includes(product.id) ? 'bl-inv__new' : ''].filter(Boolean).join(' ') || undefined}
                         onClick={() => history.push(`/inventory/${product.id}`)}
                       >
                         <td className="bl-td-text">
@@ -769,8 +909,9 @@ export function Inventory() {
                         </td>
                         <td>{product.category}</td>
                         <td className="bl-td-num">
-                          {number(product.currentStock)}
+                          {stockNumber(product)}
                           <div className="bl-table__sub">{product.unit}</div>
+                          {product.loose && <div className="bl-table__sub bl-inv__loose-left">{looseLeft(product)}</div>}
                         </td>
                         <td className="bl-td-num">{number(product.minimumStock)}</td>
                         <td className="bl-inv__col-supplier">{supplierName(product.supplierId)}</td>
@@ -844,11 +985,11 @@ export function Inventory() {
           {/* Mobile and tablet: cards */}
           <ul className="bl-responsive-cards">
             {filtered.map((product) => (
-              <li key={product.id}>
+              <li key={product.id} data-product-id={product.id} className={justAdded.includes(product.id) ? 'bl-inv__new' : undefined}>
                 <MobileRow
                   lead={<ProductThumbnail src={product.imageUrl} name={product.name} size="sm" />}
                   title={product.name}
-                  meta={`${number(product.currentStock)} ${product.unit} · ${pesoExact(product.sellingPrice)}${extraSizesFor(product) > 0 ? ` · ${extraSizesFor(product) > 1 ? t('+{{count}} sizes', { count: extraSizesFor(product) }) : t('+1 size')}` : ''}`}
+                  meta={`${stockNumber(product)} ${product.unit}${product.loose ? ` (${looseLeft(product)})` : ''} · ${pesoExact(product.sellingPrice)}${extraSizesFor(product) > 0 ? ` · ${extraSizesFor(product) > 1 ? t('+{{count}} sizes', { count: extraSizesFor(product) }) : t('+1 size')}` : ''}`}
                   value={
                     <StatusBadge
                       status={product.status}
@@ -870,6 +1011,7 @@ export function Inventory() {
         isOpen={addOpen}
         onClose={closeModal}
         size="lg"
+        className={looseOpen ? 'bl-modal--beside-panel' : undefined}
         title={editingProductId ? t('Edit Product') : t('Add Product')}
         icon="product"
         description={
@@ -939,9 +1081,27 @@ export function Inventory() {
               <TextField
                 label={t('Product code')}
                 placeholder={t('e.g. CO-1000')}
-                hint={t('Your own product code.')}
+                hint={t('Type your own, or tap Generate.')}
+                className="bl-inv__code-field"
                 value={form.sku}
                 onChange={(e) => setField('sku')(e.target.value)}
+                suffix={
+                  <button
+                    type="button"
+                    className="bl-inv__code-gen"
+                    onClick={() =>
+                      setField('sku')(
+                        generateProductCode(form.name, [
+                          ...(data ?? []).filter((p) => p.id !== editingProductId).map((p) => p.sku),
+                          ...subUnits.map((u) => u.sku),
+                        ]),
+                      )
+                    }
+                  >
+                    <IonIcon icon={sparklesOutline} aria-hidden="true" />
+                    {t('Generate')}
+                  </button>
+                }
               />
               <div className="bl-inv__category-row">
                 <SelectField
@@ -954,14 +1114,17 @@ export function Inventory() {
                       void handleAddCategory();
                       return;
                     }
-                    setField('categoryId')(e.target.value);
+                    const picked = e.target.value;
+                    void resolveCategory(picked, form.categoryId).then((id) => setField('categoryId')(id));
                   }}
                   options={[
                     { value: NEW_CATEGORY_OPTION, label: t('+ Add new category') },
-                    ...(dbCategories ?? []).map((c) => ({ value: c.id, label: c.name })),
+                    ...categoryOptions(dbCategories ?? []),
                   ]}
                 />
-                {form.categoryId && form.categoryId !== NEW_CATEGORY_OPTION && (
+                {form.categoryId &&
+                  form.categoryId !== NEW_CATEGORY_OPTION &&
+                  !isPresetCategory((dbCategories ?? []).find((c) => c.id === form.categoryId)?.name) && (
                   <Button
                     variant="ghost"
                     icon={trashOutline}
@@ -987,13 +1150,13 @@ export function Inventory() {
                   onChange={(e) => setField('openingStock')(e.target.value)}
                 />
               )}
-              <TextField
+              <UnitField
                 label={t('Unit')}
-                placeholder={t('e.g. bottles')}
                 required
-                textOnly
                 value={form.unit}
-                onChange={(e) => setField('unit')(e.target.value)}
+                onChange={setField('unit')}
+                customUnits={customUnits}
+                onDelete={(u) => void handleDeleteUnit(u, () => setField('unit')(''))}
               />
               <NumberField
                 label={t('Low-stock level')}
@@ -1023,6 +1186,41 @@ export function Inventory() {
             </div>
           </fieldset>
 
+          <fieldset className="bl-fieldset bl-form-grid__full">
+            <legend className="bl-fieldset__legend">{t('Sell loose (tingi)')}</legend>
+            <div className="bl-inv__loose-toggle">
+              <div>
+                <span className="bl-inv__loose-title">{t('Also sell this product loose')}</span>
+                <span className="bl-caption">
+                  {t('For example a sack of rice sold by the kilo, cigarettes by the stick, or eggs by the piece.')}
+                </span>
+              </div>
+              <Switch
+                checked={form.looseOn === '1'}
+                onChange={(on) => {
+                  setField('looseOn')(on ? '1' : '');
+                  setLooseOpen(on);
+                }}
+                label={t('Also sell this product loose')}
+              />
+            </div>
+            {form.looseOn === '1' && looseComplete(form) && (
+              <div className="bl-inv__loose-summary">
+                <span>
+                  {t('By the {{loose}} · {{per}} {{loose}} in one {{unit}} · {{price}} per {{loose}}', {
+                    loose: form.looseUnit,
+                    per: fractionQty(Number(form.loosePerUnit)),
+                    unit: singularUnit(form.unit) || t('unit'),
+                    price: pesoExact(Number(form.loosePrice)),
+                  })}
+                </span>
+                <Button variant="ghost" size="sm" onClick={() => setLooseOpen(true)}>
+                  {t('Edit')}
+                </Button>
+              </div>
+            )}
+          </fieldset>
+
           <div className="bl-form-grid__full bl-inv__supplier-row">
             <SelectField
               label={t('Supplier')}
@@ -1033,7 +1231,7 @@ export function Inventory() {
               options={(suppliers ?? []).map((s) => ({ value: s.id, label: s.name }))}
             />
             <Button variant="secondary" icon={addOutline} onClick={addSubUnit}>
-              {t('Add another size')}
+              {t('Add another')}
             </Button>
           </div>
 
@@ -1096,8 +1294,11 @@ export function Inventory() {
                   label={t('Category')}
                   placeholder={t('Select a category')}
                   value={unit.categoryId}
-                  onChange={(e) => updateSubUnit(unit.localId, { categoryId: e.target.value })}
-                  options={(dbCategories ?? []).map((c) => ({ value: c.id, label: c.name }))}
+                  onChange={(e) => {
+                    const picked = e.target.value;
+                    void resolveCategory(picked, unit.categoryId).then((id) => updateSubUnit(unit.localId, { categoryId: id }));
+                  }}
+                  options={categoryOptions(dbCategories ?? [])}
                 />
                 <SelectField
                   label={t('Supplier')}
@@ -1106,13 +1307,13 @@ export function Inventory() {
                   onChange={(e) => updateSubUnit(unit.localId, { supplierId: e.target.value })}
                   options={(suppliers ?? []).map((s) => ({ value: s.id, label: s.name }))}
                 />
-                <TextField
+                <UnitField
                   label={t('Unit')}
-                  placeholder={t('e.g. bottles')}
                   required
-                  textOnly
                   value={unit.unit}
-                  onChange={(e) => updateSubUnit(unit.localId, { unit: e.target.value })}
+                  onChange={(v) => updateSubUnit(unit.localId, { unit: v })}
+                  customUnits={customUnits}
+                  onDelete={(u) => void handleDeleteUnit(u, () => updateSubUnit(unit.localId, { unit: '' }))}
                 />
                 <NumberField
                   label={t('Opening stock')}
@@ -1147,6 +1348,21 @@ export function Inventory() {
           ))}
         </form>
       </Modal>
+
+      <LooseSellingPanel
+        isOpen={addOpen && looseOpen}
+        unit={form.unit}
+        sellingPrice={Number(form.sellingPrice) || 0}
+        value={form}
+        onChange={(key, value) => setField(key)(value)}
+        customUnits={customUnits}
+        onDone={() => setLooseOpen(false)}
+        onCancel={() => {
+          setLooseOpen(false);
+          // Closed before the settings were complete: loose selling stays off.
+          if (!looseComplete(form)) setField('looseOn')('');
+        }}
+      />
     </Workspace>
   );
 }

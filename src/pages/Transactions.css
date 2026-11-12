@@ -202,8 +202,21 @@
 .bl-pos__side-fields { display: grid; gap: var(--bl-s4); }
 /* The date shares the heading's row, to leave room for the payment fields. */
 .bl-pos__details-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--bl-s2); flex-shrink: 0; }
-.bl-pos__details-date { flex: 0 1 150px; }
-.bl-pos__details-date .bl-input { padding: 0 var(--bl-s2); font-size: var(--bl-fs-sm); }
+/* The sale date is always today and cannot be changed, so it reads as a label, not a field. */
+.bl-pos__details-date {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px var(--bl-s3);
+  border-radius: 999px;
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  font-size: var(--bl-fs-sm);
+  font-weight: 600;
+  white-space: nowrap;
+  user-select: none;
+}
+.bl-pos__details-date ion-icon { font-size: 1rem; flex-shrink: 0; }
 .bl-pos__summary { display: grid; gap: var(--bl-s2); margin: 0; padding-top: var(--bl-s3); border-top: 1px solid var(--bl-border); }
 .bl-pos__summary > div { display: flex; justify-content: space-between; }
 .bl-pos__summary dt { color: var(--bl-text-secondary); }
@@ -727,4 +740,41 @@
   .bl-cart__subtotal { font-size: var(--bl-fs-md); }
 
   .bl-pos__chip { min-height: 44px; }
+}
+
+/* ---- Selling loose (tingi): whole sack or by the kilo, with quick amounts ---- */
+.bl-cart__modes,
+.bl-cart__amounts { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 4px; }
+.bl-cart__mode,
+.bl-cart__amount {
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid var(--bl-border);
+  border-radius: 999px;
+  background: var(--bl-surface, #fff);
+  color: var(--bl-text);
+  font: inherit;
+  font-size: var(--bl-fs-sm);
+  font-weight: 600;
+  cursor: pointer;
+}
+.bl-cart__amount { min-width: 36px; padding: 0 8px; }
+.bl-cart__mode.is-on,
+.bl-cart__amount.is-on { border-color: var(--bl-green); background: var(--bl-green-light); color: var(--bl-green-dark); }
+.bl-cart__amount:disabled { opacity: 0.4; cursor: not-allowed; }
+.bl-cart__amount-input.bl-input { width: 74px; min-height: 28px; height: 28px; padding: 0 8px; font-size: var(--bl-fs-sm); }
+.bl-tile__loose { display: block; font-size: var(--bl-fs-xs, 0.75rem); font-weight: 500; color: var(--bl-text-secondary); }
+
+/* Phones: thumb-sized loose controls (at least 40px tall). */
+@media (max-width: 599px) {
+  .bl-cart__modes,
+  .bl-cart__amounts { gap: 6px; margin-top: 6px; }
+  .bl-cart__mode,
+  .bl-cart__amount { min-height: 40px; padding: 0 14px; font-size: var(--bl-fs-base); }
+  .bl-cart__amount { min-width: 48px; }
+  .bl-cart__amount-input.bl-input { width: 96px; min-height: 40px; height: 40px; font-size: 16px; }
+}
+@media (max-width: 599px) {
+  /* Whole / By kg stay on one row even on small phones. */
+  .bl-cart__mode { padding: 0 12px; font-size: var(--bl-fs-sm); }
 }

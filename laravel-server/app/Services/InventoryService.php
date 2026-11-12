@@ -103,7 +103,7 @@ class InventoryService
             ->where('product_id', $productId)
             ->where('business_id', $businessId)
             ->lockForUpdate()
-            ->first(['current_stock', 'minimum_stock', 'name', 'unit', 'is_active']);
+            ->first(['current_stock', 'minimum_stock', 'name', 'unit', 'is_active', 'loose_per_unit']);
 
         if (! $product) {
             throw ApiException::notFound('That product no longer exists.');
@@ -113,7 +113,13 @@ class InventoryService
             throw ApiException::badRequest(':name is disabled. Enable it in Inventory to sell it.', ['name' => $product->name]);
         }
 
-        $nextStock = (float) $product->current_stock + $quantity;
+        $nextStock = round((float) $product->current_stock + $quantity, 6);
+        // Loose sales (1 egg = 1/30 tray) can leave a crumb from rounding: less
+        // than 1/100 of a loose unit counts as nothing left.
+        $perUnit = (float) ($product->loose_per_unit ?? 0);
+        if ($perUnit > 0 && abs($nextStock * $perUnit) < 0.01) {
+            $nextStock = 0.0;
+        }
 
         if ($nextStock < 0) {
             $available = rtrim(rtrim(number_format((float) $product->current_stock, 3, '.', ''), '0'), '.');
