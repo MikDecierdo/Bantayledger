@@ -223,7 +223,14 @@ export function Inventory() {
     });
   };
 
-  const addSubUnit = () => setSubUnits((units) => [...units, blankSubUnit()]);
+  const addSubUnit = () => {
+    setSubUnits((units) => [...units, blankSubUnit()]);
+    // Bring the new row into view, so adding a third, fourth, fifth… is one tap each.
+    window.setTimeout(() => {
+      const rows = document.querySelectorAll<HTMLElement>('.bl-inv__subunit');
+      rows[rows.length - 1]?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }, 60);
+  };
 
   const removeSubUnit = (localId: string) => {
     setSubUnits((units) => {
@@ -1346,6 +1353,16 @@ export function Inventory() {
               </div>
             </fieldset>
           ))}
+          {subUnits.length > 0 && (
+            <div className="bl-form-grid__full bl-inv__add-more">
+              <Button variant="secondary" icon={addOutline} onClick={addSubUnit}>
+                {t('Add another')}
+              </Button>
+              <span className="bl-caption">
+                {subUnits.length === 1 ? t('1 more size so far') : t('{{count}} more sizes so far', { count: subUnits.length })}
+              </span>
+            </div>
+          )}
         </form>
       </Modal>
 

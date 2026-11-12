@@ -1,0 +1,8 @@
+{
+  "{{count}} more sizes so far": ["{{count}} pang laki sa ngayon", "{{count}} pa ka gidak-on karon"],
+  "{{count}} sales": ["{{count}} benta", "{{count}} ka halin"],
+  "1 more size so far": ["1 pang laki sa ngayon", "1 pa ka gidak-on karon"],
+  "1 sale": ["1 benta", "1 ka halin"],
+  "Enter the cash received from the customer.": ["Ilagay ang cash na natanggap mula sa customer.", "Ibutang ang cash nga nadawat gikan sa customer."],
+  "The cash is short by {{amount}}.": ["Kulang ang cash ng {{amount}}.", "Kulang ang cash og {{amount}}."]
+}

@@ -778,3 +778,30 @@
   /* Whole / By kg stay on one row even on small phones. */
   .bl-cart__mode { padding: 0 12px; font-size: var(--bl-fs-sm); }
 }
+
+/* Sales list: one heading per day, with that day's count and total. */
+.bl-table tr.bl-tx__day > th {
+  padding: 8px 12px;
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  text-align: left;
+  font-size: var(--bl-fs-sm);
+  text-transform: none;
+  letter-spacing: 0;
+}
+.bl-tx__day-name { font-weight: 700; margin-right: var(--bl-s3); }
+.bl-tx__day-sum { font-weight: 500; }
+li.bl-tx__day--phone {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  gap: var(--bl-s2);
+  padding: 8px 12px;
+  margin-top: var(--bl-s2);
+  border-radius: 10px;
+  background: var(--bl-green-light);
+  color: var(--bl-green-dark);
+  font-size: var(--bl-fs-sm);
+}

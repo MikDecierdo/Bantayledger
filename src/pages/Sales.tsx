@@ -370,6 +370,18 @@ export function Sales() {
       return;
     }
 
+    // No checkout without the money: the cash (or the cash part) must cover what is due.
+    if (paymentMode !== 'GCash') {
+      if (cash.state === 'blank') {
+        setFormError(t('Enter the cash received from the customer.'));
+        return;
+      }
+      if (cash.state === 'short') {
+        setFormError(t('The cash is short by {{amount}}.', { amount: pesoExact(cash.centavos / 100) }));
+        return;
+      }
+    }
+
     if (!usesLiveData() || !activeBusiness) {
       setFormError(t('Recording a sale needs an active business. Please sign in again.'));
       return;
@@ -452,6 +464,23 @@ export function Sales() {
       return matchesQuery && matchesPayment;
     });
   }, [sales, query, payment]);
+
+  // One group per day, newest first, each with its own count and total.
+  const days = useMemo(() => {
+    const byDay = new Map<string, Sale[]>();
+    for (const sale of filtered) byDay.set(sale.date, [...(byDay.get(sale.date) ?? []), sale]);
+    return [...byDay.entries()]
+      .sort(([a], [b]) => (a < b ? 1 : -1))
+      .map(([date, list]) => ({ date, sales: list, total: list.reduce((sum, s) => sum + s.total, 0) }));
+  }, [filtered]);
+  const dayName = (date: string) => {
+    const today = localTodayIso();
+    const y = new Date();
+    y.setDate(y.getDate() - 1);
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const yesterday = `${y.getFullYear()}-${pad(y.getMonth() + 1)}-${pad(y.getDate())}`;
+    return date === today ? t('Today') : date === yesterday ? t('Yesterday') : shortDate(date);
+  };
 
   const header = (
     <PageHeader
@@ -620,7 +649,16 @@ export function Sales() {
                       </tr>
                     </thead>
                     <tbody>
-                      {filtered.map((sale) => (
+                      {days.flatMap((day) => [
+                        <tr key={`day-${day.date}`} className="bl-tx__day">
+                          <th colSpan={7} scope="colgroup">
+                            <span className="bl-tx__day-name">{dayName(day.date)}</span>
+                            <span className="bl-tx__day-sum">
+                              {day.sales.length === 1 ? t('1 sale') : t('{{count}} sales', { count: day.sales.length })} · {pesoExact(day.total)}
+                            </span>
+                          </th>
+                        </tr>,
+                        ...day.sales.map((sale) => (
                         <tr key={sale.id}>
                           <td className="bl-table__primary">{sale.reference}</td>
                           <td className="bl-td-date">
@@ -652,7 +690,8 @@ export function Sales() {
                             </Button>
                           </td>
                         </tr>
-                      ))}
+                        )),
+                      ])}
                     </tbody>
                   </table>
                 </div>
@@ -660,7 +699,14 @@ export function Sales() {
             </div>
 
             <ul className="bl-responsive-cards">
-              {filtered.map((sale) => (
+              {days.flatMap((day) => [
+                <li key={`day-${day.date}`} className="bl-tx__day bl-tx__day--phone">
+                  <span className="bl-tx__day-name">{dayName(day.date)}</span>
+                  <span className="bl-tx__day-sum">
+                    {day.sales.length === 1 ? t('1 sale') : t('{{count}} sales', { count: day.sales.length })} · {pesoExact(day.total)}
+                  </span>
+                </li>,
+                ...day.sales.map((sale) => (
                 <li key={sale.id}>
                   <MobileRow
                     title={saleTitle(sale)}
@@ -671,7 +717,8 @@ export function Sales() {
                     onClick={() => setViewSale(sale)}
                   />
                 </li>
-              ))}
+                )),
+              ])}
             </ul>
           </>
         )}

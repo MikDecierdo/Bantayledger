@@ -205,3 +205,9 @@ li.bl-inv__new .bl-mrow {
   .bl-inv__code-gen { height: 38px; padding: 0 12px; }
   .bl-inv__code-field .bl-input { padding-right: 124px; }
 }
+
+/* "Add another" repeated under the last size row. */
+.bl-inv__add-more { display: flex; flex-direction: row-reverse; align-items: center; justify-content: space-between; gap: var(--bl-s3); }
+/* Same spot as the first one beside Supplier: right edge, same width. */
+.bl-inv__add-more > .bl-btn,
+.bl-inv__supplier-row > .bl-btn { flex: 0 0 auto; min-width: 172px; }
