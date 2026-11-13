@@ -21,6 +21,8 @@ php artisan route:cache
 # New migrations (only the ones not yet run) on every start.
 if [ "${RUN_MIGRATIONS:-true}" = "true" ]; then
   php artisan migrate --force
+  # Photos saved as files before they moved into the database (runs once; then finds none).
+  php artisan photos:move-to-db || true
 fi
 
 chown -R www-data:www-data storage bootstrap/cache

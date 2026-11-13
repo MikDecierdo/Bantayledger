@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\BusinessController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\ExpenseController;
+use App\Http\Controllers\Api\PhotoController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\PurchaseController;
 use App\Http\Controllers\Api\ReportController;
@@ -25,6 +26,9 @@ use Illuminate\Support\Facades\Route;
 
 // Used by the app to wake the server (Render free sleeps) and to check it's reachable.
 Route::get('/health', fn () => response()->json(['ok' => true]));
+
+// Product photos, kept in the database (see PhotoController). Public: <img> can't send a token.
+Route::get('/photos/{token}.jpg', [PhotoController::class, 'show'])->middleware('throttle:1200,1');
 
 // Limits on tries per minute, so passwords can't be guessed by brute force.
 Route::post('/auth/signup', [AuthController::class, 'signup'])->middleware('throttle:signup');

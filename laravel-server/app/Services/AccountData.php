@@ -4,7 +4,6 @@ namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Storage;
 
 /**
  * A person's right to take their data with them or have it removed: the
@@ -148,11 +147,12 @@ class AccountData
         DB::table('users')->where('user_id', $userId)->delete();
     }
 
+    /** Old photo files; database photos go with their products (foreign key). */
     private static function deletePhotos(array $paths): void
     {
         foreach ($paths as $path) {
             try {
-                Storage::disk('public')->delete($path);
+                ProductPhotos::deleteOldFile($path);
             } catch (\Throwable $e) {
                 report($e);
             }

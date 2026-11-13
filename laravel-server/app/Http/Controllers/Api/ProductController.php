@@ -6,9 +6,9 @@ use App\Exceptions\ApiException;
 use App\Http\Controllers\Controller;
 use App\Services\ActivityLog;
 use App\Services\InventoryService;
+use App\Services\ProductPhotos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -38,7 +38,7 @@ class ProductController extends Controller
                 'price' => (float) $row->loose_price,
             ],
             'status' => $row->status,
-            'imageUrl' => $row->image_path ? Storage::disk('public')->url($row->image_path) : null,
+            'imageUrl' => ProductPhotos::url($row->image_path),
             'averageDailyDemand' => $derived['averageDailyDemand'] ?? 0,
             'lastRestockedAt' => $derived['lastRestockedAt'] ?? substr((string) $row->created_at, 0, 10),
             'updatedAt' => substr((string) $row->updated_at, 0, 10),
@@ -376,8 +376,9 @@ class ProductController extends Controller
             throw ApiException::badRequest('This product cannot be deleted because it appears in recorded sales or purchases.');
         }
 
-        if ($product && $product->image_path) {
-            Storage::disk('public')->delete($product->image_path);
+        // A database photo went with the product (foreign key); an old file is removed here.
+        if ($product) {
+            ProductPhotos::deleteOldFile($product->image_path);
         }
 
         return response()->noContent();
@@ -394,21 +395,16 @@ class ProductController extends Controller
             throw ApiException::notFound('That product could not be found.');
         }
 
-        $path = $data['image']->store('products', 'public');
+        // Kept in the database, not on the server's disk: the live server's disk
+        // is wiped on every deploy and restart, which used to lose the photos.
+        $bytes = (string) file_get_contents($data['image']->getRealPath());
+        DB::transaction(function () use ($business, $id, $bytes, $existing) {
+            $path = ProductPhotos::save($id, $bytes);
+            DB::table('products')->where('business_id', $business)->where('product_id', $id)->update(['image_path' => $path]);
+            ActivityLog::record($business, ActivityLog::PRODUCT, 'product_photo_changed', ['subjectId' => $id, 'subject' => $existing->name]);
+        });
 
-        try {
-            DB::transaction(function () use ($business, $id, $path, $existing) {
-                DB::table('products')->where('business_id', $business)->where('product_id', $id)->update(['image_path' => $path]);
-                ActivityLog::record($business, ActivityLog::PRODUCT, 'product_photo_changed', ['subjectId' => $id, 'subject' => $existing->name]);
-            });
-        } catch (\Throwable $e) {
-            Storage::disk('public')->delete($path);
-            throw $e;
-        }
-
-        if ($existing->image_path) {
-            Storage::disk('public')->delete($existing->image_path);
-        }
+        ProductPhotos::deleteOldFile($existing->image_path);
 
         return $this->show($business, $id);
     }
@@ -422,14 +418,13 @@ class ProductController extends Controller
 
         DB::transaction(function () use ($business, $id, $existing) {
             DB::table('products')->where('business_id', $business)->where('product_id', $id)->update(['image_path' => null]);
+            ProductPhotos::delete($id);
             if ($existing->image_path) {
                 ActivityLog::record($business, ActivityLog::PRODUCT, 'product_photo_removed', ['subjectId' => $id, 'subject' => $existing->name]);
             }
         });
 
-        if ($existing->image_path) {
-            Storage::disk('public')->delete($existing->image_path);
-        }
+        ProductPhotos::deleteOldFile($existing->image_path);
 
         return response()->noContent();
     }
