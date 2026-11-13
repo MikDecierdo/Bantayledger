@@ -170,7 +170,7 @@ export function Landing() {
           <div className="bl-land__wrap bl-land__hero-grid">
             <div className="bl-land__hero-copy">
               <p className="bl-land__eyebrow">{t('For sari-sari stores and small shops')}</p>
-              <h1 className="bl-land__title">{t('Know your sales, stock and profit — every single day.')}</h1>
+              <h1 className="bl-land__title">{t('Know your sales, stock and profit - every single day.')}</h1>
               <p className="bl-land__lead">
                 {t('BantayLedger keeps your sales, inventory, expenses and suppliers in one place, then tells you what to restock and what is coming next.')}
               </p>
