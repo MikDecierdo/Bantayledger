@@ -1,0 +1,17 @@
+{
+  "{{title}} (continued)": ["{{title}} (karugtong)", "{{title}} (padayon)"],
+  "Business Report": ["Ulat ng Negosyo", "Report sa Negosyo"],
+  "Generated": ["Ginawa noong", "Gihimo niadtong"],
+  "Image (PNG)": ["Larawan (PNG)", "Hulagway (PNG)"],
+  "Left": ["Natitira", "Nahabilin"],
+  "Low": ["Kaunti na", "Gamay na"],
+  "Page {{page}} of {{total}}": ["Pahina {{page}} ng {{total}}", "Panid {{page}} sa {{total}}"],
+  "PDF (bond paper)": ["PDF (bond paper)", "PDF (bond paper)"],
+  "Prepared by": ["Inihanda ni", "Giandam ni"],
+  "Report image downloaded.": ["Na-download na ang larawan ng ulat.", "Na-download na ang hulagway sa report."],
+  "Report PDF downloaded.": ["Na-download na ang PDF ng ulat.", "Na-download na ang PDF sa report."],
+  "Runs out in": ["Mauubos sa loob ng", "Mahurot sulod sa"],
+  "Share": ["Bahagi", "Bahin"],
+  "Week": ["Linggo", "Semana"],
+  "Your full report on short bond paper (8.5 × 11 in), ready to print — as a PDF or as an image.": ["Ang buong ulat mo sa short bond paper (8.5 × 11 in), handa nang i-print — bilang PDF o larawan.", "Ang tibuok nimong report sa short bond paper (8.5 × 11 in), andam na i-print — isip PDF o hulagway."]
+}

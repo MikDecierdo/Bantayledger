@@ -47,7 +47,7 @@ export function receiptTimestamp(): string {
 // ---- Builder -----------------------------------------------------------------
 
 /** jsPDF's built-in Courier only covers basic Latin; swap look-alikes so nothing prints as garbage. */
-function ascii(text: string): string {
+export function ascii(text: string): string {
   return text.replace(/[–—]/g, '-').replace(/[·•]/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"');
 }
 

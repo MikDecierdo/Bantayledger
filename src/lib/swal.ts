@@ -151,17 +151,24 @@ export async function confirmAction({
  * Asks which file type to export. Resolves null if cancelled.
  *
  * @param subject What's being exported, e.g. "dashboard" or "report".
+ * @param style 'paper' for short bond paper pages, 'receipt' for a receipt strip.
  */
-export async function chooseExportFormat(subject: string): Promise<'pdf' | 'png' | null> {
+export async function chooseExportFormat(
+  subject: string,
+  style: 'receipt' | 'paper' = 'receipt',
+): Promise<'pdf' | 'png' | null> {
+  const paper = style === 'paper';
   const result = await fireSwal({
     ...baseOptions,
     icon: 'question',
     title: t('Export {{subject}}', { subject }),
-    text: t('Your sales, inventory and other key figures as a receipt-style list — as a PDF or as an image.'),
+    text: paper
+      ? t('Your full report on short bond paper (8.5 × 11 in), ready to print — as a PDF or as an image.')
+      : t('Your sales, inventory and other key figures as a receipt-style list — as a PDF or as an image.'),
     showCancelButton: true,
     showDenyButton: true,
-    confirmButtonText: t('PDF receipt'),
-    denyButtonText: t('Image receipt (PNG)'),
+    confirmButtonText: paper ? t('PDF (bond paper)') : t('PDF receipt'),
+    denyButtonText: paper ? t('Image (PNG)') : t('Image receipt (PNG)'),
     cancelButtonText: t('Cancel'),
     customClass: {
       ...classes,

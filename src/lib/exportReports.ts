@@ -1,90 +1,134 @@
 import type { Report } from '../services/api';
 import type { DemandForecast } from '../types';
-import { type ExportFormat, ReceiptBuilder, type ReceiptLine, php, qty, receiptTimestamp, saveReceipt } from './receipt';
+import { type ExportFormat, php, qty, receiptTimestamp } from './receipt';
+import { type Cell, loadLogo, PaperDoc, savePaper } from './reportPaper';
 import { t } from '../i18n';
 
-const STATUS = { healthy: t('ENOUGH'), low: t('LOW'), critical: t('ALMOST OUT'), out: t('OUT') } as const;
-const PER = { day: t('day'), week: t('week'), month: t('month') } as const;
+const STATUS_COLOR = { healthy: '#1F7A4D', low: '#B26A00', critical: '#C0392B', out: '#C0392B' } as const;
 
 /** Stock running out sooner than this many days shows up in the restock list. */
 const RESTOCK_WITHIN_DAYS = 14;
 
-/** Every report section, for the selected period and category, as a receipt-style list. */
-export function buildReportReceipt(
-  report: Report,
-  businessName: string,
-  periodLabel: string,
-  demand: DemandForecast[],
-): ReceiptLine[] {
+export interface ReportPaperInfo {
+  businessName: string;
+  periodLabel: string;
+  preparedBy: string;
+}
+
+function share(value: number, total: number): string {
+  return total > 0 ? `${((value / total) * 100).toFixed(1)}%` : '-';
+}
+
+/** Every report section, for the selected period and category, on short bond paper pages. */
+export function buildReportPaper(report: Report, info: ReportPaperInfo, demand: DemandForecast[], logo: string | null) {
+  // Looked up here, not when the file loads, so they follow the language picked now.
+  const STATUS = { healthy: t('Enough'), low: t('Low'), critical: t('Almost out'), out: t('Out of stock') };
+  const PER = { day: t('day'), week: t('week'), month: t('month') };
+  const PERIOD = { day: t('Day'), week: t('Week'), month: t('Month') };
   const { summary, sales, purchases, expenses, inventory, range } = report;
   const filtered = range.categoryName !== null;
   const per = PER[range.granularity];
-  const r = new ReceiptBuilder();
+  const businessName = info.businessName || t('My Business');
 
-  r.center(businessName || t('My Business'), true)
-    .center(t('BUSINESS REPORT'))
-    .center(periodLabel)
-    .center(receiptTimestamp());
-
-  r.section(t('Summary'), () => {
-    r.row(t('Revenue'), php(summary.revenue))
-      .row(t('Sales made'), String(summary.transactions))
-      .row(t('Stock purchased'), php(summary.purchases))
-      .row(filtered ? t('Expenses (all)') : t('Expenses'), php(summary.expenses))
-      .rule()
-      .row(t('NET POSITION'), php(summary.netPosition), { bold: true });
+  const doc = new PaperDoc({
+    title: t('Business Report'),
+    businessName,
+    periodLabel: info.periodLabel,
+    generatedAt: receiptTimestamp().replace(/\s{2,}/, ' '),
+    preparedBy: info.preparedBy,
+    logo,
   });
 
-  r.section(t('Sales by category'), () => {
-    if (sales.byCategory.length === 0) r.text(t('No sales in this period.'));
-    for (const c of sales.byCategory) r.row(c.label, php(c.value));
-  });
+  doc.boxes([
+    { label: t('Revenue'), value: php(summary.revenue) },
+    { label: t('Sales made'), value: String(summary.transactions) },
+    { label: t('Stock purchased'), value: php(summary.purchases) },
+    { label: filtered ? t('Expenses (all)') : t('Expenses'), value: php(summary.expenses) },
+    { label: t('Net position'), value: php(summary.netPosition), color: summary.netPosition < 0 ? '#C0392B' : '#1F7A4D' },
+  ]);
+
+  const salesTotal = sales.byCategory.reduce((sum, c) => sum + c.value, 0);
+  doc.table(
+    t('Sales by category'),
+    [{ label: t('Category'), width: 5 }, { label: t('Amount'), width: 2.5, align: 'right' }, { label: t('Share'), width: 1.5, align: 'right' }],
+    sales.byCategory.map((c) => [{ text: c.label }, { text: php(c.value) }, { text: share(c.value, salesTotal) }]),
+    { total: [{ text: t('Total') }, { text: php(salesTotal) }, { text: '100%' }], empty: t('No sales in this period.') },
+  );
 
   const salesRows = sales.series.filter((p) => p.value > 0);
-  r.section(t('Sales per {{per}}', { per }), () => {
-    if (salesRows.length === 0) r.text(t('No sales in this period.'));
-    for (const p of salesRows) r.row(p.label, php(p.value));
-  });
+  doc.table(
+    t('Sales per {{per}}', { per }),
+    [{ label: PERIOD[range.granularity], width: 6.5 }, { label: t('Amount'), width: 2.5, align: 'right' }],
+    salesRows.map((p) => [{ text: p.label }, { text: php(p.value) }]),
+    { total: [{ text: t('Total') }, { text: php(salesRows.reduce((s, p) => s + p.value, 0)) }], empty: t('No sales in this period.') },
+  );
 
-  r.section(filtered ? t('Expenses by category (all)') : t('Expenses by category'), () => {
-    if (expenses.byCategory.length === 0) r.text(t('No expenses in this period.'));
-    for (const c of expenses.byCategory) r.row(c.label, php(c.value));
-  });
+  const expenseTotal = expenses.byCategory.reduce((sum, c) => sum + c.value, 0);
+  doc.table(
+    filtered ? t('Expenses by category (all)') : t('Expenses by category'),
+    [{ label: t('Category'), width: 5 }, { label: t('Amount'), width: 2.5, align: 'right' }, { label: t('Share'), width: 1.5, align: 'right' }],
+    expenses.byCategory.map((c) => [{ text: c.label }, { text: php(c.value) }, { text: share(c.value, expenseTotal) }]),
+    { total: [{ text: t('Total') }, { text: php(expenseTotal) }, { text: '100%' }], empty: t('No expenses in this period.') },
+  );
 
   const purchaseRows = purchases.series.filter((p) => p.value > 0);
-  r.section(t('Purchases per {{per}}', { per }), () => {
-    if (purchaseRows.length === 0) r.text(t('No received purchases in this period.'));
-    for (const p of purchaseRows) r.row(p.label, php(p.value));
-  });
+  doc.table(
+    t('Purchases per {{per}}', { per }),
+    [{ label: PERIOD[range.granularity], width: 6.5 }, { label: t('Amount'), width: 2.5, align: 'right' }],
+    purchaseRows.map((p) => [{ text: p.label }, { text: php(p.value) }]),
+    { total: [{ text: t('Total') }, { text: php(purchaseRows.reduce((s, p) => s + p.value, 0)) }], empty: t('No received purchases in this period.') },
+  );
 
-  r.section(t('Inventory today ({{count}} items)', { count: inventory.products.length }), () => {
-    if (inventory.products.length === 0) r.text(t('No products.'));
-    for (const p of inventory.products) {
-      r.row(p.name);
-      r.row(`${qty(p.currentStock)} ${p.unit}  ${STATUS[p.status]}`, php(p.stockValue), { indent: 2 });
-    }
-    if (inventory.products.length > 0) r.rule().row(t('STOCK VALUE'), php(inventory.totalValue), { bold: true });
-  });
+  doc.table(
+    t('Inventory today ({{count}} items)', { count: inventory.products.length }),
+    [
+      { label: t('Product'), width: 4.4 },
+      { label: t('Stock'), width: 1.8, align: 'right' },
+      { label: t('Status'), width: 1.5 },
+      { label: t('Stock value'), width: 2, align: 'right' },
+    ],
+    inventory.products.map((p): Cell[] => [
+      { text: p.name },
+      { text: `${qty(p.currentStock)} ${p.unit}` },
+      { text: STATUS[p.status], color: STATUS_COLOR[p.status], bold: p.status !== 'healthy' },
+      { text: php(p.stockValue) },
+    ]),
+    { total: [{ text: t('Total stock value') }, { text: '' }, { text: '' }, { text: php(inventory.totalValue) }], empty: t('No products.') },
+  );
 
-  const restock = demand.filter((d) => d.averageDailyDemand > 0 && d.daysOfCover <= RESTOCK_WITHIN_DAYS);
-  r.section(filtered ? t('Restock soon (all products)') : t('Restock soon'), () => {
-    if (demand.length === 0) r.text(t('No forecast yet.'));
-    else if (restock.length === 0) r.text(t('Nothing runs out within {{days}} days.', { days: RESTOCK_WITHIN_DAYS }));
-    for (const d of restock) {
-      r.row(d.productName);
-      r.row(t('{{qty}} {{unit}} left', { qty: qty(d.currentStock), unit: d.unit }), t('~{{days}} days', { days: qty(d.daysOfCover) }), { indent: 2 });
-    }
-  });
+  const restock = demand
+    .filter((d) => d.averageDailyDemand > 0 && d.daysOfCover <= RESTOCK_WITHIN_DAYS)
+    .sort((a, b) => a.daysOfCover - b.daysOfCover);
+  doc.table(
+    filtered ? t('Restock soon (all products)') : t('Restock soon'),
+    [
+      { label: t('Product'), width: 4.4 },
+      { label: t('Left'), width: 1.7, align: 'right' },
+      { label: t('Sold per day'), width: 1.7, align: 'right' },
+      { label: t('Runs out in'), width: 1.7, align: 'right' },
+    ],
+    restock.map((d): Cell[] => [
+      { text: d.productName },
+      { text: `${qty(d.currentStock)} ${d.unit}` },
+      { text: qty(d.averageDailyDemand) },
+      { text: t('~{{days}} days', { days: qty(d.daysOfCover) }), color: d.daysOfCover <= 3 ? '#C0392B' : undefined, bold: d.daysOfCover <= 3 },
+    ]),
+    {
+      empty:
+        demand.length === 0 ? t('No forecast yet.') : t('Nothing runs out within {{days}} days.', { days: RESTOCK_WITHIN_DAYS }),
+    },
+  );
 
-  return r.footer().lines;
+  return doc.finish();
 }
 
-export function exportReportReceipt(
+/** Saves the report on short bond paper (8.5 x 11 in) as a PDF or a PNG. */
+export async function exportReportPaper(
   report: Report,
-  businessName: string,
-  periodLabel: string,
+  info: ReportPaperInfo,
   demand: DemandForecast[],
   format: ExportFormat,
 ): Promise<void> {
-  return saveReceipt(buildReportReceipt(report, businessName, periodLabel, demand), 'report', format);
+  const pages = buildReportPaper(report, info, demand, await loadLogo());
+  await savePaper(pages, 'report', format);
 }

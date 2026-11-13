@@ -22,7 +22,7 @@ import { Card, Section } from '../components/layout/Section';
 import { Bento, Workspace } from '../components/layout/Workspace';
 import { useAuth } from '../context/AuthContext';
 import { useAsyncData } from '../hooks/useAsyncData';
-import { exportReportReceipt } from '../lib/exportReports';
+import { exportReportPaper } from '../lib/exportReports';
 import { chooseExportFormat } from '../lib/swal';
 import { categoryService, type Report } from '../services/api';
 import { dataService, usesLiveData } from '../services/dataService';
@@ -100,7 +100,7 @@ function describe(series: SeriesPoint[], what: string, unit: string): string {
 }
 
 export function Reports() {
-  const { activeBusiness } = useAuth();
+  const { activeBusiness, profile, user } = useAuth();
   const { showToast } = useToast();
   const [tab, setTab] = useState<ReportTab>('sales');
 
@@ -164,13 +164,22 @@ export function Reports() {
 
   const handleExport = async () => {
     if (!report) return;
-    const format = await chooseExportFormat('report');
+    const format = await chooseExportFormat('report', 'paper');
     if (!format) return;
 
     setExporting(true);
     try {
-      await exportReportReceipt(report, activeBusiness?.name ?? '', periodLabel, forecasts?.demand ?? [], format);
-      showToast(format === 'pdf' ? t('Receipt PDF downloaded.') : t('Receipt image downloaded.'));
+      await exportReportPaper(
+        report,
+        {
+          businessName: activeBusiness?.name ?? '',
+          periodLabel,
+          preparedBy: profile?.full_name?.trim() || profile?.email || user?.email || '',
+        },
+        forecasts?.demand ?? [],
+        format,
+      );
+      showToast(format === 'pdf' ? t('Report PDF downloaded.') : t('Report image downloaded.'));
     } catch {
       showToast(t('Could not create the export. Please try again.'), 'error');
     } finally {
